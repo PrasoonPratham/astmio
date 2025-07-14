@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "astmio"
-version = "1.0.0"
+version = "1.0.0a1"
 authors = [
   { name="Prasoon Pratham", email="prathamprasoon@gmail.com" },
 ]
@@ -28,4 +28,4 @@ classifiers = [
 
 [project.urls]
 "Homepage" = "https://github.com/PrasoonPratham/astmio"
-"Bug Tracker" = "https://github.com/PrasoonPratham/astmio/issues" 
+"Bug Tracker" = "https://github.com/PrasoonPratham/astmio/issues"
