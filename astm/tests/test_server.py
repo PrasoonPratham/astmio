@@ -6,108 +6,95 @@
 # This software is licensed as described in the file COPYING, which
 # you should have received as part of this distribution.
 #
-
-import os
-import sys
+import asyncio
 import unittest
-from astm.exceptions import NotAccepted, InvalidState
-from astm.server import RequestHandler, BaseRecordsDispatcher
+from astm.server import Server, BaseRecordsDispatcher
 from astm import codec, constants, records
-from astm.tests.utils import DummyMixIn, track_call
+from astm.tests.utils import track_call
 
 
-def null_dispatcher(*args, **kwargs):
-    pass
+class TestDispatcher(BaseRecordsDispatcher):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.records = []
+        self.was_called = False
+
+    def __call__(self, message):
+        self.was_called = True
+        super().__call__(message)
+
+    def on_header(self, record):
+        self.records.append(record)
+
+    def on_patient(self, record):
+        self.records.append(record)
+
+    def on_order(self, record):
+        self.records.append(record)
+
+    def on_result(self, record):
+        self.records.append(record)
+
+    def on_comment(self, record):
+        self.records.append(record)
+
+    def on_terminator(self, record):
+        self.records.append(record)
 
 
-class DummyRequestHandler(DummyMixIn, RequestHandler):
-    dummy_dispatcher_called_time = 0
+class ServerTestCase(unittest.IsolatedAsyncioTestCase):
+    host = '127.0.0.1'
+    port = 0
 
-    def __init__(self, dispatcher=null_dispatcher):
-        RequestHandler.__init__(self, None, dispatcher)
+    async def asyncSetUp(self):
+        self.dispatcher = TestDispatcher()
+        self.server = Server(
+            host=self.host, port=self.port, dispatcher=lambda *a, **kw: self.dispatcher
+        )
+        await self.server.start()
+        self.host, self.port = self.server._server.sockets[0].getsockname()
 
-    def default_handler(self, data):
-        return constants.NAK
+    async def asyncTearDown(self):
+        self.server.close()
+        await self.server.wait_closed()
 
-    def dispatch(self, data):
-        self.dummy_dispatcher_called_time += 1
-        return super(DummyRequestHandler, self).dispatch(data)
+    async def test_full_session(self):
+        reader, writer = await asyncio.open_connection(self.host, self.port)
 
-    def recv(self, size):
-        return codec.encode([records.HeaderRecord().to_astm()])[0]
+        # Start session
+        writer.write(constants.ENQ)
+        await writer.drain()
+        response = await reader.read(1)
+        self.assertEqual(response, constants.ACK)
 
+        # Send header
+        header = records.HeaderRecord()
+        message = codec.encode_message(1, [header.to_astm()])
+        writer.write(message)
+        await writer.drain()
+        response = await reader.read(1)
+        self.assertEqual(response, constants.ACK)
+        
+        # Send terminator
+        terminator = records.TerminatorRecord()
+        message = codec.encode_message(2, [terminator.to_astm()])
+        writer.write(message)
+        await writer.drain()
+        response = await reader.read(1)
+        self.assertEqual(response, constants.ACK)
 
-class RequestHandlerTestCase(unittest.TestCase):
+        # End session
+        writer.write(constants.EOT)
+        await writer.drain()
 
-    def setUp(self):
-        self.req = DummyRequestHandler()
-        self.req.dispatcher = track_call(self.req.dispatcher)
-        self.stderr = sys.stderr
-        sys.stderr = open(os.devnull, 'w')
-
-    def tearDown(self):
-        sys.stderr.close()
-        sys.stderr = self.stderr
-
-    def test_allow_enq_only_for_init_state(self):
-        self.assertEqual(self.req.on_enq(), constants.ACK)
-        self.assertEqual(self.req.on_enq(), constants.NAK)
-
-    def test_allow_eot_only_for_transfer_state(self):
-        self.assertRaises(InvalidState, self.req.on_eot)
-        self.req.on_enq()
-        self.req.on_eot()
-
-    def test_fail_on_enq(self):
-        self.assertRaises(NotAccepted, self.req.on_ack)
-
-    def test_fail_on_eot(self):
-        self.assertRaises(NotAccepted, self.req.on_nak)
-
-    def test_reject_message_on_invalid_state(self):
-        self.assertEqual(self.req.on_message(), constants.NAK)
-
-    def test_reject_message_on_handle_error(self):
-        self.req.on_enq()
-        self.assertEqual(self.req.on_message(), constants.NAK)
-        self.assertFalse(self.req.dispatcher.was_called)
-
-    def test_reject_message_on_dispatch_error(self):
-        def dispatcher(message):
-            codec.decode_message(message, 'latin-1')
-        req = DummyRequestHandler(track_call(dispatcher))
-        req.on_enq()
-        req._last_recv_data = '|foo'.encode()
-        self.assertEqual(req.on_message(), constants.NAK)
-        self.assertTrue(req.dispatcher.was_called)
-
-    def test_accept_message(self):
-        self.req.on_enq()
-        self.req._last_recv_data = codec.encode([records.HeaderRecord()
-                                                        .to_astm()])[0]
-        self.assertEqual(self.req.on_message(), constants.ACK)
-        self.assertTrue(self.req.dispatcher.was_called)
-        self.assertFalse(self.req._chunks)
-
-    def test_handle_chunked_transfer(self):
-        self.req.on_enq()
-        self.req._chunks = [b'']
-        self.req._last_recv_data = codec.encode([records.HeaderRecord()
-                                                 .to_astm()])[0]
-        self.assertEqual(self.req.on_message(), constants.ACK)
-        self.assertTrue(self.req.dispatcher.was_called)
-        self.assertFalse(self.req._chunks)
-
-    def test_cleanup_input_buffer_on_message_reject(self):
-        self.req.handle_read()
-        self.assertEqual(self.req.dummy_dispatcher_called_time, 1)
-        self.assertEqual(self.req.outbox[-1], constants.NAK)
-        self.assertEqual(self.req._input_buffer, '')
-
-    def test_close_on_timeout(self):
-        self.req.close = track_call(self.req.close)
-        self.req.on_timeout()
-        self.assertTrue(self.req.close.was_called)
+        # Check dispatcher calls
+        self.assertTrue(self.dispatcher.was_called)
+        self.assertEqual(len(self.dispatcher.records), 2)
+        self.assertEqual(self.dispatcher.records[0][0], 'H')
+        self.assertEqual(self.dispatcher.records[1][0], 'L')
+        
+        writer.close()
+        await writer.wait_closed()
 
 
 class RecordsDispatcherTestCase(unittest.TestCase):
@@ -120,42 +107,42 @@ class RecordsDispatcherTestCase(unittest.TestCase):
         self.dispatcher = d
 
     def test_dispatch_header(self):
-        message = codec.encode_message(1, ['H'], 'ascii')
+        message = codec.encode_message(1, [['H']], 'ascii')
         self.dispatcher(message)
         self.assertTrue(self.dispatcher.dispatch['H'].was_called)
 
     def test_dispatch_comment(self):
-        message = codec.encode_message(1, ['C'], 'ascii')
+        message = codec.encode_message(1, [['C']], 'ascii')
         self.dispatcher(message)
         self.assertTrue(self.dispatcher.dispatch['C'].was_called)
 
     def test_dispatch_patient(self):
-        message = codec.encode_message(1, ['P'], 'ascii')
+        message = codec.encode_message(1, [['P']], 'ascii')
         self.dispatcher(message)
         self.assertTrue(self.dispatcher.dispatch['P'].was_called)
 
     def test_dispatch_order(self):
-        message = codec.encode_message(1, ['O'], 'ascii')
+        message = codec.encode_message(1, [['O']], 'ascii')
         self.dispatcher(message)
         self.assertTrue(self.dispatcher.dispatch['O'].was_called)
 
     def test_dispatch_result(self):
-        message = codec.encode_message(1, ['R'], 'ascii')
+        message = codec.encode_message(1, [['R']], 'ascii')
         self.dispatcher(message)
         self.assertTrue(self.dispatcher.dispatch['R'].was_called)
 
     def test_dispatch_scientific(self):
-        message = codec.encode_message(1, ['S'], 'ascii')
+        message = codec.encode_message(1, [['S']], 'ascii')
         self.dispatcher(message)
         self.assertTrue(self.dispatcher.dispatch['S'].was_called)
 
     def test_dispatch_manufacturer_info(self):
-        message = codec.encode_message(1, ['M'], 'ascii')
+        message = codec.encode_message(1, [['M']], 'ascii')
         self.dispatcher(message)
         self.assertTrue(self.dispatcher.dispatch['M'].was_called)
 
     def test_dispatch_terminator(self):
-        message = codec.encode_message(1, ['L'], 'ascii')
+        message = codec.encode_message(1, [['L']], 'ascii')
         self.dispatcher(message)
         self.assertTrue(self.dispatcher.dispatch['L'].was_called)
 
@@ -165,17 +152,16 @@ class RecordsDispatcherTestCase(unittest.TestCase):
                 self.args = args
         def handler(record):
             assert isinstance(record, Thing)
-        message = codec.encode_message(1, ['H'], 'ascii')
+        message = codec.encode_message(1, [['H']], 'ascii')
         self.dispatcher.wrappers['H'] = Thing
         self.dispatcher.dispatch['H'] = track_call(handler)
         self.dispatcher(message)
         self.assertTrue(self.dispatcher.dispatch['H'].was_called)
 
     def test_provide_default_handler_for_unknown_message_type(self):
-        message = codec.encode_message(1, ['FOO'], 'ascii')
+        message = codec.encode_message(1, [['FOO']], 'ascii')
         self.dispatcher(message)
         self.assertTrue(self.dispatcher.on_unknown.was_called)
-
 
 
 if __name__ == '__main__':
