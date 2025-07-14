@@ -1,0 +1,2052 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="./">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="#" /><link rel="search" title="Search" href="search.html" />
+
+    <!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 --><title>Index - astmio 1.0.0 documentation</title>
+<link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=354aac6f" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=302659d7" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #eeffcc;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="index.html"><div class="brand">astmio 1.0.0 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
+  
+  
+  <span class="sidebar-brand-text">astmio 1.0.0 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="astm.html">astm package</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of astm package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="astm.omnilab.html">astm.omnilab package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="astm.tests.html">astm.tests package</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="changes.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="licence.html">Licence</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          
+<section class="genindex-section">
+  <h1 id="index">Index</h1>
+  <div class="genindex-jumpbox"><a href="#A"><strong>A</strong></a> | <a href="#B"><strong>B</strong></a> | <a href="#C"><strong>C</strong></a> | <a href="#D"><strong>D</strong></a> | <a href="#E"><strong>E</strong></a> | <a href="#F"><strong>F</strong></a> | <a href="#H"><strong>H</strong></a> | <a href="#I"><strong>I</strong></a> | <a href="#J"><strong>J</strong></a> | <a href="#K"><strong>K</strong></a> | <a href="#L"><strong>L</strong></a> | <a href="#M"><strong>M</strong></a> | <a href="#N"><strong>N</strong></a> | <a href="#O"><strong>O</strong></a> | <a href="#P"><strong>P</strong></a> | <a href="#R"><strong>R</strong></a> | <a href="#S"><strong>S</strong></a> | <a href="#T"><strong>T</strong></a> | <a href="#U"><strong>U</strong></a> | <a href="#V"><strong>V</strong></a> | <a href="#W"><strong>W</strong></a></div>
+</section>
+<section id="A" class="genindex-section">
+  <h2>A</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="astm.omnilab.html#astm.omnilab.server.Result.abnormal_flag">abnormal_flag (astm.omnilab.server.Result attribute)</a>
+</li>
+        <li><a href="astm.omnilab.html#astm.omnilab.server.Result.abnormality_nature">abnormality_nature (astm.omnilab.server.Result attribute)</a>
+</li>
+        <li><a href="astm.html#astm.asynclib.Dispatcher.accept">accept() (astm.asynclib.Dispatcher method)</a>, <a href="asynclib.html#astm.asynclib.Dispatcher.accept">[1]</a>
+</li>
+        <li><a href="astm.html#astm.asynclib.Dispatcher.accepting">accepting (astm.asynclib.Dispatcher attribute)</a>
+</li>
+        <li><a href="astm.html#astm.constants.ACK">ACK (in module astm.constants)</a>, <a href="constants.html#astm.constants.ACK">[1]</a>
+</li>
+        <li><a href="astm.omnilab.html#astm.omnilab.client.Order.action_code">action_code (astm.omnilab.client.Order attribute)</a>
+
+        <ul>
+          <li><a href="astm.omnilab.html#astm.omnilab.server.Order.action_code">(astm.omnilab.server.Order attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="astm.html#astm.asynclib.Dispatcher.addr">addr (astm.asynclib.Dispatcher attribute)</a>
+
+        <ul>
+          <li><a href="astm.tests.html#astm.tests.utils.DummyMixIn.addr">(astm.tests.utils.DummyMixIn attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="astm.html#astm.mapping.RepeatedComponentField.Proxy.append">append() (astm.mapping.RepeatedComponentField.Proxy method)</a>, <a href="mapping.html#astm.mapping.RepeatedComponentField.Proxy.append">[1]</a>
+</li>
+        <li>
+    astm
+
+        <ul>
+          <li><a href="astm.html#module-astm">module</a>
+</li>
+        </ul></li>
+        <li>
+    astm.asynclib
+
+        <ul>
+          <li><a href="astm.html#module-0">module</a>, <a href="astm.html#module-astm.asynclib">[1]</a>, <a href="asynclib.html#module-0">[2]</a>, <a href="asynclib.html#module-astm.asynclib">[3]</a>
+</li>
+        </ul></li>
+        <li>
+    astm.client
+
+        <ul>
+          <li><a href="astm.html#module-astm.client">module</a>, <a href="protocol.html#module-astm.client">[1]</a>
+</li>
+        </ul></li>
+        <li>
+    astm.codec
+
+        <ul>
+          <li><a href="astm.html#module-astm.codec">module</a>, <a href="codecs.html#module-astm.codec">[1]</a>
+</li>
+        </ul></li>
+        <li>
+    astm.constants
+
+        <ul>
+          <li><a href="astm.html#module-astm.constants">module</a>, <a href="constants.html#module-astm.constants">[1]</a>
+</li>
+        </ul></li>
+        <li>
+    astm.exceptions
+
+        <ul>
+          <li><a href="astm.html#module-astm.exceptions">module</a>
+</li>
+        </ul></li>
+        <li>
+    astm.mapping
+
+        <ul>
+          <li><a href="astm.html#module-astm.mapping">module</a>, <a href="mapping.html#module-astm.mapping">[1]</a>
+</li>
+        </ul></li>
+        <li>
+    astm.omnilab
+
+        <ul>
+          <li><a href="astm.omnilab.html#module-astm.omnilab">module</a>
+</li>
+        </ul></li>
+        <li>
+    astm.omnilab.client
+
+        <ul>
+          <li><a href="astm.omnilab.html#module-astm.omnilab.client">module</a>, <a href="modules.html#module-astm.omnilab.client">[1]</a>
+</li>
+        </ul></li>
+        <li>
+    astm.omnilab.common
+
+        <ul>
+          <li><a href="astm.omnilab.html#module-astm.omnilab.common">module</a>
+</li>
+        </ul></li>
+        <li>
+    astm.omnilab.server
+
+        <ul>
+          <li><a href="astm.omnilab.html#module-astm.omnilab.server">module</a>, <a href="modules.html#module-astm.omnilab.server">[1]</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li>
+    astm.protocol
+
+        <ul>
+          <li><a href="astm.html#module-astm.protocol">module</a>, <a href="protocol.html#module-astm.protocol">[1]</a>
+</li>
+        </ul></li>
+        <li>
+    astm.records
+
+        <ul>
+          <li><a href="astm.html#module-astm.records">module</a>, <a href="records.html#module-astm.records">[1]</a>
+</li>
+        </ul></li>
+        <li>
+    astm.server
+
+        <ul>
+          <li><a href="astm.html#module-astm.server">module</a>, <a href="protocol.html#module-astm.server">[1]</a>
+</li>
+        </ul></li>
+        <li>
+    astm.tests
+
+        <ul>
+          <li><a href="astm.tests.html#module-astm.tests">module</a>
+</li>
+        </ul></li>
+        <li>
+    astm.tests.test_asynclib
+
+        <ul>
+          <li><a href="astm.tests.html#module-astm.tests.test_asynclib">module</a>
+</li>
+        </ul></li>
+        <li>
+    astm.tests.test_client
+
+        <ul>
+          <li><a href="astm.tests.html#module-astm.tests.test_client">module</a>
+</li>
+        </ul></li>
+        <li>
+    astm.tests.test_codecs
+
+        <ul>
+          <li><a href="astm.tests.html#module-astm.tests.test_codecs">module</a>
+</li>
+        </ul></li>
+        <li>
+    astm.tests.test_mapping
+
+        <ul>
+          <li><a href="astm.tests.html#module-astm.tests.test_mapping">module</a>
+</li>
+        </ul></li>
+        <li>
+    astm.tests.test_omnilab
+
+        <ul>
+          <li><a href="astm.tests.html#module-astm.tests.test_omnilab">module</a>
+</li>
+        </ul></li>
+        <li>
+    astm.tests.test_protocol
+
+        <ul>
+          <li><a href="astm.tests.html#module-astm.tests.test_protocol">module</a>
+</li>
+        </ul></li>
+        <li>
+    astm.tests.test_server
+
+        <ul>
+          <li><a href="astm.tests.html#module-astm.tests.test_server">module</a>
+</li>
+        </ul></li>
+        <li>
+    astm.tests.utils
+
+        <ul>
+          <li><a href="astm.tests.html#module-astm.tests.utils">module</a>
+</li>
+        </ul></li>
+        <li>
+    astm.version
+
+        <ul>
+          <li><a href="astm.html#module-astm.version">module</a>
+</li>
+        </ul></li>
+        <li><a href="astm.html#astm.protocol.ASTMProtocol.astm_header">astm_header (astm.protocol.ASTMProtocol attribute)</a>, <a href="protocol.html#astm.protocol.ASTMProtocol.astm_header">[1]</a>
+</li>
+        <li><a href="astm.html#astm.protocol.ASTMProtocol.astm_terminator">astm_terminator (astm.protocol.ASTMProtocol attribute)</a>, <a href="protocol.html#astm.protocol.ASTMProtocol.astm_terminator">[1]</a>
+</li>
+        <li><a href="astm.html#astm.protocol.ASTMProtocol">ASTMProtocol (class in astm.protocol)</a>, <a href="protocol.html#astm.protocol.ASTMProtocol">[1]</a>
+</li>
+        <li><a href="astm.html#astm.asynclib.AsyncChat">AsyncChat (class in astm.asynclib)</a>, <a href="asynclib.html#astm.asynclib.AsyncChat">[1]</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="B" class="genindex-section">
+  <h2>B</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="astm.html#astm.exceptions.BaseASTMError">BaseASTMError</a>
+</li>
+        <li><a href="astm.html#astm.server.BaseRecordsDispatcher">BaseRecordsDispatcher (class in astm.server)</a>, <a href="protocol.html#astm.server.BaseRecordsDispatcher">[1]</a>
+</li>
+        <li><a href="astm.html#astm.asynclib.Dispatcher.bind">bind() (astm.asynclib.Dispatcher method)</a>, <a href="asynclib.html#astm.asynclib.Dispatcher.bind">[1]</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="astm.omnilab.html#astm.omnilab.common.CommonOrder.biomaterial">biomaterial (astm.omnilab.common.CommonOrder attribute)</a>
+</li>
+        <li><a href="astm.omnilab.html#astm.omnilab.common.CommonPatient.birthdate">birthdate (astm.omnilab.common.CommonPatient attribute)</a>
+</li>
+        <li><a href="astm.html#astm.mapping.Mapping.build">build() (astm.mapping.Mapping class method)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="C" class="genindex-section">
+  <h2>C</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="astm.html#astm.asynclib.call_later.call">call() (astm.asynclib.call_later method)</a>
+</li>
+        <li><a href="astm.html#astm.asynclib.call_later">call_later (class in astm.asynclib)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_asynclib.CallLaterTests">CallLaterTests (class in astm.tests.test_asynclib)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.utils.CallLogger">CallLogger (class in astm.tests.utils)</a>
+</li>
+        <li><a href="astm.html#astm.asynclib.call_later.cancel">cancel() (astm.asynclib.call_later method)</a>
+
+        <ul>
+          <li><a href="astm.tests.html#astm.tests.test_protocol.DummyTimer.cancel">(astm.tests.test_protocol.DummyTimer method)</a>
+</li>
+        </ul></li>
+        <li><a href="astm.tests.html#astm.tests.test_asynclib.capture_server">capture_server() (in module astm.tests.test_asynclib)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_codecs.ChecksummTestCase">ChecksummTestCase (class in astm.tests.test_codecs)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_codecs.ChunkedEncodingTestCase">ChunkedEncodingTestCase (class in astm.tests.test_codecs)</a>
+</li>
+        <li><a href="astm.html#astm.client.Client">Client (class in astm.client)</a>, <a href="protocol.html#astm.client.Client">[1]</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_client.ClientTestCase">ClientTestCase (class in astm.tests.test_client)</a>
+</li>
+        <li><a href="astm.html#astm.asynclib.Dispatcher.close">close() (astm.asynclib.Dispatcher method)</a>, <a href="asynclib.html#astm.asynclib.Dispatcher.close">[1]</a>
+
+        <ul>
+          <li><a href="astm.html#astm.client.Emitter.close">(astm.client.Emitter method)</a>, <a href="protocol.html#astm.client.Emitter.close">[1]</a>
+</li>
+          <li><a href="astm.tests.html#astm.tests.test_asynclib.dummychannel.close">(astm.tests.test_asynclib.dummychannel method)</a>
+</li>
+          <li><a href="astm.tests.html#astm.tests.test_asynclib.dummysocket.close">(astm.tests.test_asynclib.dummysocket method)</a>
+</li>
+          <li><a href="astm.tests.html#astm.tests.utils.DummyMixIn.close">(astm.tests.utils.DummyMixIn method)</a>
+</li>
+        </ul></li>
+        <li><a href="astm.html#astm.asynclib.close_all">close_all() (in module astm.asynclib)</a>
+</li>
+        <li><a href="astm.html#astm.asynclib.AsyncChat.close_when_done">close_when_done() (astm.asynclib.AsyncChat method)</a>, <a href="asynclib.html#astm.asynclib.AsyncChat.close_when_done">[1]</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_asynclib.HelperFunctionTests.closeall_check">closeall_check() (astm.tests.test_asynclib.HelperFunctionTests method)</a>
+</li>
+        <li><a href="astm.omnilab.html#astm.omnilab.client.Comment">Comment (class in astm.omnilab.client)</a>, <a href="modules.html#astm.omnilab.client.Comment">[1]</a>
+</li>
+        <li><a href="astm.omnilab.html#astm.omnilab.client.CommentData">CommentData (in module astm.omnilab.client)</a>, <a href="modules.html#astm.omnilab.client.CommentData">[1]</a>
+
+        <ul>
+          <li><a href="astm.omnilab.html#astm.omnilab.server.CommentData">(in module astm.omnilab.server)</a>, <a href="modules.html#astm.omnilab.server.CommentData">[1]</a>
+</li>
+        </ul></li>
+        <li><a href="astm.html#astm.records.CommentRecord">CommentRecord (in module astm.records)</a>, <a href="records.html#astm.records.CommentRecord">[1]</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="astm.omnilab.html#astm.omnilab.common.CommonComment">CommonComment (class in astm.omnilab.common)</a>
+</li>
+        <li><a href="astm.omnilab.html#astm.omnilab.common.CommonOrder">CommonOrder (class in astm.omnilab.common)</a>
+</li>
+        <li><a href="astm.omnilab.html#astm.omnilab.common.CommonPatient">CommonPatient (class in astm.omnilab.common)</a>
+</li>
+        <li><a href="astm.omnilab.html#astm.omnilab.common.CommonResult">CommonResult (class in astm.omnilab.common)</a>
+</li>
+        <li><a href="astm.omnilab.html#astm.omnilab.common.CommonResult.completed_at">completed_at (astm.omnilab.common.CommonResult attribute)</a>
+
+        <ul>
+          <li><a href="astm.omnilab.html#astm.omnilab.server.Result.completed_at">(astm.omnilab.server.Result attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="astm.omnilab.html#astm.omnilab.server.CompletionDate">CompletionDate (in module astm.omnilab.server)</a>, <a href="modules.html#astm.omnilab.server.CompletionDate">[1]</a>
+</li>
+        <li><a href="astm.html#astm.mapping.Component">Component (class in astm.mapping)</a>, <a href="mapping.html#astm.mapping.Component">[1]</a>
+</li>
+        <li><a href="astm.html#astm.constants.COMPONENT_SEP">COMPONENT_SEP (in module astm.constants)</a>, <a href="constants.html#astm.constants.COMPONENT_SEP">[1]</a>
+</li>
+        <li><a href="astm.html#astm.mapping.ComponentField">ComponentField (class in astm.mapping)</a>, <a href="mapping.html#astm.mapping.ComponentField">[1]</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.ComponentFieldTestCase">ComponentFieldTestCase (class in astm.tests.test_mapping)</a>
+</li>
+        <li><a href="astm.html#astm.asynclib.Dispatcher.connect">connect() (astm.asynclib.Dispatcher method)</a>, <a href="asynclib.html#astm.asynclib.Dispatcher.connect">[1]</a>
+
+        <ul>
+          <li><a href="astm.tests.html#astm.tests.test_client.DummyClient.connect">(astm.tests.test_client.DummyClient method)</a>
+</li>
+        </ul></li>
+        <li><a href="astm.html#astm.asynclib.Dispatcher.connected">connected (astm.asynclib.Dispatcher attribute)</a>
+</li>
+        <li><a href="astm.html#astm.mapping.ConstantField">ConstantField (class in astm.mapping)</a>, <a href="mapping.html#astm.mapping.ConstantField">[1]</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.ConstantFieldTestCase">ConstantFieldTestCase (class in astm.tests.test_mapping)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_asynclib.crashingdummy">crashingdummy (class in astm.tests.test_asynclib)</a>
+</li>
+        <li><a href="astm.html#astm.asynclib.Dispatcher.create_socket">create_socket() (astm.asynclib.Dispatcher method)</a>, <a href="asynclib.html#astm.asynclib.Dispatcher.create_socket">[1]</a>
+
+        <ul>
+          <li><a href="astm.tests.html#astm.tests.test_client.DummyClient.create_socket">(astm.tests.test_client.DummyClient method)</a>
+</li>
+        </ul></li>
+        <li><a href="astm.omnilab.html#astm.omnilab.client.Order.created_at">created_at (astm.omnilab.client.Order attribute)</a>
+
+        <ul>
+          <li><a href="astm.omnilab.html#astm.omnilab.server.Result.created_at">(astm.omnilab.server.Result attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="astm.html#astm.constants.CRLF">CRLF (in module astm.constants)</a>, <a href="constants.html#astm.constants.CRLF">[1]</a>
+</li>
+        <li><a href="astm.omnilab.html#astm.omnilab.common.CommonComment.ctype">ctype (astm.omnilab.common.CommonComment attribute)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="D" class="genindex-section">
+  <h2>D</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="astm.omnilab.html#astm.omnilab.client.Comment.data">data (astm.omnilab.client.Comment attribute)</a>
+</li>
+        <li><a href="astm.html#astm.mapping.DateField">DateField (class in astm.mapping)</a>, <a href="mapping.html#astm.mapping.DateField">[1]</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.DateFieldTestCase">DateFieldTestCase (class in astm.tests.test_mapping)</a>
+</li>
+        <li><a href="astm.html#astm.mapping.DateTimeField">DateTimeField (class in astm.mapping)</a>, <a href="mapping.html#astm.mapping.DateTimeField">[1]</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.DatetimeFieldTestCase">DatetimeFieldTestCase (class in astm.tests.test_mapping)</a>
+</li>
+        <li><a href="astm.html#astm.mapping.DecimalField">DecimalField (class in astm.mapping)</a>, <a href="mapping.html#astm.mapping.DecimalField">[1]</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.DecimalFieldTestCase">DecimalFieldTestCase (class in astm.tests.test_mapping)</a>
+</li>
+        <li><a href="astm.html#astm.codec.decode">decode() (in module astm.codec)</a>, <a href="codecs.html#astm.codec.decode">[1]</a>
+</li>
+        <li><a href="astm.html#astm.codec.decode_component">decode_component() (in module astm.codec)</a>, <a href="codecs.html#astm.codec.decode_component">[1]</a>
+</li>
+        <li><a href="astm.html#astm.codec.decode_frame">decode_frame() (in module astm.codec)</a>, <a href="codecs.html#astm.codec.decode_frame">[1]</a>
+</li>
+        <li><a href="astm.html#astm.codec.decode_message">decode_message() (in module astm.codec)</a>, <a href="codecs.html#astm.codec.decode_message">[1]</a>
+</li>
+        <li><a href="astm.html#astm.codec.decode_record">decode_record() (in module astm.codec)</a>, <a href="codecs.html#astm.codec.decode_record">[1]</a>
+
+        <ul>
+          <li><a href="astm.tests.html#astm.tests.test_omnilab.decode_record">(in module astm.tests.test_omnilab)</a>
+</li>
+        </ul></li>
+        <li><a href="astm.html#astm.codec.decode_repeated_component">decode_repeated_component() (in module astm.codec)</a>, <a href="codecs.html#astm.codec.decode_repeated_component">[1]</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_codecs.DecodeFrameTestCase">DecodeFrameTestCase (class in astm.tests.test_codecs)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_codecs.DecodeMessageTestCase">DecodeMessageTestCase (class in astm.tests.test_codecs)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_codecs.DecodeRecordTestCase">DecodeRecordTestCase (class in astm.tests.test_codecs)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_codecs.DecodeTestCase">DecodeTestCase (class in astm.tests.test_codecs)</a>
+</li>
+        <li><a href="astm.html#astm.protocol.ASTMProtocol.default_handler">default_handler() (astm.protocol.ASTMProtocol method)</a>
+
+        <ul>
+          <li><a href="astm.tests.html#astm.tests.test_server.DummyRequestHandler.default_handler">(astm.tests.test_server.DummyRequestHandler method)</a>
+</li>
+        </ul></li>
+        <li><a href="astm.html#astm.asynclib.call_later.delay">delay() (astm.asynclib.call_later method)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="astm.html#astm.asynclib.AsyncChat.discard_buffers">discard_buffers() (astm.asynclib.AsyncChat method)</a>, <a href="asynclib.html#astm.asynclib.AsyncChat.discard_buffers">[1]</a>
+</li>
+        <li><a href="astm.html#astm.asynclib.AsyncChat.discard_input_buffers">discard_input_buffers() (astm.asynclib.AsyncChat method)</a>
+
+        <ul>
+          <li><a href="astm.html#astm.server.RequestHandler.discard_input_buffers">(astm.server.RequestHandler method)</a>
+</li>
+        </ul></li>
+        <li><a href="astm.html#astm.asynclib.AsyncChat.discard_output_buffers">discard_output_buffers() (astm.asynclib.AsyncChat method)</a>
+</li>
+        <li><a href="astm.html#astm.protocol.ASTMProtocol.dispatch">dispatch() (astm.protocol.ASTMProtocol method)</a>, <a href="protocol.html#astm.protocol.ASTMProtocol.dispatch">[1]</a>
+
+        <ul>
+          <li><a href="astm.tests.html#astm.tests.test_server.DummyRequestHandler.dispatch">(astm.tests.test_server.DummyRequestHandler method)</a>
+</li>
+        </ul></li>
+        <li><a href="astm.html#astm.server.Server.dispatcher">dispatcher (astm.server.Server attribute)</a>, <a href="protocol.html#astm.server.Server.dispatcher">[1]</a>
+</li>
+        <li><a href="astm.html#astm.asynclib.Dispatcher">Dispatcher (class in astm.asynclib)</a>, <a href="asynclib.html#astm.asynclib.Dispatcher">[1]</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_protocol.DispatcherTestCase">DispatcherTestCase (class in astm.tests.test_protocol)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_asynclib.DispatcherTests">DispatcherTests (class in astm.tests.test_asynclib)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_asynclib.dispatcherwithsend_noread">dispatcherwithsend_noread (class in astm.tests.test_asynclib)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_asynclib.DispatcherWithSendTests">DispatcherWithSendTests (class in astm.tests.test_asynclib)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_asynclib.DispatcherWithSendTests_UsePoll">DispatcherWithSendTests_UsePoll (class in astm.tests.test_asynclib)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_server.DummyRequestHandler.dummy_dispatcher_called_time">dummy_dispatcher_called_time (astm.tests.test_server.DummyRequestHandler attribute)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_asynclib.dummychannel">dummychannel (class in astm.tests.test_asynclib)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_client.DummyClient">DummyClient (class in astm.tests.test_client)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.utils.DummyMixIn">DummyMixIn (class in astm.tests.utils)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_protocol.DummyProto">DummyProto (class in astm.tests.test_protocol)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_server.DummyRequestHandler">DummyRequestHandler (class in astm.tests.test_server)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_asynclib.dummysocket">dummysocket (class in astm.tests.test_asynclib)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_protocol.DummyTimer">DummyTimer (class in astm.tests.test_protocol)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="E" class="genindex-section">
+  <h2>E</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="astm.html#astm.NullHandler.emit">emit() (astm.NullHandler method)</a>
+</li>
+        <li><a href="astm.html#astm.client.Emitter">Emitter (class in astm.client)</a>, <a href="protocol.html#astm.client.Emitter">[1]</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_client.emitter">emitter (class in astm.tests.test_client)</a>
+</li>
+        <li><a href="astm.html#astm.client.Client.emitter_wrapper">emitter_wrapper (astm.client.Client attribute)</a>, <a href="protocol.html#astm.client.Client.emitter_wrapper">[1]</a>
+</li>
+        <li><a href="astm.html#astm.codec.encode">encode() (in module astm.codec)</a>, <a href="codecs.html#astm.codec.encode">[1]</a>
+</li>
+        <li><a href="astm.html#astm.codec.encode_component">encode_component() (in module astm.codec)</a>, <a href="codecs.html#astm.codec.encode_component">[1]</a>
+</li>
+        <li><a href="astm.html#astm.codec.encode_message">encode_message() (in module astm.codec)</a>, <a href="codecs.html#astm.codec.encode_message">[1]</a>
+</li>
+        <li><a href="astm.html#astm.codec.encode_record">encode_record() (in module astm.codec)</a>, <a href="codecs.html#astm.codec.encode_record">[1]</a>
+
+        <ul>
+          <li><a href="astm.tests.html#astm.tests.test_omnilab.encode_record">(in module astm.tests.test_omnilab)</a>
+</li>
+        </ul></li>
+        <li><a href="astm.html#astm.codec.encode_repeated_component">encode_repeated_component() (in module astm.codec)</a>, <a href="codecs.html#astm.codec.encode_repeated_component">[1]</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_codecs.EncodeTestCase">EncodeTestCase (class in astm.tests.test_codecs)</a>
+</li>
+        <li><a href="astm.html#astm.asynclib.AsyncChat.encoding">encoding (astm.asynclib.AsyncChat attribute)</a>, <a href="asynclib.html#astm.asynclib.AsyncChat.encoding">[1]</a>
+
+        <ul>
+          <li><a href="astm.html#astm.protocol.ASTMProtocol.encoding">(astm.protocol.ASTMProtocol attribute)</a>, <a href="protocol.html#astm.protocol.ASTMProtocol.encoding">[1]</a>
+</li>
+          <li><a href="astm.html#astm.server.BaseRecordsDispatcher.encoding">(astm.server.BaseRecordsDispatcher attribute)</a>, <a href="protocol.html#astm.server.BaseRecordsDispatcher.encoding">[1]</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="astm.html#astm.constants.ENCODING">ENCODING (in module astm.constants)</a>, <a href="constants.html#astm.constants.ENCODING">[1]</a>
+</li>
+        <li><a href="astm.html#astm.constants.ENQ">ENQ (in module astm.constants)</a>, <a href="constants.html#astm.constants.ENQ">[1]</a>
+</li>
+        <li><a href="astm.html#astm.constants.EOT">EOT (in module astm.constants)</a>, <a href="constants.html#astm.constants.EOT">[1]</a>
+</li>
+        <li><a href="astm.html#astm.constants.ESCAPE_SEP">ESCAPE_SEP (in module astm.constants)</a>, <a href="constants.html#astm.constants.ESCAPE_SEP">[1]</a>
+</li>
+        <li><a href="astm.html#astm.constants.ETB">ETB (in module astm.constants)</a>, <a href="constants.html#astm.constants.ETB">[1]</a>
+</li>
+        <li><a href="astm.html#astm.constants.ETX">ETX (in module astm.constants)</a>, <a href="constants.html#astm.constants.ETX">[1]</a>
+</li>
+        <li><a href="astm.html#astm.asynclib.exception">exception() (in module astm.asynclib)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_asynclib.exitingdummy">exitingdummy (class in astm.tests.test_asynclib)</a>
+</li>
+        <li><a href="astm.html#astm.asynclib.ExitNow">ExitNow</a>
+</li>
+        <li><a href="astm.html#astm.mapping.RepeatedComponentField.Proxy.extend">extend() (astm.mapping.RepeatedComponentField.Proxy method)</a>, <a href="mapping.html#astm.mapping.RepeatedComponentField.Proxy.extend">[1]</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="F" class="genindex-section">
+  <h2>F</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="astm.tests.html#astm.tests.test_codecs.f">f() (in module astm.tests.test_codecs)</a>
+</li>
+        <li><a href="astm.html#astm.mapping.Field">Field (class in astm.mapping)</a>, <a href="mapping.html#astm.mapping.Field">[1]</a>
+</li>
+        <li><a href="astm.html#astm.constants.FIELD_SEP">FIELD_SEP (in module astm.constants)</a>, <a href="constants.html#astm.constants.FIELD_SEP">[1]</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.FieldTestCase">FieldTestCase (class in astm.tests.test_mapping)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_asynclib.dummysocket.fileno">fileno() (astm.tests.test_asynclib.dummysocket method)</a>
+</li>
+        <li><a href="astm.html#astm.asynclib.find_prefix_at_end">find_prefix_at_end() (in module astm.asynclib)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="astm.html#astm.asynclib.AsyncChat.flush">flush() (astm.asynclib.AsyncChat method)</a>, <a href="asynclib.html#astm.asynclib.AsyncChat.flush">[1]</a>
+
+        <ul>
+          <li><a href="astm.tests.html#astm.tests.utils.DummyMixIn.flush">(astm.tests.utils.DummyMixIn method)</a>
+</li>
+        </ul></li>
+        <li><a href="astm.html#astm.mapping.DateField.format">format (astm.mapping.DateField attribute)</a>
+
+        <ul>
+          <li><a href="astm.html#astm.mapping.DateTimeField.format">(astm.mapping.DateTimeField attribute)</a>
+</li>
+          <li><a href="astm.html#astm.mapping.TimeField.format">(astm.mapping.TimeField attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="astm.html#astm.asynclib.AsyncChat.found_terminator">found_terminator() (astm.asynclib.AsyncChat method)</a>, <a href="asynclib.html#astm.asynclib.AsyncChat.found_terminator">[1]</a>
+
+        <ul>
+          <li><a href="astm.html#astm.protocol.ASTMProtocol.found_terminator">(astm.protocol.ASTMProtocol method)</a>, <a href="protocol.html#astm.protocol.ASTMProtocol.found_terminator">[1]</a>
+</li>
+        </ul></li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="H" class="genindex-section">
+  <h2>H</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="astm.html#astm.asynclib.Dispatcher.handle_accept">handle_accept() (astm.asynclib.Dispatcher method)</a>, <a href="asynclib.html#astm.asynclib.Dispatcher.handle_accept">[1]</a>
+
+        <ul>
+          <li><a href="astm.html#astm.server.Server.handle_accept">(astm.server.Server method)</a>, <a href="protocol.html#astm.server.Server.handle_accept">[1]</a>
+</li>
+        </ul></li>
+        <li><a href="astm.html#astm.asynclib.Dispatcher.handle_close">handle_close() (astm.asynclib.Dispatcher method)</a>, <a href="asynclib.html#astm.asynclib.Dispatcher.handle_close">[1]</a>
+
+        <ul>
+          <li><a href="astm.html#astm.client.Client.handle_close">(astm.client.Client method)</a>, <a href="protocol.html#astm.client.Client.handle_close">[1]</a>
+</li>
+          <li><a href="astm.html#astm.protocol.ASTMProtocol.handle_close">(astm.protocol.ASTMProtocol method)</a>, <a href="protocol.html#astm.protocol.ASTMProtocol.handle_close">[1]</a>
+</li>
+          <li><a href="astm.tests.html#astm.tests.test_asynclib.crashingdummy.handle_close">(astm.tests.test_asynclib.crashingdummy method)</a>
+</li>
+          <li><a href="astm.tests.html#astm.tests.test_asynclib.exitingdummy.handle_close">(astm.tests.test_asynclib.exitingdummy method)</a>
+</li>
+        </ul></li>
+        <li><a href="astm.html#astm.asynclib.Dispatcher.handle_connect">handle_connect() (astm.asynclib.Dispatcher method)</a>, <a href="asynclib.html#astm.asynclib.Dispatcher.handle_connect">[1]</a>
+
+        <ul>
+          <li><a href="astm.html#astm.client.Client.handle_connect">(astm.client.Client method)</a>, <a href="protocol.html#astm.client.Client.handle_connect">[1]</a>
+</li>
+          <li><a href="astm.tests.html#astm.tests.test_asynclib.dispatcherwithsend_noread.handle_connect">(astm.tests.test_asynclib.dispatcherwithsend_noread method)</a>
+</li>
+        </ul></li>
+        <li><a href="astm.html#astm.asynclib.Dispatcher.handle_connect_event">handle_connect_event() (astm.asynclib.Dispatcher method)</a>
+</li>
+        <li><a href="astm.html#astm.asynclib.Dispatcher.handle_error">handle_error() (astm.asynclib.Dispatcher method)</a>, <a href="asynclib.html#astm.asynclib.Dispatcher.handle_error">[1]</a>
+
+        <ul>
+          <li><a href="astm.tests.html#astm.tests.test_asynclib.crashingdummy.handle_error">(astm.tests.test_asynclib.crashingdummy method)</a>
+</li>
+        </ul></li>
+        <li><a href="astm.html#astm.asynclib.Dispatcher.handle_exception">handle_exception() (astm.asynclib.Dispatcher method)</a>
+</li>
+        <li><a href="astm.html#astm.asynclib.Dispatcher.handle_exception_event">handle_exception_event() (astm.asynclib.Dispatcher method)</a>
+
+        <ul>
+          <li><a href="astm.tests.html#astm.tests.test_asynclib.crashingdummy.handle_exception_event">(astm.tests.test_asynclib.crashingdummy method)</a>
+</li>
+          <li><a href="astm.tests.html#astm.tests.test_asynclib.exitingdummy.handle_exception_event">(astm.tests.test_asynclib.exitingdummy method)</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="astm.html#astm.server.RequestHandler.handle_message">handle_message() (astm.server.RequestHandler method)</a>
+</li>
+        <li><a href="astm.html#astm.asynclib.AsyncChat.handle_read">handle_read() (astm.asynclib.AsyncChat method)</a>
+
+        <ul>
+          <li><a href="astm.html#astm.asynclib.Dispatcher.handle_read">(astm.asynclib.Dispatcher method)</a>
+</li>
+          <li><a href="astm.html#astm.protocol.ASTMProtocol.handle_read">(astm.protocol.ASTMProtocol method)</a>
+</li>
+        </ul></li>
+        <li><a href="astm.html#astm.asynclib.Dispatcher.handle_read_event">handle_read_event() (astm.asynclib.Dispatcher method)</a>
+
+        <ul>
+          <li><a href="astm.tests.html#astm.tests.test_asynclib.crashingdummy.handle_read_event">(astm.tests.test_asynclib.crashingdummy method)</a>
+</li>
+          <li><a href="astm.tests.html#astm.tests.test_asynclib.exitingdummy.handle_read_event">(astm.tests.test_asynclib.exitingdummy method)</a>
+</li>
+        </ul></li>
+        <li><a href="astm.html#astm.asynclib.AsyncChat.handle_write">handle_write() (astm.asynclib.AsyncChat method)</a>, <a href="asynclib.html#astm.asynclib.AsyncChat.handle_write">[1]</a>
+
+        <ul>
+          <li><a href="astm.html#astm.asynclib.Dispatcher.handle_write">(astm.asynclib.Dispatcher method)</a>, <a href="asynclib.html#astm.asynclib.Dispatcher.handle_write">[1]</a>
+</li>
+          <li><a href="astm.tests.html#astm.tests.test_asynclib.dispatcherwithsend_noread.handle_write">(astm.tests.test_asynclib.dispatcherwithsend_noread method)</a>
+</li>
+        </ul></li>
+        <li><a href="astm.html#astm.asynclib.Dispatcher.handle_write_event">handle_write_event() (astm.asynclib.Dispatcher method)</a>
+
+        <ul>
+          <li><a href="astm.tests.html#astm.tests.test_asynclib.crashingdummy.handle_write_event">(astm.tests.test_asynclib.crashingdummy method)</a>
+</li>
+          <li><a href="astm.tests.html#astm.tests.test_asynclib.exitingdummy.handle_write_event">(astm.tests.test_asynclib.exitingdummy method)</a>
+</li>
+        </ul></li>
+        <li><a href="astm.omnilab.html#astm.omnilab.client.Header">Header (class in astm.omnilab.client)</a>, <a href="modules.html#astm.omnilab.client.Header">[1]</a>
+
+        <ul>
+          <li><a href="astm.omnilab.html#astm.omnilab.common.Header">(class in astm.omnilab.common)</a>
+</li>
+          <li><a href="astm.omnilab.html#astm.omnilab.server.Header">(class in astm.omnilab.server)</a>, <a href="modules.html#astm.omnilab.server.Header">[1]</a>
+</li>
+        </ul></li>
+        <li><a href="astm.html#astm.records.HeaderRecord">HeaderRecord (in module astm.records)</a>, <a href="records.html#astm.records.HeaderRecord">[1]</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_asynclib.HelperFunctionTests">HelperFunctionTests (class in astm.tests.test_asynclib)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="I" class="genindex-section">
+  <h2>I</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="astm.tests.html#astm.tests.test_asynclib.dispatcherwithsend_noread.initiate_send">initiate_send() (astm.tests.test_asynclib.dispatcherwithsend_noread method)</a>
+</li>
+        <li><a href="astm.omnilab.html#astm.omnilab.server.Order.instrument">instrument (astm.omnilab.server.Order attribute)</a>
+
+        <ul>
+          <li><a href="astm.omnilab.html#astm.omnilab.server.Result.instrument">(astm.omnilab.server.Result attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="astm.omnilab.html#astm.omnilab.server.Instrument">Instrument (in module astm.omnilab.server)</a>, <a href="modules.html#astm.omnilab.server.Instrument">[1]</a>
+</li>
+        <li><a href="astm.html#astm.mapping.IntegerField">IntegerField (class in astm.mapping)</a>, <a href="mapping.html#astm.mapping.IntegerField">[1]</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.IntegerTestCase">IntegerTestCase (class in astm.tests.test_mapping)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="astm.html#astm.exceptions.InvalidState">InvalidState</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_protocol.DummyTimer.is_alive">is_alive() (astm.tests.test_protocol.DummyTimer method)</a>
+</li>
+        <li><a href="astm.html#astm.codec.is_chunked_message">is_chunked_message() (in module astm.codec)</a>, <a href="codecs.html#astm.codec.is_chunked_message">[1]</a>
+</li>
+        <li><a href="astm.html#astm.protocol.ASTMProtocol.is_chunked_transfer">is_chunked_transfer (astm.protocol.ASTMProtocol attribute)</a>, <a href="protocol.html#astm.protocol.ASTMProtocol.is_chunked_transfer">[1]</a>
+</li>
+        <li><a href="astm.html#astm.mapping.Mapping.items">items() (astm.mapping.Mapping method)</a>
+</li>
+        <li><a href="astm.html#astm.codec.iter_encode">iter_encode() (in module astm.codec)</a>, <a href="codecs.html#astm.codec.iter_encode">[1]</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="J" class="genindex-section">
+  <h2>J</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="astm.html#astm.codec.join">join() (in module astm.codec)</a>, <a href="codecs.html#astm.codec.join">[1]</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="K" class="genindex-section">
+  <h2>K</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="astm.html#astm.mapping.Mapping.keys">keys() (astm.mapping.Mapping method)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="L" class="genindex-section">
+  <h2>L</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="astm.omnilab.html#astm.omnilab.client.Order.laboratory">laboratory (astm.omnilab.client.Order attribute)</a>
+</li>
+        <li><a href="astm.omnilab.html#astm.omnilab.client.Order.laboratory_field_1">laboratory_field_1 (astm.omnilab.client.Order attribute)</a>
+</li>
+        <li><a href="astm.omnilab.html#astm.omnilab.common.CommonOrder.laboratory_field_2">laboratory_field_2 (astm.omnilab.common.CommonOrder attribute)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="astm.omnilab.html#astm.omnilab.common.CommonPatient.laboratory_id">laboratory_id (astm.omnilab.common.CommonPatient attribute)</a>
+</li>
+        <li><a href="astm.html#astm.asynclib.Dispatcher.listen">listen() (astm.asynclib.Dispatcher method)</a>, <a href="asynclib.html#astm.asynclib.Dispatcher.listen">[1]</a>
+</li>
+        <li><a href="astm.omnilab.html#astm.omnilab.common.CommonPatient.location">location (astm.omnilab.common.CommonPatient attribute)</a>
+</li>
+        <li><a href="astm.html#astm.asynclib.loop">loop() (in module astm.asynclib)</a>, <a href="asynclib.html#astm.asynclib.loop">[1]</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="M" class="genindex-section">
+  <h2>M</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="astm.html#astm.codec.make_checksum">make_checksum() (in module astm.codec)</a>, <a href="codecs.html#astm.codec.make_checksum">[1]</a>
+</li>
+        <li><a href="astm.html#astm.codec.make_chunks">make_chunks() (in module astm.codec)</a>
+</li>
+        <li><a href="astm.html#astm.mapping.make_string">make_string() (in module astm.mapping)</a>
+</li>
+        <li><a href="astm.html#astm.mapping.Mapping">Mapping (class in astm.mapping)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.MappingTestCase">MappingTestCase (class in astm.tests.test_mapping)</a>
+</li>
+        <li><a href="astm.html#astm.mapping.MetaMapping">MetaMapping (class in astm.mapping)</a>
+</li>
+        <li>
+    module
+
+        <ul>
+          <li><a href="astm.html#module-astm">astm</a>
+</li>
+          <li><a href="astm.html#module-0">astm.asynclib</a>, <a href="astm.html#module-astm.asynclib">[1]</a>, <a href="asynclib.html#module-0">[2]</a>, <a href="asynclib.html#module-astm.asynclib">[3]</a>
+</li>
+          <li><a href="astm.html#module-astm.client">astm.client</a>, <a href="protocol.html#module-astm.client">[1]</a>
+</li>
+          <li><a href="astm.html#module-astm.codec">astm.codec</a>, <a href="codecs.html#module-astm.codec">[1]</a>
+</li>
+          <li><a href="astm.html#module-astm.constants">astm.constants</a>, <a href="constants.html#module-astm.constants">[1]</a>
+</li>
+          <li><a href="astm.html#module-astm.exceptions">astm.exceptions</a>
+</li>
+          <li><a href="astm.html#module-astm.mapping">astm.mapping</a>, <a href="mapping.html#module-astm.mapping">[1]</a>
+</li>
+          <li><a href="astm.omnilab.html#module-astm.omnilab">astm.omnilab</a>
+</li>
+          <li><a href="astm.omnilab.html#module-astm.omnilab.client">astm.omnilab.client</a>, <a href="modules.html#module-astm.omnilab.client">[1]</a>
+</li>
+          <li><a href="astm.omnilab.html#module-astm.omnilab.common">astm.omnilab.common</a>
+</li>
+          <li><a href="astm.omnilab.html#module-astm.omnilab.server">astm.omnilab.server</a>, <a href="modules.html#module-astm.omnilab.server">[1]</a>
+</li>
+          <li><a href="astm.html#module-astm.protocol">astm.protocol</a>, <a href="protocol.html#module-astm.protocol">[1]</a>
+</li>
+          <li><a href="astm.html#module-astm.records">astm.records</a>, <a href="records.html#module-astm.records">[1]</a>
+</li>
+          <li><a href="astm.html#module-astm.server">astm.server</a>, <a href="protocol.html#module-astm.server">[1]</a>
+</li>
+          <li><a href="astm.tests.html#module-astm.tests">astm.tests</a>
+</li>
+          <li><a href="astm.tests.html#module-astm.tests.test_asynclib">astm.tests.test_asynclib</a>
+</li>
+          <li><a href="astm.tests.html#module-astm.tests.test_client">astm.tests.test_client</a>
+</li>
+          <li><a href="astm.tests.html#module-astm.tests.test_codecs">astm.tests.test_codecs</a>
+</li>
+          <li><a href="astm.tests.html#module-astm.tests.test_mapping">astm.tests.test_mapping</a>
+</li>
+          <li><a href="astm.tests.html#module-astm.tests.test_omnilab">astm.tests.test_omnilab</a>
+</li>
+          <li><a href="astm.tests.html#module-astm.tests.test_protocol">astm.tests.test_protocol</a>
+</li>
+          <li><a href="astm.tests.html#module-astm.tests.test_server">astm.tests.test_server</a>
+</li>
+          <li><a href="astm.tests.html#module-astm.tests.utils">astm.tests.utils</a>
+</li>
+          <li><a href="astm.html#module-astm.version">astm.version</a>
+</li>
+        </ul></li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="N" class="genindex-section">
+  <h2>N</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="astm.html#astm.constants.NAK">NAK (in module astm.constants)</a>, <a href="constants.html#astm.constants.NAK">[1]</a>
+</li>
+        <li><a href="astm.omnilab.html#astm.omnilab.common.CommonPatient.name">name (astm.omnilab.common.CommonPatient attribute)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_client.emitter.next">next() (astm.tests.test_client.emitter method)</a>
+</li>
+        <li><a href="astm.html#astm.exceptions.NotAccepted">NotAccepted</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="astm.html#astm.mapping.NotUsedField">NotUsedField (class in astm.mapping)</a>, <a href="mapping.html#astm.mapping.NotUsedField">[1]</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.NotUsedFieldTestCase">NotUsedFieldTestCase (class in astm.tests.test_mapping)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_server.null_dispatcher">null_dispatcher() (in module astm.tests.test_server)</a>
+</li>
+        <li><a href="astm.html#astm.NullHandler">NullHandler (class in astm)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="O" class="genindex-section">
+  <h2>O</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="astm.tests.html#astm.tests.test_omnilab.OmnilabTestCase">OmnilabTestCase (class in astm.tests.test_omnilab)</a>
+</li>
+        <li><a href="astm.html#astm.client.Client.on_ack">on_ack() (astm.client.Client method)</a>, <a href="protocol.html#astm.client.Client.on_ack">[1]</a>
+
+        <ul>
+          <li><a href="astm.html#astm.protocol.ASTMProtocol.on_ack">(astm.protocol.ASTMProtocol method)</a>, <a href="protocol.html#astm.protocol.ASTMProtocol.on_ack">[1]</a>
+</li>
+          <li><a href="astm.html#astm.server.RequestHandler.on_ack">(astm.server.RequestHandler method)</a>, <a href="protocol.html#astm.server.RequestHandler.on_ack">[1]</a>
+</li>
+        </ul></li>
+        <li><a href="astm.html#astm.server.BaseRecordsDispatcher.on_comment">on_comment() (astm.server.BaseRecordsDispatcher method)</a>, <a href="protocol.html#astm.server.BaseRecordsDispatcher.on_comment">[1]</a>
+</li>
+        <li><a href="astm.html#astm.client.Client.on_enq">on_enq() (astm.client.Client method)</a>, <a href="protocol.html#astm.client.Client.on_enq">[1]</a>
+
+        <ul>
+          <li><a href="astm.html#astm.protocol.ASTMProtocol.on_enq">(astm.protocol.ASTMProtocol method)</a>, <a href="protocol.html#astm.protocol.ASTMProtocol.on_enq">[1]</a>
+</li>
+          <li><a href="astm.html#astm.server.RequestHandler.on_enq">(astm.server.RequestHandler method)</a>, <a href="protocol.html#astm.server.RequestHandler.on_enq">[1]</a>
+</li>
+        </ul></li>
+        <li><a href="astm.html#astm.client.Client.on_eot">on_eot() (astm.client.Client method)</a>, <a href="protocol.html#astm.client.Client.on_eot">[1]</a>
+
+        <ul>
+          <li><a href="astm.html#astm.protocol.ASTMProtocol.on_eot">(astm.protocol.ASTMProtocol method)</a>, <a href="protocol.html#astm.protocol.ASTMProtocol.on_eot">[1]</a>
+</li>
+          <li><a href="astm.html#astm.server.RequestHandler.on_eot">(astm.server.RequestHandler method)</a>, <a href="protocol.html#astm.server.RequestHandler.on_eot">[1]</a>
+</li>
+        </ul></li>
+        <li><a href="astm.html#astm.server.BaseRecordsDispatcher.on_header">on_header() (astm.server.BaseRecordsDispatcher method)</a>, <a href="protocol.html#astm.server.BaseRecordsDispatcher.on_header">[1]</a>
+</li>
+        <li><a href="astm.html#astm.server.BaseRecordsDispatcher.on_manufacturer_info">on_manufacturer_info() (astm.server.BaseRecordsDispatcher method)</a>, <a href="protocol.html#astm.server.BaseRecordsDispatcher.on_manufacturer_info">[1]</a>
+</li>
+        <li><a href="astm.html#astm.client.Client.on_message">on_message() (astm.client.Client method)</a>, <a href="protocol.html#astm.client.Client.on_message">[1]</a>
+
+        <ul>
+          <li><a href="astm.html#astm.protocol.ASTMProtocol.on_message">(astm.protocol.ASTMProtocol method)</a>, <a href="protocol.html#astm.protocol.ASTMProtocol.on_message">[1]</a>
+</li>
+          <li><a href="astm.html#astm.server.RequestHandler.on_message">(astm.server.RequestHandler method)</a>, <a href="protocol.html#astm.server.RequestHandler.on_message">[1]</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="astm.html#astm.client.Client.on_nak">on_nak() (astm.client.Client method)</a>, <a href="protocol.html#astm.client.Client.on_nak">[1]</a>
+
+        <ul>
+          <li><a href="astm.html#astm.protocol.ASTMProtocol.on_nak">(astm.protocol.ASTMProtocol method)</a>, <a href="protocol.html#astm.protocol.ASTMProtocol.on_nak">[1]</a>
+</li>
+          <li><a href="astm.html#astm.server.RequestHandler.on_nak">(astm.server.RequestHandler method)</a>, <a href="protocol.html#astm.server.RequestHandler.on_nak">[1]</a>
+</li>
+        </ul></li>
+        <li><a href="astm.html#astm.server.BaseRecordsDispatcher.on_order">on_order() (astm.server.BaseRecordsDispatcher method)</a>, <a href="protocol.html#astm.server.BaseRecordsDispatcher.on_order">[1]</a>
+</li>
+        <li><a href="astm.html#astm.server.BaseRecordsDispatcher.on_patient">on_patient() (astm.server.BaseRecordsDispatcher method)</a>, <a href="protocol.html#astm.server.BaseRecordsDispatcher.on_patient">[1]</a>
+</li>
+        <li><a href="astm.html#astm.server.BaseRecordsDispatcher.on_result">on_result() (astm.server.BaseRecordsDispatcher method)</a>, <a href="protocol.html#astm.server.BaseRecordsDispatcher.on_result">[1]</a>
+</li>
+        <li><a href="astm.html#astm.server.BaseRecordsDispatcher.on_scientific">on_scientific() (astm.server.BaseRecordsDispatcher method)</a>, <a href="protocol.html#astm.server.BaseRecordsDispatcher.on_scientific">[1]</a>
+</li>
+        <li><a href="astm.html#astm.server.BaseRecordsDispatcher.on_terminator">on_terminator() (astm.server.BaseRecordsDispatcher method)</a>, <a href="protocol.html#astm.server.BaseRecordsDispatcher.on_terminator">[1]</a>
+</li>
+        <li><a href="astm.html#astm.client.Client.on_timeout">on_timeout() (astm.client.Client method)</a>, <a href="protocol.html#astm.client.Client.on_timeout">[1]</a>
+
+        <ul>
+          <li><a href="astm.html#astm.protocol.ASTMProtocol.on_timeout">(astm.protocol.ASTMProtocol method)</a>, <a href="protocol.html#astm.protocol.ASTMProtocol.on_timeout">[1]</a>
+</li>
+          <li><a href="astm.html#astm.server.RequestHandler.on_timeout">(astm.server.RequestHandler method)</a>, <a href="protocol.html#astm.server.RequestHandler.on_timeout">[1]</a>
+</li>
+        </ul></li>
+        <li><a href="astm.html#astm.server.BaseRecordsDispatcher.on_unknown">on_unknown() (astm.server.BaseRecordsDispatcher method)</a>, <a href="protocol.html#astm.server.BaseRecordsDispatcher.on_unknown">[1]</a>
+</li>
+        <li><a href="astm.omnilab.html#astm.omnilab.server.Result.operator">operator (astm.omnilab.server.Result attribute)</a>
+</li>
+        <li><a href="astm.omnilab.html#astm.omnilab.server.Operator">Operator (in module astm.omnilab.server)</a>, <a href="modules.html#astm.omnilab.server.Operator">[1]</a>
+</li>
+        <li><a href="astm.omnilab.html#astm.omnilab.client.Order">Order (class in astm.omnilab.client)</a>, <a href="modules.html#astm.omnilab.client.Order">[1]</a>
+
+        <ul>
+          <li><a href="astm.omnilab.html#astm.omnilab.server.Order">(class in astm.omnilab.server)</a>, <a href="modules.html#astm.omnilab.server.Order">[1]</a>
+</li>
+        </ul></li>
+        <li><a href="astm.html#astm.records.OrderRecord">OrderRecord (in module astm.records)</a>, <a href="records.html#astm.records.OrderRecord">[1]</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="P" class="genindex-section">
+  <h2>P</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="astm.omnilab.html#astm.omnilab.client.Patient">Patient (class in astm.omnilab.client)</a>, <a href="modules.html#astm.omnilab.client.Patient">[1]</a>
+
+        <ul>
+          <li><a href="astm.omnilab.html#astm.omnilab.server.Patient">(in module astm.omnilab.server)</a>, <a href="modules.html#astm.omnilab.server.Patient">[1]</a>
+</li>
+        </ul></li>
+        <li><a href="astm.omnilab.html#astm.omnilab.client.PatientAge">PatientAge (in module astm.omnilab.client)</a>, <a href="modules.html#astm.omnilab.client.PatientAge">[1]</a>
+</li>
+        <li><a href="astm.omnilab.html#astm.omnilab.common.PatientName">PatientName (in module astm.omnilab.common)</a>
+</li>
+        <li><a href="astm.html#astm.records.PatientRecord">PatientRecord (in module astm.records)</a>, <a href="records.html#astm.records.PatientRecord">[1]</a>
+</li>
+        <li><a href="astm.omnilab.html#astm.omnilab.client.Patient.physician_id">physician_id (astm.omnilab.client.Patient attribute)</a>
+</li>
+        <li><a href="astm.html#astm.asynclib.poll">poll() (in module astm.asynclib)</a>
+</li>
+        <li><a href="astm.omnilab.html#astm.omnilab.common.CommonPatient.practice_id">practice_id (astm.omnilab.common.CommonPatient attribute)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="astm.omnilab.html#astm.omnilab.common.CommonOrder.priority">priority (astm.omnilab.common.CommonOrder attribute)</a>
+</li>
+        <li><a href="astm.omnilab.html#astm.omnilab.client.Header.processing_id">processing_id (astm.omnilab.client.Header attribute)</a>
+
+        <ul>
+          <li><a href="astm.omnilab.html#astm.omnilab.common.Header.processing_id">(astm.omnilab.common.Header attribute)</a>
+</li>
+          <li><a href="astm.omnilab.html#astm.omnilab.server.Header.processing_id">(astm.omnilab.server.Header attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="astm.html#astm.asynclib.AsyncChat.pull">pull() (astm.asynclib.AsyncChat method)</a>, <a href="asynclib.html#astm.asynclib.AsyncChat.pull">[1]</a>
+</li>
+        <li><a href="astm.html#astm.asynclib.AsyncChat.push">push() (astm.asynclib.AsyncChat method)</a>, <a href="asynclib.html#astm.asynclib.AsyncChat.push">[1]</a>
+
+        <ul>
+          <li><a href="astm.html#astm.protocol.ASTMProtocol.push">(astm.protocol.ASTMProtocol method)</a>, <a href="protocol.html#astm.protocol.ASTMProtocol.push">[1]</a>
+</li>
+        </ul></li>
+        <li><a href="astm.html#astm.asynclib.AsyncChat.push_with_producer">push_with_producer() (astm.asynclib.AsyncChat method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_client.emitter.put">put() (astm.tests.test_client.emitter method)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="R" class="genindex-section">
+  <h2>R</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="astm.html#astm.asynclib.read">read() (in module astm.asynclib)</a>
+</li>
+        <li><a href="astm.html#astm.asynclib.AsyncChat.readable">readable() (astm.asynclib.AsyncChat method)</a>, <a href="asynclib.html#astm.asynclib.AsyncChat.readable">[1]</a>
+
+        <ul>
+          <li><a href="astm.html#astm.asynclib.Dispatcher.readable">(astm.asynclib.Dispatcher method)</a>, <a href="asynclib.html#astm.asynclib.Dispatcher.readable">[1]</a>
+</li>
+          <li><a href="astm.tests.html#astm.tests.test_asynclib.dispatcherwithsend_noread.readable">(astm.tests.test_asynclib.dispatcherwithsend_noread method)</a>
+</li>
+        </ul></li>
+        <li><a href="astm.html#astm.asynclib.readwrite">readwrite() (in module astm.asynclib)</a>
+</li>
+        <li><a href="astm.html#astm.mapping.Record">Record (class in astm.mapping)</a>, <a href="mapping.html#astm.mapping.Record">[1]</a>
+</li>
+        <li><a href="astm.html#astm.constants.RECORD_SEP">RECORD_SEP (in module astm.constants)</a>, <a href="constants.html#astm.constants.RECORD_SEP">[1]</a>
+</li>
+        <li><a href="astm.omnilab.html#astm.omnilab.server.RecordsDispatcher">RecordsDispatcher (class in astm.omnilab.server)</a>, <a href="modules.html#astm.omnilab.server.RecordsDispatcher">[1]</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_server.RecordsDispatcherTestCase">RecordsDispatcherTestCase (class in astm.tests.test_server)</a>
+</li>
+        <li><a href="astm.html#astm.asynclib.Dispatcher.recv">recv() (astm.asynclib.Dispatcher method)</a>, <a href="asynclib.html#astm.asynclib.Dispatcher.recv">[1]</a>
+
+        <ul>
+          <li><a href="astm.tests.html#astm.tests.test_server.DummyRequestHandler.recv">(astm.tests.test_server.DummyRequestHandler method)</a>
+</li>
+        </ul></li>
+        <li><a href="astm.html#astm.asynclib.AsyncChat.recv_buffer_size">recv_buffer_size (astm.asynclib.AsyncChat attribute)</a>, <a href="asynclib.html#astm.asynclib.AsyncChat.recv_buffer_size">[1]</a>
+</li>
+        <li><a href="astm.omnilab.html#astm.omnilab.server.Result.references">references (astm.omnilab.server.Result attribute)</a>
+</li>
+        <li><a href="astm.html#astm.exceptions.Rejected">Rejected</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="astm.html#astm.constants.REPEAT_SEP">REPEAT_SEP (in module astm.constants)</a>, <a href="constants.html#astm.constants.REPEAT_SEP">[1]</a>
+</li>
+        <li><a href="astm.html#astm.mapping.RepeatedComponentField">RepeatedComponentField (class in astm.mapping)</a>, <a href="mapping.html#astm.mapping.RepeatedComponentField">[1]</a>
+</li>
+        <li><a href="astm.html#astm.mapping.RepeatedComponentField.Proxy">RepeatedComponentField.Proxy (class in astm.mapping)</a>, <a href="mapping.html#astm.mapping.RepeatedComponentField.Proxy">[1]</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.RepeatedComponentFieldTestCase">RepeatedComponentFieldTestCase (class in astm.tests.test_mapping)</a>
+</li>
+        <li><a href="astm.omnilab.html#astm.omnilab.client.Order.report_type">report_type (astm.omnilab.client.Order attribute)</a>
+
+        <ul>
+          <li><a href="astm.omnilab.html#astm.omnilab.server.Order.report_type">(astm.omnilab.server.Order attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="astm.html#astm.server.Server.request">request (astm.server.Server attribute)</a>, <a href="protocol.html#astm.server.Server.request">[1]</a>
+</li>
+        <li><a href="astm.html#astm.server.RequestHandler">RequestHandler (class in astm.server)</a>, <a href="protocol.html#astm.server.RequestHandler">[1]</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_server.RequestHandlerTestCase">RequestHandlerTestCase (class in astm.tests.test_server)</a>
+</li>
+        <li><a href="astm.html#astm.asynclib.call_later.reset">reset() (astm.asynclib.call_later method)</a>
+</li>
+        <li><a href="astm.omnilab.html#astm.omnilab.client.Result">Result (class in astm.omnilab.client)</a>, <a href="modules.html#astm.omnilab.client.Result">[1]</a>
+
+        <ul>
+          <li><a href="astm.omnilab.html#astm.omnilab.server.Result">(class in astm.omnilab.server)</a>, <a href="modules.html#astm.omnilab.server.Result">[1]</a>
+</li>
+        </ul></li>
+        <li><a href="astm.html#astm.records.ResultRecord">ResultRecord (in module astm.records)</a>, <a href="records.html#astm.records.ResultRecord">[1]</a>
+</li>
+        <li><a href="astm.html#astm.client.Client.run">run() (astm.client.Client method)</a>, <a href="protocol.html#astm.client.Client.run">[1]</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="S" class="genindex-section">
+  <h2>S</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="astm.omnilab.html#astm.omnilab.common.CommonOrder.sample_id">sample_id (astm.omnilab.common.CommonOrder attribute)</a>
+</li>
+        <li><a href="astm.omnilab.html#astm.omnilab.client.Order.sampled_at">sampled_at (astm.omnilab.client.Order attribute)</a>
+
+        <ul>
+          <li><a href="astm.omnilab.html#astm.omnilab.server.Result.sampled_at">(astm.omnilab.server.Result attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="astm.tests.html#astm.tests.test_asynclib.CallLaterTests.scheduler">scheduler() (astm.tests.test_asynclib.CallLaterTests method)</a>
+
+        <ul>
+          <li><a href="astm.html#astm.asynclib.scheduler">(in module astm.asynclib)</a>
+</li>
+        </ul></li>
+        <li><a href="astm.html#astm.asynclib.Dispatcher.send">send() (astm.asynclib.Dispatcher method)</a>, <a href="asynclib.html#astm.asynclib.Dispatcher.send">[1]</a>
+
+        <ul>
+          <li><a href="astm.html#astm.client.Emitter.send">(astm.client.Emitter method)</a>, <a href="protocol.html#astm.client.Emitter.send">[1]</a>
+</li>
+          <li><a href="astm.tests.html#astm.tests.test_asynclib.dispatcherwithsend_noread.send">(astm.tests.test_asynclib.dispatcherwithsend_noread method)</a>
+</li>
+          <li><a href="astm.tests.html#astm.tests.test_client.emitter.send">(astm.tests.test_client.emitter method)</a>
+</li>
+        </ul></li>
+        <li><a href="astm.html#astm.asynclib.AsyncChat.send_buffer_size">send_buffer_size (astm.asynclib.AsyncChat attribute)</a>, <a href="asynclib.html#astm.asynclib.AsyncChat.send_buffer_size">[1]</a>
+</li>
+        <li><a href="astm.omnilab.html#astm.omnilab.client.Header.sender">sender (astm.omnilab.client.Header attribute)</a>
+
+        <ul>
+          <li><a href="astm.omnilab.html#astm.omnilab.common.Header.sender">(astm.omnilab.common.Header attribute)</a>
+</li>
+          <li><a href="astm.omnilab.html#astm.omnilab.server.Header.sender">(astm.omnilab.server.Header attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="astm.omnilab.html#astm.omnilab.client.Sender">Sender (in module astm.omnilab.client)</a>, <a href="modules.html#astm.omnilab.client.Sender">[1]</a>
+
+        <ul>
+          <li><a href="astm.omnilab.html#astm.omnilab.common.Sender">(in module astm.omnilab.common)</a>
+</li>
+          <li><a href="astm.omnilab.html#astm.omnilab.server.Sender">(in module astm.omnilab.server)</a>, <a href="modules.html#astm.omnilab.server.Sender">[1]</a>
+</li>
+        </ul></li>
+        <li><a href="astm.html#astm.server.Server.serve_forever">serve_forever() (astm.server.Server method)</a>, <a href="protocol.html#astm.server.Server.serve_forever">[1]</a>
+</li>
+        <li><a href="astm.html#astm.server.Server">Server (class in astm.server)</a>, <a href="protocol.html#astm.server.Server">[1]</a>
+</li>
+        <li><a href="astm.html#astm.asynclib.Dispatcher.set_reuse_addr">set_reuse_addr() (astm.asynclib.Dispatcher method)</a>
+</li>
+        <li><a href="astm.html#astm.asynclib.Dispatcher.set_socket">set_socket() (astm.asynclib.Dispatcher method)</a>
+</li>
+        <li><a href="astm.html#astm.mapping.SetField">SetField (class in astm.mapping)</a>, <a href="mapping.html#astm.mapping.SetField">[1]</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.SetFieldTestCase">SetFieldTestCase (class in astm.tests.test_mapping)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_asynclib.CallLaterTests.setUp">setUp() (astm.tests.test_asynclib.CallLaterTests method)</a>
+
+        <ul>
+          <li><a href="astm.tests.html#astm.tests.test_asynclib.DispatcherTests.setUp">(astm.tests.test_asynclib.DispatcherTests method)</a>
+</li>
+          <li><a href="astm.tests.html#astm.tests.test_asynclib.DispatcherWithSendTests.setUp">(astm.tests.test_asynclib.DispatcherWithSendTests method)</a>
+</li>
+          <li><a href="astm.tests.html#astm.tests.test_mapping.ComponentFieldTestCase.setUp">(astm.tests.test_mapping.ComponentFieldTestCase method)</a>
+</li>
+          <li><a href="astm.tests.html#astm.tests.test_mapping.DateFieldTestCase.setUp">(astm.tests.test_mapping.DateFieldTestCase method)</a>
+</li>
+          <li><a href="astm.tests.html#astm.tests.test_mapping.DatetimeFieldTestCase.setUp">(astm.tests.test_mapping.DatetimeFieldTestCase method)</a>
+</li>
+          <li><a href="astm.tests.html#astm.tests.test_mapping.DecimalFieldTestCase.setUp">(astm.tests.test_mapping.DecimalFieldTestCase method)</a>
+</li>
+          <li><a href="astm.tests.html#astm.tests.test_mapping.IntegerTestCase.setUp">(astm.tests.test_mapping.IntegerTestCase method)</a>
+</li>
+          <li><a href="astm.tests.html#astm.tests.test_mapping.MappingTestCase.setUp">(astm.tests.test_mapping.MappingTestCase method)</a>
+</li>
+          <li><a href="astm.tests.html#astm.tests.test_mapping.NotUsedFieldTestCase.setUp">(astm.tests.test_mapping.NotUsedFieldTestCase method)</a>
+</li>
+          <li><a href="astm.tests.html#astm.tests.test_mapping.RepeatedComponentFieldTestCase.setUp">(astm.tests.test_mapping.RepeatedComponentFieldTestCase method)</a>
+</li>
+          <li><a href="astm.tests.html#astm.tests.test_mapping.SetFieldTestCase.setUp">(astm.tests.test_mapping.SetFieldTestCase method)</a>
+</li>
+          <li><a href="astm.tests.html#astm.tests.test_mapping.TextFieldTestCase.setUp">(astm.tests.test_mapping.TextFieldTestCase method)</a>
+</li>
+          <li><a href="astm.tests.html#astm.tests.test_mapping.TimeFieldTestCase.setUp">(astm.tests.test_mapping.TimeFieldTestCase method)</a>
+</li>
+          <li><a href="astm.tests.html#astm.tests.test_server.RecordsDispatcherTestCase.setUp">(astm.tests.test_server.RecordsDispatcherTestCase method)</a>
+</li>
+          <li><a href="astm.tests.html#astm.tests.test_server.RequestHandlerTestCase.setUp">(astm.tests.test_server.RequestHandlerTestCase method)</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="astm.omnilab.html#astm.omnilab.common.CommonPatient.sex">sex (astm.omnilab.common.CommonPatient attribute)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_client.simple_emitter">simple_emitter() (in module astm.tests.test_client)</a>
+</li>
+        <li><a href="astm.omnilab.html#astm.omnilab.client.Comment.source">source (astm.omnilab.client.Comment attribute)</a>
+</li>
+        <li><a href="astm.omnilab.html#astm.omnilab.client.Patient.special_1">special_1 (astm.omnilab.client.Patient attribute)</a>
+</li>
+        <li><a href="astm.omnilab.html#astm.omnilab.common.CommonPatient.special_2">special_2 (astm.omnilab.common.CommonPatient attribute)</a>
+</li>
+        <li><a href="astm.html#astm.codec.split">split() (in module astm.codec)</a>, <a href="codecs.html#astm.codec.split">[1]</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_protocol.DummyTimer.start">start() (astm.tests.test_protocol.DummyTimer method)</a>
+</li>
+        <li><a href="astm.omnilab.html#astm.omnilab.server.Result.started_at">started_at (astm.omnilab.server.Result attribute)</a>
+</li>
+        <li><a href="astm.html#astm.client.Emitter.state_machine">state_machine (astm.client.Emitter attribute)</a>, <a href="protocol.html#astm.client.Emitter.state_machine">[1]</a>
+</li>
+        <li><a href="astm.omnilab.html#astm.omnilab.server.Result.status">status (astm.omnilab.server.Result attribute)</a>
+</li>
+        <li><a href="astm.html#astm.asynclib.AsyncChat.strip_terminator">strip_terminator (astm.asynclib.AsyncChat attribute)</a>, <a href="asynclib.html#astm.asynclib.AsyncChat.strip_terminator">[1]</a>
+
+        <ul>
+          <li><a href="astm.html#astm.protocol.ASTMProtocol.strip_terminator">(astm.protocol.ASTMProtocol attribute)</a>, <a href="protocol.html#astm.protocol.ASTMProtocol.strip_terminator">[1]</a>
+</li>
+        </ul></li>
+        <li><a href="astm.html#astm.constants.STX">STX (in module astm.constants)</a>, <a href="constants.html#astm.constants.STX">[1]</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.suite">suite() (in module astm.tests)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="T" class="genindex-section">
+  <h2>T</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="astm.tests.html#astm.tests.test_asynclib.DispatcherTests.tearDown">tearDown() (astm.tests.test_asynclib.DispatcherTests method)</a>
+
+        <ul>
+          <li><a href="astm.tests.html#astm.tests.test_asynclib.DispatcherWithSendTests.tearDown">(astm.tests.test_asynclib.DispatcherWithSendTests method)</a>
+</li>
+          <li><a href="astm.tests.html#astm.tests.test_server.RequestHandlerTestCase.tearDown">(astm.tests.test_server.RequestHandlerTestCase method)</a>
+</li>
+        </ul></li>
+        <li><a href="astm.html#astm.asynclib.AsyncChat.terminator">terminator (astm.asynclib.AsyncChat property)</a>, <a href="asynclib.html#astm.asynclib.AsyncChat.terminator">[1]</a>
+</li>
+        <li><a href="astm.omnilab.html#astm.omnilab.client.Terminator">Terminator (class in astm.omnilab.client)</a>, <a href="modules.html#astm.omnilab.client.Terminator">[1]</a>
+
+        <ul>
+          <li><a href="astm.omnilab.html#astm.omnilab.common.Terminator">(class in astm.omnilab.common)</a>
+</li>
+          <li><a href="astm.omnilab.html#astm.omnilab.server.Terminator">(class in astm.omnilab.server)</a>, <a href="modules.html#astm.omnilab.server.Terminator">[1]</a>
+</li>
+        </ul></li>
+        <li><a href="astm.html#astm.records.TerminatorRecord">TerminatorRecord (in module astm.records)</a>, <a href="records.html#astm.records.TerminatorRecord">[1]</a>
+</li>
+        <li><a href="astm.omnilab.html#astm.omnilab.client.Order.test">test (astm.omnilab.client.Order attribute)</a>
+
+        <ul>
+          <li><a href="astm.omnilab.html#astm.omnilab.client.Result.test">(astm.omnilab.client.Result attribute)</a>
+</li>
+          <li><a href="astm.omnilab.html#astm.omnilab.server.Order.test">(astm.omnilab.server.Order attribute)</a>
+</li>
+          <li><a href="astm.omnilab.html#astm.omnilab.server.Result.test">(astm.omnilab.server.Result attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="astm.omnilab.html#astm.omnilab.client.Test">Test (in module astm.omnilab.client)</a>, <a href="modules.html#astm.omnilab.client.Test">[1]</a>
+
+        <ul>
+          <li><a href="astm.omnilab.html#astm.omnilab.server.Test">(in module astm.omnilab.server)</a>, <a href="modules.html#astm.omnilab.server.Test">[1]</a>
+</li>
+        </ul></li>
+        <li><a href="astm.tests.html#astm.tests.test_server.RequestHandlerTestCase.test_accept_message">test_accept_message() (astm.tests.test_server.RequestHandlerTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_omnilab.OmnilabTestCase.test_add_test">test_add_test() (astm.tests.test_omnilab.OmnilabTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_omnilab.OmnilabTestCase.test_aliquoting">test_aliquoting() (astm.tests.test_omnilab.OmnilabTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_server.RequestHandlerTestCase.test_allow_enq_only_for_init_state">test_allow_enq_only_for_init_state() (astm.tests.test_server.RequestHandlerTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_server.RequestHandlerTestCase.test_allow_eot_only_for_transfer_state">test_allow_eot_only_for_transfer_state() (astm.tests.test_server.RequestHandlerTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.ConstantFieldTestCase.test_always_required">test_always_required() (astm.tests.test_mapping.ConstantFieldTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_asynclib.DispatcherTests.test_basic">test_basic() (astm.tests.test_asynclib.DispatcherTests method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_client.ClientTestCase.test_bulk_mode">test_bulk_mode() (astm.tests.test_client.ClientTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_codecs.ChecksummTestCase.test_bytes">test_bytes() (astm.tests.test_codecs.ChecksummTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.FieldTestCase.test_callable_default_value">test_callable_default_value() (astm.tests.test_mapping.FieldTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_client.ClientTestCase.test_callback_on_sent_failure">test_callback_on_sent_failure() (astm.tests.test_client.ClientTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_asynclib.CallLaterTests.test_cancel">test_cancel() (astm.tests.test_asynclib.CallLaterTests method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_client.ClientTestCase.test_chunked_response">test_chunked_response() (astm.tests.test_client.ClientTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_server.RequestHandlerTestCase.test_cleanup_input_buffer_on_message_reject">test_cleanup_input_buffer_on_message_reject() (astm.tests.test_server.RequestHandlerTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_server.RequestHandlerTestCase.test_close_on_timeout">test_close_on_timeout() (astm.tests.test_server.RequestHandlerTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_asynclib.HelperFunctionTests.test_closeall">test_closeall() (astm.tests.test_asynclib.HelperFunctionTests method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_asynclib.HelperFunctionTests.test_closeall_default">test_closeall_default() (astm.tests.test_asynclib.HelperFunctionTests method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_omnilab.OmnilabTestCase.test_comment_request">test_comment_request() (astm.tests.test_omnilab.OmnilabTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_omnilab.OmnilabTestCase.test_comment_response">test_comment_response() (astm.tests.test_omnilab.OmnilabTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_codecs.ChecksummTestCase.test_common">test_common() (astm.tests.test_codecs.ChecksummTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.MappingTestCase.test_contains">test_contains() (astm.tests.test_mapping.MappingTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_codecs.EncodeTestCase.test_count_none_fields_as_empty_strings">test_count_none_fields_as_empty_strings() (astm.tests.test_codecs.EncodeTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.SetFieldTestCase.test_custom_field">test_custom_field() (astm.tests.test_mapping.SetFieldTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_codecs.DecodeRecordTestCase.test_decode">test_decode() (astm.tests.test_codecs.DecodeRecordTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_codecs.ChunkedEncodingTestCase.test_decode_chunks">test_decode_chunks() (astm.tests.test_codecs.ChunkedEncodingTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_codecs.DecodeTestCase.test_decode_frame">test_decode_frame() (astm.tests.test_codecs.DecodeTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_codecs.DecodeMessageTestCase.test_decode_message">test_decode_message() (astm.tests.test_codecs.DecodeMessageTestCase method)</a>
+
+        <ul>
+          <li><a href="astm.tests.html#astm.tests.test_codecs.DecodeTestCase.test_decode_message">(astm.tests.test_codecs.DecodeTestCase method)</a>
+</li>
+        </ul></li>
+        <li><a href="astm.tests.html#astm.tests.test_codecs.DecodeTestCase.test_decode_message_with_nonascii">test_decode_message_with_nonascii() (astm.tests.test_codecs.DecodeTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_codecs.DecodeRecordTestCase.test_decode_nonascii_chars_as_unicode">test_decode_nonascii_chars_as_unicode() (astm.tests.test_codecs.DecodeRecordTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_codecs.DecodeRecordTestCase.test_decode_none_values_for_missed_ones">test_decode_none_values_for_missed_ones() (astm.tests.test_codecs.DecodeRecordTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_codecs.DecodeTestCase.test_decode_record">test_decode_record() (astm.tests.test_codecs.DecodeTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_codecs.DecodeRecordTestCase.test_decode_with_components">test_decode_with_components() (astm.tests.test_codecs.DecodeRecordTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_codecs.DecodeRecordTestCase.test_decode_with_repeated_components">test_decode_with_repeated_components() (astm.tests.test_codecs.DecodeRecordTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_protocol.DispatcherTestCase.test_default_hanlder">test_default_hanlder() (astm.tests.test_protocol.DispatcherTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.ConstantFieldTestCase.test_default_value_should_be_defined">test_default_value_should_be_defined() (astm.tests.test_mapping.ConstantFieldTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_asynclib.CallLaterTests.test_delay">test_delay() (astm.tests.test_asynclib.CallLaterTests method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.MappingTestCase.test_delitem">test_delitem() (astm.tests.test_mapping.MappingTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_server.RecordsDispatcherTestCase.test_dispatch_comment">test_dispatch_comment() (astm.tests.test_server.RecordsDispatcherTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_server.RecordsDispatcherTestCase.test_dispatch_header">test_dispatch_header() (astm.tests.test_server.RecordsDispatcherTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_server.RecordsDispatcherTestCase.test_dispatch_manufacturer_info">test_dispatch_manufacturer_info() (astm.tests.test_server.RecordsDispatcherTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_server.RecordsDispatcherTestCase.test_dispatch_order">test_dispatch_order() (astm.tests.test_server.RecordsDispatcherTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_server.RecordsDispatcherTestCase.test_dispatch_patient">test_dispatch_patient() (astm.tests.test_server.RecordsDispatcherTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_server.RecordsDispatcherTestCase.test_dispatch_result">test_dispatch_result() (astm.tests.test_server.RecordsDispatcherTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_server.RecordsDispatcherTestCase.test_dispatch_scientific">test_dispatch_scientific() (astm.tests.test_server.RecordsDispatcherTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_server.RecordsDispatcherTestCase.test_dispatch_terminator">test_dispatch_terminator() (astm.tests.test_server.RecordsDispatcherTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_client.ClientTestCase.test_dummy_usage">test_dummy_usage() (astm.tests.test_client.ClientTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_client.ClientTestCase.test_early_yield">test_early_yield() (astm.tests.test_client.ClientTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_client.ClientTestCase.test_emit_after_nak">test_emit_after_nak() (astm.tests.test_client.ClientTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_client.ClientTestCase.test_emitter_may_send_new_record_after_nak_response">test_emitter_may_send_new_record_after_nak_response() (astm.tests.test_client.ClientTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_client.ClientTestCase.test_empty_emitter">test_empty_emitter() (astm.tests.test_client.ClientTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_codecs.EncodeTestCase.test_encode">test_encode() (astm.tests.test_codecs.EncodeTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_codecs.ChunkedEncodingTestCase.test_encode_as_single_message">test_encode_as_single_message() (astm.tests.test_codecs.ChunkedEncodingTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_codecs.ChunkedEncodingTestCase.test_encode_chunky">test_encode_chunky() (astm.tests.test_codecs.ChunkedEncodingTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_codecs.EncodeTestCase.test_encode_component">test_encode_component() (astm.tests.test_codecs.EncodeTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_codecs.EncodeTestCase.test_encode_component_strip_tail">test_encode_component_strip_tail() (astm.tests.test_codecs.EncodeTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_codecs.EncodeTestCase.test_encode_message">test_encode_message() (astm.tests.test_codecs.EncodeTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_codecs.EncodeTestCase.test_encode_record">test_encode_record() (astm.tests.test_codecs.EncodeTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_codecs.EncodeTestCase.test_encode_record_with_none_and_non_string">test_encode_record_with_none_and_non_string() (astm.tests.test_codecs.EncodeTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_codecs.EncodeTestCase.test_encode_repeated_component">test_encode_repeated_component() (astm.tests.test_codecs.EncodeTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.MappingTestCase.test_equal">test_equal() (astm.tests.test_mapping.MappingTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_codecs.DecodeMessageTestCase.test_fail_decode_invalid_message">test_fail_decode_invalid_message() (astm.tests.test_codecs.DecodeMessageTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_codecs.DecodeFrameTestCase.test_fail_decode_with_invalid_tail">test_fail_decode_with_invalid_tail() (astm.tests.test_codecs.DecodeFrameTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_codecs.DecodeFrameTestCase.test_fail_decode_without_seq_value">test_fail_decode_without_seq_value() (astm.tests.test_codecs.DecodeFrameTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_codecs.DecodeFrameTestCase.test_fail_decode_without_tail_data">test_fail_decode_without_tail_data() (astm.tests.test_codecs.DecodeFrameTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_codecs.DecodeMessageTestCase.test_fail_decome_message_with_wrong_checksumm">test_fail_decome_message_with_wrong_checksumm() (astm.tests.test_codecs.DecodeMessageTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_client.ClientTestCase.test_fail_on_enq">test_fail_on_enq() (astm.tests.test_client.ClientTestCase method)</a>
+
+        <ul>
+          <li><a href="astm.tests.html#astm.tests.test_server.RequestHandlerTestCase.test_fail_on_enq">(astm.tests.test_server.RequestHandlerTestCase method)</a>
+</li>
+        </ul></li>
+        <li><a href="astm.tests.html#astm.tests.test_client.ClientTestCase.test_fail_on_eot">test_fail_on_eot() (astm.tests.test_client.ClientTestCase method)</a>
+
+        <ul>
+          <li><a href="astm.tests.html#astm.tests.test_server.RequestHandlerTestCase.test_fail_on_eot">(astm.tests.test_server.RequestHandlerTestCase method)</a>
+</li>
+        </ul></li>
+        <li><a href="astm.tests.html#astm.tests.test_client.ClientTestCase.test_fail_on_message">test_fail_on_message() (astm.tests.test_client.ClientTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.RepeatedComponentFieldTestCase.test_fail_on_set_strings">test_fail_on_set_strings() (astm.tests.test_mapping.RepeatedComponentFieldTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.ConstantFieldTestCase.test_fail_override_setted_value">test_fail_override_setted_value() (astm.tests.test_mapping.ConstantFieldTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.RepeatedComponentFieldTestCase.test_fail_proxy_index_for_nonexisted_element">test_fail_proxy_index_for_nonexisted_element() (astm.tests.test_mapping.RepeatedComponentFieldTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.RepeatedComponentFieldTestCase.test_fail_proxy_index_negative_start">test_fail_proxy_index_negative_start() (astm.tests.test_mapping.RepeatedComponentFieldTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.RepeatedComponentFieldTestCase.test_fail_proxy_remove_missing">test_fail_proxy_remove_missing() (astm.tests.test_mapping.RepeatedComponentFieldTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.TextFieldTestCase.test_fail_set_non_string_value">test_fail_set_non_string_value() (astm.tests.test_mapping.TextFieldTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.TextFieldTestCase.test_fail_set_non_utf8_value">test_fail_set_non_utf8_value() (astm.tests.test_mapping.TextFieldTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.MappingTestCase.test_field_max_length">test_field_max_length() (astm.tests.test_mapping.MappingTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_omnilab.OmnilabTestCase.test_force_close">test_force_close() (astm.tests.test_omnilab.OmnilabTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_protocol.DispatcherTestCase.test_found_terminator">test_found_terminator() (astm.tests.test_protocol.DispatcherTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_protocol.DispatcherTestCase.test_found_terminator_skip_empty">test_found_terminator_skip_empty() (astm.tests.test_protocol.DispatcherTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_codecs.EncodeTestCase.test_frame_number">test_frame_number() (astm.tests.test_codecs.EncodeTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.DatetimeFieldTestCase.test_get_date_value">test_get_date_value() (astm.tests.test_mapping.DatetimeFieldTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.ComponentFieldTestCase.test_get_value">test_get_value() (astm.tests.test_mapping.ComponentFieldTestCase method)</a>
+
+        <ul>
+          <li><a href="astm.tests.html#astm.tests.test_mapping.ConstantFieldTestCase.test_get_value">(astm.tests.test_mapping.ConstantFieldTestCase method)</a>
+</li>
+          <li><a href="astm.tests.html#astm.tests.test_mapping.DateFieldTestCase.test_get_value">(astm.tests.test_mapping.DateFieldTestCase method)</a>
+</li>
+          <li><a href="astm.tests.html#astm.tests.test_mapping.DatetimeFieldTestCase.test_get_value">(astm.tests.test_mapping.DatetimeFieldTestCase method)</a>
+</li>
+          <li><a href="astm.tests.html#astm.tests.test_mapping.DecimalFieldTestCase.test_get_value">(astm.tests.test_mapping.DecimalFieldTestCase method)</a>
+</li>
+          <li><a href="astm.tests.html#astm.tests.test_mapping.IntegerTestCase.test_get_value">(astm.tests.test_mapping.IntegerTestCase method)</a>
+</li>
+          <li><a href="astm.tests.html#astm.tests.test_mapping.NotUsedFieldTestCase.test_get_value">(astm.tests.test_mapping.NotUsedFieldTestCase method)</a>
+</li>
+          <li><a href="astm.tests.html#astm.tests.test_mapping.RepeatedComponentFieldTestCase.test_get_value">(astm.tests.test_mapping.RepeatedComponentFieldTestCase method)</a>
+</li>
+          <li><a href="astm.tests.html#astm.tests.test_mapping.SetFieldTestCase.test_get_value">(astm.tests.test_mapping.SetFieldTestCase method)</a>
+</li>
+          <li><a href="astm.tests.html#astm.tests.test_mapping.TextFieldTestCase.test_get_value">(astm.tests.test_mapping.TextFieldTestCase method)</a>
+</li>
+          <li><a href="astm.tests.html#astm.tests.test_mapping.TimeFieldTestCase.test_get_value">(astm.tests.test_mapping.TimeFieldTestCase method)</a>
+</li>
+        </ul></li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.MappingTestCase.test_getitem">test_getitem() (astm.tests.test_mapping.MappingTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.RepeatedComponentFieldTestCase.test_getter_returns_list">test_getter_returns_list() (astm.tests.test_mapping.RepeatedComponentFieldTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_server.RequestHandlerTestCase.test_handle_chunked_transfer">test_handle_chunked_transfer() (astm.tests.test_server.RequestHandlerTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_omnilab.OmnilabTestCase.test_header_request">test_header_request() (astm.tests.test_omnilab.OmnilabTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_omnilab.OmnilabTestCase.test_header_response">test_header_response() (astm.tests.test_omnilab.OmnilabTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_omnilab.OmnilabTestCase.test_host_query">test_host_query() (astm.tests.test_omnilab.OmnilabTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.DateFieldTestCase.test_init_date_value">test_init_date_value() (astm.tests.test_mapping.DateFieldTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.FieldTestCase.test_init_default">test_init_default() (astm.tests.test_mapping.FieldTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.TimeFieldTestCase.test_init_time_value">test_init_time_value() (astm.tests.test_mapping.TimeFieldTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.FieldTestCase.test_init_with_custom_default_value">test_init_with_custom_default_value() (astm.tests.test_mapping.FieldTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.FieldTestCase.test_init_with_custom_name">test_init_with_custom_name() (astm.tests.test_mapping.FieldTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_asynclib.CallLaterTests.test_interface">test_interface() (astm.tests.test_asynclib.CallLaterTests method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_codecs.ChunkedEncodingTestCase.test_is_chunked_message">test_is_chunked_message() (astm.tests.test_codecs.ChunkedEncodingTestCase method)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.ComponentFieldTestCase.test_iter">test_iter() (astm.tests.test_mapping.ComponentFieldTestCase method)</a>
+
+        <ul>
+          <li><a href="astm.tests.html#astm.tests.test_mapping.MappingTestCase.test_iter">(astm.tests.test_mapping.MappingTestCase method)</a>
+</li>
+          <li><a href="astm.tests.html#astm.tests.test_mapping.RepeatedComponentFieldTestCase.test_iter">(astm.tests.test_mapping.RepeatedComponentFieldTestCase method)</a>
+</li>
+        </ul></li>
+        <li><a href="astm.tests.html#astm.tests.test_codecs.EncodeTestCase.test_iter_encoding">test_iter_encoding() (astm.tests.test_codecs.EncodeTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_codecs.ChunkedEncodingTestCase.test_join_chunks">test_join_chunks() (astm.tests.test_codecs.ChunkedEncodingTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_client.ClientTestCase.test_late_ack">test_late_ack() (astm.tests.test_client.ClientTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.MappingTestCase.test_len">test_len() (astm.tests.test_mapping.MappingTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_client.ClientTestCase.test_messages_workflow">test_messages_workflow() (astm.tests.test_client.ClientTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_client.ClientTestCase.test_nak_callback">test_nak_callback() (astm.tests.test_client.ClientTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_protocol.DispatcherTestCase.test_on_ack">test_on_ack() (astm.tests.test_protocol.DispatcherTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_protocol.DispatcherTestCase.test_on_enq">test_on_enq() (astm.tests.test_protocol.DispatcherTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_protocol.DispatcherTestCase.test_on_eot">test_on_eot() (astm.tests.test_protocol.DispatcherTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_protocol.DispatcherTestCase.test_on_message">test_on_message() (astm.tests.test_protocol.DispatcherTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_protocol.DispatcherTestCase.test_on_nak">test_on_nak() (astm.tests.test_protocol.DispatcherTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_client.ClientTestCase.test_open_connection">test_open_connection() (astm.tests.test_client.ClientTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_asynclib.CallLaterTests.test_order">test_order() (astm.tests.test_asynclib.CallLaterTests method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_omnilab.OmnilabTestCase.test_order_request">test_order_request() (astm.tests.test_omnilab.OmnilabTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_omnilab.OmnilabTestCase.test_order_response">test_order_response() (astm.tests.test_omnilab.OmnilabTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_omnilab.OmnilabTestCase.test_patient_request">test_patient_request() (astm.tests.test_omnilab.OmnilabTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_omnilab.OmnilabTestCase.test_patient_response">test_patient_response() (astm.tests.test_omnilab.OmnilabTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_omnilab.OmnilabTestCase.test_primary_tube">test_primary_tube() (astm.tests.test_omnilab.OmnilabTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_server.RecordsDispatcherTestCase.test_provide_default_handler_for_unknown_message_type">test_provide_default_handler_for_unknown_message_type() (astm.tests.test_server.RecordsDispatcherTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.RepeatedComponentFieldTestCase.test_proxy_add">test_proxy_add() (astm.tests.test_mapping.RepeatedComponentFieldTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.RepeatedComponentFieldTestCase.test_proxy_add_other_proxy">test_proxy_add_other_proxy() (astm.tests.test_mapping.RepeatedComponentFieldTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.RepeatedComponentFieldTestCase.test_proxy_append">test_proxy_append() (astm.tests.test_mapping.RepeatedComponentFieldTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.RepeatedComponentFieldTestCase.test_proxy_contains">test_proxy_contains() (astm.tests.test_mapping.RepeatedComponentFieldTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.RepeatedComponentFieldTestCase.test_proxy_count">test_proxy_count() (astm.tests.test_mapping.RepeatedComponentFieldTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.RepeatedComponentFieldTestCase.test_proxy_delitem">test_proxy_delitem() (astm.tests.test_mapping.RepeatedComponentFieldTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.RepeatedComponentFieldTestCase.test_proxy_eq">test_proxy_eq() (astm.tests.test_mapping.RepeatedComponentFieldTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.RepeatedComponentFieldTestCase.test_proxy_eq_with_other_proxy">test_proxy_eq_with_other_proxy() (astm.tests.test_mapping.RepeatedComponentFieldTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.RepeatedComponentFieldTestCase.test_proxy_extend">test_proxy_extend() (astm.tests.test_mapping.RepeatedComponentFieldTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.RepeatedComponentFieldTestCase.test_proxy_ge">test_proxy_ge() (astm.tests.test_mapping.RepeatedComponentFieldTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.RepeatedComponentFieldTestCase.test_proxy_ge_with_other_proxy">test_proxy_ge_with_other_proxy() (astm.tests.test_mapping.RepeatedComponentFieldTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.RepeatedComponentFieldTestCase.test_proxy_gt">test_proxy_gt() (astm.tests.test_mapping.RepeatedComponentFieldTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.RepeatedComponentFieldTestCase.test_proxy_gt_with_other_proxy">test_proxy_gt_with_other_proxy() (astm.tests.test_mapping.RepeatedComponentFieldTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.RepeatedComponentFieldTestCase.test_proxy_iadd">test_proxy_iadd() (astm.tests.test_mapping.RepeatedComponentFieldTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.RepeatedComponentFieldTestCase.test_proxy_imul">test_proxy_imul() (astm.tests.test_mapping.RepeatedComponentFieldTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.RepeatedComponentFieldTestCase.test_proxy_imul_one">test_proxy_imul_one() (astm.tests.test_mapping.RepeatedComponentFieldTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.RepeatedComponentFieldTestCase.test_proxy_imul_zero">test_proxy_imul_zero() (astm.tests.test_mapping.RepeatedComponentFieldTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.RepeatedComponentFieldTestCase.test_proxy_index">test_proxy_index() (astm.tests.test_mapping.RepeatedComponentFieldTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.RepeatedComponentFieldTestCase.test_proxy_index_range">test_proxy_index_range() (astm.tests.test_mapping.RepeatedComponentFieldTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.RepeatedComponentFieldTestCase.test_proxy_insert">test_proxy_insert() (astm.tests.test_mapping.RepeatedComponentFieldTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.RepeatedComponentFieldTestCase.test_proxy_le">test_proxy_le() (astm.tests.test_mapping.RepeatedComponentFieldTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.RepeatedComponentFieldTestCase.test_proxy_le_with_other_proxy">test_proxy_le_with_other_proxy() (astm.tests.test_mapping.RepeatedComponentFieldTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.RepeatedComponentFieldTestCase.test_proxy_lt">test_proxy_lt() (astm.tests.test_mapping.RepeatedComponentFieldTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.RepeatedComponentFieldTestCase.test_proxy_lt_with_other_proxy">test_proxy_lt_with_other_proxy() (astm.tests.test_mapping.RepeatedComponentFieldTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.RepeatedComponentFieldTestCase.test_proxy_mul">test_proxy_mul() (astm.tests.test_mapping.RepeatedComponentFieldTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.RepeatedComponentFieldTestCase.test_proxy_mul_one">test_proxy_mul_one() (astm.tests.test_mapping.RepeatedComponentFieldTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.RepeatedComponentFieldTestCase.test_proxy_mul_zero">test_proxy_mul_zero() (astm.tests.test_mapping.RepeatedComponentFieldTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.RepeatedComponentFieldTestCase.test_proxy_ne">test_proxy_ne() (astm.tests.test_mapping.RepeatedComponentFieldTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.RepeatedComponentFieldTestCase.test_proxy_ne_with_other_proxy">test_proxy_ne_with_other_proxy() (astm.tests.test_mapping.RepeatedComponentFieldTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.RepeatedComponentFieldTestCase.test_proxy_pop">test_proxy_pop() (astm.tests.test_mapping.RepeatedComponentFieldTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.RepeatedComponentFieldTestCase.test_proxy_remove">test_proxy_remove() (astm.tests.test_mapping.RepeatedComponentFieldTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.RepeatedComponentFieldTestCase.test_proxy_slices">test_proxy_slices() (astm.tests.test_mapping.RepeatedComponentFieldTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.RepeatedComponentFieldTestCase.test_proxy_sort_fails">test_proxy_sort_fails() (astm.tests.test_mapping.RepeatedComponentFieldTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_protocol.DispatcherTestCase.test_push_event_response">test_push_event_response() (astm.tests.test_protocol.DispatcherTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.ComponentFieldTestCase.test_raw_value">test_raw_value() (astm.tests.test_mapping.ComponentFieldTestCase method)</a>
+
+        <ul>
+          <li><a href="astm.tests.html#astm.tests.test_mapping.ConstantFieldTestCase.test_raw_value">(astm.tests.test_mapping.ConstantFieldTestCase method)</a>
+</li>
+          <li><a href="astm.tests.html#astm.tests.test_mapping.DateFieldTestCase.test_raw_value">(astm.tests.test_mapping.DateFieldTestCase method)</a>
+</li>
+          <li><a href="astm.tests.html#astm.tests.test_mapping.DatetimeFieldTestCase.test_raw_value">(astm.tests.test_mapping.DatetimeFieldTestCase method)</a>
+</li>
+          <li><a href="astm.tests.html#astm.tests.test_mapping.SetFieldTestCase.test_raw_value">(astm.tests.test_mapping.SetFieldTestCase method)</a>
+</li>
+          <li><a href="astm.tests.html#astm.tests.test_mapping.TextFieldTestCase.test_raw_value">(astm.tests.test_mapping.TextFieldTestCase method)</a>
+</li>
+          <li><a href="astm.tests.html#astm.tests.test_mapping.TimeFieldTestCase.test_raw_value">(astm.tests.test_mapping.TimeFieldTestCase method)</a>
+</li>
+        </ul></li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.ConstantFieldTestCase.test_raw_value_should_be_string">test_raw_value_should_be_string() (astm.tests.test_mapping.ConstantFieldTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_asynclib.HelperFunctionTests.test_readwrite">test_readwrite() (astm.tests.test_asynclib.HelperFunctionTests method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_asynclib.HelperFunctionTests.test_readwriteexc">test_readwriteexc() (astm.tests.test_asynclib.HelperFunctionTests method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.SetFieldTestCase.test_reject_any_value">test_reject_any_value() (astm.tests.test_mapping.SetFieldTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_client.ClientTestCase.test_reject_header">test_reject_header() (astm.tests.test_client.ClientTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_server.RequestHandlerTestCase.test_reject_message_on_dispatch_error">test_reject_message_on_dispatch_error() (astm.tests.test_server.RequestHandlerTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_server.RequestHandlerTestCase.test_reject_message_on_handle_error">test_reject_message_on_handle_error() (astm.tests.test_server.RequestHandlerTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_server.RequestHandlerTestCase.test_reject_message_on_invalid_state">test_reject_message_on_invalid_state() (astm.tests.test_server.RequestHandlerTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_client.ClientTestCase.test_reject_terminator">test_reject_terminator() (astm.tests.test_client.ClientTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_asynclib.DispatcherTests.test_repr">test_repr() (astm.tests.test_asynclib.DispatcherTests method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.MappingTestCase.test_required_field">test_required_field() (astm.tests.test_mapping.MappingTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_asynclib.CallLaterTests.test_reset">test_reset() (astm.tests.test_asynclib.CallLaterTests method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.ConstantFieldTestCase.test_restrict_new_values_by_default_one">test_restrict_new_values_by_default_one() (astm.tests.test_mapping.ConstantFieldTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.SetFieldTestCase.test_restrict_new_values_by_specified_set">test_restrict_new_values_by_specified_set() (astm.tests.test_mapping.SetFieldTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_omnilab.OmnilabTestCase.test_result_request">test_result_request() (astm.tests.test_omnilab.OmnilabTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_omnilab.OmnilabTestCase.test_result_response">test_result_response() (astm.tests.test_omnilab.OmnilabTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_omnilab.OmnilabTestCase.test_sample_check_in">test_sample_check_in() (astm.tests.test_omnilab.OmnilabTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_omnilab.OmnilabTestCase.test_sample_seen">test_sample_seen() (astm.tests.test_omnilab.OmnilabTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_omnilab.OmnilabTestCase.test_sample_storage">test_sample_storage() (astm.tests.test_omnilab.OmnilabTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_asynclib.DispatcherWithSendTests.test_send">test_send() (astm.tests.test_asynclib.DispatcherWithSendTests method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_client.ClientTestCase.test_session_in_loop">test_session_in_loop() (astm.tests.test_client.ClientTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.DateFieldTestCase.test_set_date_value">test_set_date_value() (astm.tests.test_mapping.DateFieldTestCase method)</a>
+
+        <ul>
+          <li><a href="astm.tests.html#astm.tests.test_mapping.DatetimeFieldTestCase.test_set_date_value">(astm.tests.test_mapping.DatetimeFieldTestCase method)</a>
+</li>
+        </ul></li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.DateFieldTestCase.test_set_datetime_value">test_set_datetime_value() (astm.tests.test_mapping.DateFieldTestCase method)</a>
+
+        <ul>
+          <li><a href="astm.tests.html#astm.tests.test_mapping.TimeFieldTestCase.test_set_datetime_value">(astm.tests.test_mapping.TimeFieldTestCase method)</a>
+</li>
+        </ul></li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.DecimalFieldTestCase.test_set_int_value">test_set_int_value() (astm.tests.test_mapping.DecimalFieldTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.ComponentFieldTestCase.test_set_string_value">test_set_string_value() (astm.tests.test_mapping.ComponentFieldTestCase method)</a>
+
+        <ul>
+          <li><a href="astm.tests.html#astm.tests.test_mapping.DateFieldTestCase.test_set_string_value">(astm.tests.test_mapping.DateFieldTestCase method)</a>
+</li>
+          <li><a href="astm.tests.html#astm.tests.test_mapping.DatetimeFieldTestCase.test_set_string_value">(astm.tests.test_mapping.DatetimeFieldTestCase method)</a>
+</li>
+          <li><a href="astm.tests.html#astm.tests.test_mapping.IntegerTestCase.test_set_string_value">(astm.tests.test_mapping.IntegerTestCase method)</a>
+</li>
+          <li><a href="astm.tests.html#astm.tests.test_mapping.TimeFieldTestCase.test_set_string_value">(astm.tests.test_mapping.TimeFieldTestCase method)</a>
+</li>
+        </ul></li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.TimeFieldTestCase.test_set_time_value">test_set_time_value() (astm.tests.test_mapping.TimeFieldTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.TextFieldTestCase.test_set_utf8_value">test_set_utf8_value() (astm.tests.test_mapping.TextFieldTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.ComponentFieldTestCase.test_set_value">test_set_value() (astm.tests.test_mapping.ComponentFieldTestCase method)</a>
+
+        <ul>
+          <li><a href="astm.tests.html#astm.tests.test_mapping.DatetimeFieldTestCase.test_set_value">(astm.tests.test_mapping.DatetimeFieldTestCase method)</a>
+</li>
+          <li><a href="astm.tests.html#astm.tests.test_mapping.DecimalFieldTestCase.test_set_value">(astm.tests.test_mapping.DecimalFieldTestCase method)</a>
+</li>
+          <li><a href="astm.tests.html#astm.tests.test_mapping.IntegerTestCase.test_set_value">(astm.tests.test_mapping.IntegerTestCase method)</a>
+</li>
+          <li><a href="astm.tests.html#astm.tests.test_mapping.NotUsedFieldTestCase.test_set_value">(astm.tests.test_mapping.NotUsedFieldTestCase method)</a>
+</li>
+          <li><a href="astm.tests.html#astm.tests.test_mapping.RepeatedComponentFieldTestCase.test_set_value">(astm.tests.test_mapping.RepeatedComponentFieldTestCase method)</a>
+</li>
+          <li><a href="astm.tests.html#astm.tests.test_mapping.SetFieldTestCase.test_set_value">(astm.tests.test_mapping.SetFieldTestCase method)</a>
+</li>
+          <li><a href="astm.tests.html#astm.tests.test_mapping.TextFieldTestCase.test_set_value">(astm.tests.test_mapping.TextFieldTestCase method)</a>
+</li>
+        </ul></li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.ConstantFieldTestCase.test_set_value_if_none_default">test_set_value_if_none_default() (astm.tests.test_mapping.ConstantFieldTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.MappingTestCase.test_setitem">test_setitem() (astm.tests.test_mapping.MappingTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_codecs.ChecksummTestCase.test_short">test_short() (astm.tests.test_codecs.ChecksummTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_asynclib.DispatcherTests.test_strerror">test_strerror() (astm.tests.test_asynclib.DispatcherTests method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_client.ClientTestCase.test_terminate_on_exception_after_nake">test_terminate_on_exception_after_nake() (astm.tests.test_client.ClientTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_omnilab.OmnilabTestCase.test_terminator_request">test_terminator_request() (astm.tests.test_omnilab.OmnilabTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_omnilab.OmnilabTestCase.test_terminator_response">test_terminator_response() (astm.tests.test_omnilab.OmnilabTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_client.ClientTestCase.test_timeout_handler">test_timeout_handler() (astm.tests.test_client.ClientTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.MappingTestCase.test_to_astm_record">test_to_astm_record() (astm.tests.test_mapping.MappingTestCase method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_server.RecordsDispatcherTestCase.test_wrap_before_dispatch">test_wrap_before_dispatch() (astm.tests.test_server.RecordsDispatcherTestCase method)</a>
+</li>
+        <li><a href="astm.html#astm.mapping.TextField">TextField (class in astm.mapping)</a>, <a href="mapping.html#astm.mapping.TextField">[1]</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.TextFieldTestCase">TextFieldTestCase (class in astm.tests.test_mapping)</a>
+</li>
+        <li><a href="astm.html#astm.client.Emitter.throw">throw() (astm.client.Emitter method)</a>, <a href="protocol.html#astm.client.Emitter.throw">[1]</a>
+</li>
+        <li><a href="astm.html#astm.mapping.TimeField">TimeField (class in astm.mapping)</a>, <a href="mapping.html#astm.mapping.TimeField">[1]</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_mapping.TimeFieldTestCase">TimeFieldTestCase (class in astm.tests.test_mapping)</a>
+</li>
+        <li><a href="astm.html#astm.protocol.ASTMProtocol.timer">timer (astm.protocol.ASTMProtocol attribute)</a>, <a href="protocol.html#astm.protocol.ASTMProtocol.timer">[1]</a>
+</li>
+        <li><a href="astm.html#astm.mapping.Mapping.to_astm">to_astm() (astm.mapping.Mapping method)</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.utils.track_call">track_call() (in module astm.tests.utils)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="U" class="genindex-section">
+  <h2>U</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="astm.omnilab.html#astm.omnilab.server.Result.units">units (astm.omnilab.server.Result attribute)</a>
+</li>
+        <li><a href="astm.html#astm.asynclib.AsyncChat.use_encoding">use_encoding (astm.asynclib.AsyncChat attribute)</a>, <a href="asynclib.html#astm.asynclib.AsyncChat.use_encoding">[1]</a>
+</li>
+        <li><a href="astm.tests.html#astm.tests.test_asynclib.DispatcherWithSendTests.usepoll">usepoll (astm.tests.test_asynclib.DispatcherWithSendTests attribute)</a>
+
+        <ul>
+          <li><a href="astm.tests.html#astm.tests.test_asynclib.DispatcherWithSendTests_UsePoll.usepoll">(astm.tests.test_asynclib.DispatcherWithSendTests_UsePoll attribute)</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="astm.omnilab.html#astm.omnilab.common.CommonOrder.user_field_1">user_field_1 (astm.omnilab.common.CommonOrder attribute)</a>
+</li>
+        <li><a href="astm.omnilab.html#astm.omnilab.common.CommonOrder.user_field_2">user_field_2 (astm.omnilab.common.CommonOrder attribute)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="V" class="genindex-section">
+  <h2>V</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="astm.omnilab.html#astm.omnilab.common.CommonResult.value">value (astm.omnilab.common.CommonResult attribute)</a>
+</li>
+        <li><a href="astm.html#astm.mapping.Mapping.values">values() (astm.mapping.Mapping method)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="astm.omnilab.html#astm.omnilab.client.Header.version">version (astm.omnilab.client.Header attribute)</a>
+
+        <ul>
+          <li><a href="astm.omnilab.html#astm.omnilab.common.Header.version">(astm.omnilab.common.Header attribute)</a>
+</li>
+          <li><a href="astm.omnilab.html#astm.omnilab.server.Header.version">(astm.omnilab.server.Header attribute)</a>
+</li>
+        </ul></li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="W" class="genindex-section">
+  <h2>W</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="astm.html#astm.server.BaseRecordsDispatcher.wrap">wrap() (astm.server.BaseRecordsDispatcher method)</a>
+</li>
+        <li><a href="astm.html#astm.asynclib.AsyncChat.writable">writable() (astm.asynclib.AsyncChat method)</a>, <a href="asynclib.html#astm.asynclib.AsyncChat.writable">[1]</a>
+
+        <ul>
+          <li><a href="astm.html#astm.asynclib.Dispatcher.writable">(astm.asynclib.Dispatcher method)</a>, <a href="asynclib.html#astm.asynclib.Dispatcher.writable">[1]</a>
+</li>
+          <li><a href="astm.tests.html#astm.tests.test_asynclib.dispatcherwithsend_noread.writable">(astm.tests.test_asynclib.dispatcherwithsend_noread method)</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="astm.html#astm.asynclib.write">write() (in module astm.asynclib)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2025, Prasoon Pratham
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer no-toc">
+      
+      
+      
+    </aside>
+  </div>
+</div><script src="_static/documentation_options.js?v=8d563738"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/scripts/furo.js?v=5fa4622c"></script>
+    </body>
+</html>

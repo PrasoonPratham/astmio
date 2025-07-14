@@ -1,0 +1,686 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
+
+    <!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
+        <title>astm.codec - astmio 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=354aac6f" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=302659d7" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #eeffcc;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../index.html"><div class="brand">astmio 1.0.0 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
+  
+  
+  <span class="sidebar-brand-text">astmio 1.0.0 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../astm.html">astm package</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of astm package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../astm.omnilab.html">astm.omnilab package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../astm.tests.html">astm.tests package</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../changes.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../licence.html">Licence</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <h1>Source code for astm.codec</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (C) 2013 Alexander Shorin</span>
+<span class="c1"># All rights reserved.</span>
+<span class="c1">#</span>
+<span class="c1"># This software is licensed as described in the file COPYING, which</span>
+<span class="c1"># you should have received as part of this distribution.</span>
+<span class="c1">#</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterable</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>  <span class="c1"># Python 2</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.constants</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">STX</span><span class="p">,</span> <span class="n">ETX</span><span class="p">,</span> <span class="n">ETB</span><span class="p">,</span> <span class="n">CR</span><span class="p">,</span> <span class="n">LF</span><span class="p">,</span> <span class="n">CRLF</span><span class="p">,</span>
+    <span class="n">FIELD_SEP</span><span class="p">,</span> <span class="n">COMPONENT_SEP</span><span class="p">,</span> <span class="n">RECORD_SEP</span><span class="p">,</span> <span class="n">REPEAT_SEP</span><span class="p">,</span> <span class="n">ENCODING</span>
+<span class="p">)</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">izip_longest</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>  <span class="c1"># Python 3</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">zip_longest</span> <span class="k">as</span> <span class="n">izip_longest</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="decode">
+<a class="viewcode-back" href="../../codecs.html#astm.codec.decode">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">decode</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="n">ENCODING</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Common ASTM decoding function that tries to guess which kind of data it</span>
+<span class="sd">    handles.</span>
+
+<span class="sd">    If `data` starts with STX character (``0x02``) than probably it is</span>
+<span class="sd">    full ASTM message with checksum and other system characters.</span>
+
+<span class="sd">    If `data` starts with digit character (``0-9``) than probably it is</span>
+<span class="sd">    frame of records leading by his sequence number. No checksum is expected</span>
+<span class="sd">    in this case.</span>
+
+<span class="sd">    Otherwise it counts `data` as regular record structure.</span>
+
+<span class="sd">    Note, that `data` should be bytes, not unicode string even if you know his</span>
+<span class="sd">    `encoding`.</span>
+
+<span class="sd">    :param data: ASTM data object.</span>
+<span class="sd">    :type data: bytes</span>
+
+<span class="sd">    :param encoding: Data encoding.</span>
+<span class="sd">    :type encoding: str</span>
+
+<span class="sd">    :return: List of ASTM records with unicode data.</span>
+<span class="sd">    :rtype: list</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;bytes expected, got </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">data</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">STX</span><span class="p">):</span>  <span class="c1"># may be decode message \x02...\x03CS\r\n</span>
+        <span class="n">seq</span><span class="p">,</span> <span class="n">records</span><span class="p">,</span> <span class="n">cs</span> <span class="o">=</span> <span class="n">decode_message</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">encoding</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">records</span>
+    <span class="n">byte</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+    <span class="k">if</span>  <span class="n">byte</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
+        <span class="n">seq</span><span class="p">,</span> <span class="n">records</span> <span class="o">=</span> <span class="n">decode_frame</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">encoding</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">records</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">decode_record</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">encoding</span><span class="p">)]</span></div>
+
+
+
+<div class="viewcode-block" id="decode_message">
+<a class="viewcode-back" href="../../codecs.html#astm.codec.decode_message">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">decode_message</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">encoding</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Decodes complete ASTM message that is sent or received due</span>
+<span class="sd">    communication routines. It should contains checksum that would be</span>
+<span class="sd">    additionally verified.</span>
+
+<span class="sd">    :param message: ASTM message.</span>
+<span class="sd">    :type message: bytes</span>
+
+<span class="sd">    :param encoding: Data encoding.</span>
+<span class="sd">    :type encoding: str</span>
+
+<span class="sd">    :returns: Tuple of three elements:</span>
+
+<span class="sd">        * :class:`int` frame sequence number.</span>
+<span class="sd">        * :class:`list` of records with unicode data.</span>
+<span class="sd">        * :class:`bytes` checksum.</span>
+
+<span class="sd">    :raises:</span>
+<span class="sd">        * :exc:`ValueError` if ASTM message is malformed.</span>
+<span class="sd">        * :exc:`AssertionError` if checksum verification fails.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;bytes expected, got </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">message</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">message</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">STX</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Malformed ASTM message: Must start with STX.&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Find the last ETX or ETB, as this marks the end of the frame data</span>
+    <span class="n">frame_end_pos</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">rfind</span><span class="p">(</span><span class="n">ETX</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">frame_end_pos</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="n">frame_end_pos</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">rfind</span><span class="p">(</span><span class="n">ETB</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">frame_end_pos</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Malformed ASTM message: No ETX or ETB found.&#39;</span><span class="p">)</span>
+
+    <span class="c1"># The frame content for checksum includes the end character (ETX or ETB)</span>
+    <span class="n">frame_for_checksum</span> <span class="o">=</span> <span class="n">message</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="n">frame_end_pos</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># The trailer contains the checksum and final CR/LF</span>
+    <span class="n">trailer</span> <span class="o">=</span> <span class="n">message</span><span class="p">[</span><span class="n">frame_end_pos</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span>
+    <span class="n">cs</span> <span class="o">=</span> <span class="n">trailer</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="n">CRLF</span><span class="p">)</span>
+
+    <span class="c1"># Verify checksum</span>
+    <span class="n">ccs</span> <span class="o">=</span> <span class="n">make_checksum</span><span class="p">(</span><span class="n">frame_for_checksum</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">cs</span> <span class="o">!=</span> <span class="n">ccs</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Checksum failure: expected </span><span class="si">%r</span><span class="s1">, calculated </span><span class="si">%r</span><span class="s1">. Data may be corrupt.&#39;</span><span class="p">,</span>
+                    <span class="n">cs</span><span class="p">,</span> <span class="n">ccs</span><span class="p">)</span>
+
+    <span class="c1"># The actual records are in the frame *before* the ETX/ETB</span>
+    <span class="n">frame_content</span> <span class="o">=</span> <span class="n">frame_for_checksum</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">seq</span><span class="p">,</span> <span class="n">records</span> <span class="o">=</span> <span class="n">decode_frame</span><span class="p">(</span><span class="n">frame_content</span><span class="p">,</span> <span class="n">encoding</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">seq</span><span class="p">,</span> <span class="n">records</span><span class="p">,</span> <span class="n">cs</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;ascii&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">cs</span> <span class="k">else</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="decode_frame">
+<a class="viewcode-back" href="../../codecs.html#astm.codec.decode_frame">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">decode_frame</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">encoding</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Decodes ASTM frame: list of records optionally preceded by a sequence number.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;bytes expected, got </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">frame</span><span class="p">)</span>
+
+    <span class="n">seq_byte</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[:</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">seq_byte</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
+        <span class="n">seq</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">seq_byte</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;ascii&#39;</span><span class="p">))</span>
+        <span class="n">records_data</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">seq</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">records_data</span> <span class="o">=</span> <span class="n">frame</span>
+
+    <span class="c1"># Records are separated by RECORD_SEP (\r).</span>
+    <span class="c1"># A trailing separator will produce an empty string, which we should ignore.</span>
+    <span class="k">return</span> <span class="n">seq</span><span class="p">,</span> <span class="p">[</span><span class="n">decode_record</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="n">encoding</span><span class="p">)</span>
+                 <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">records_data</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">RECORD_SEP</span><span class="p">)</span> <span class="k">if</span> <span class="n">record</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="decode_record">
+<a class="viewcode-back" href="../../codecs.html#astm.codec.decode_record">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">decode_record</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="n">encoding</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Decodes ASTM record message.&quot;&quot;&quot;</span>
+    <span class="n">fields</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">record</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">FIELD_SEP</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">REPEAT_SEP</span> <span class="ow">in</span> <span class="n">item</span><span class="p">:</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="n">decode_repeated_component</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">encoding</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">COMPONENT_SEP</span> <span class="ow">in</span> <span class="n">item</span><span class="p">:</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="n">decode_component</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">encoding</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">encoding</span><span class="p">)</span>
+        <span class="n">fields</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="kc">None</span><span class="p">,</span> <span class="n">item</span><span class="p">][</span><span class="nb">bool</span><span class="p">(</span><span class="n">item</span><span class="p">)])</span>
+    <span class="k">return</span> <span class="n">fields</span></div>
+
+
+
+<div class="viewcode-block" id="decode_component">
+<a class="viewcode-back" href="../../codecs.html#astm.codec.decode_component">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">decode_component</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">encoding</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Decodes ASTM field component.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[[</span><span class="kc">None</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">encoding</span><span class="p">)][</span><span class="nb">bool</span><span class="p">(</span><span class="n">item</span><span class="p">)]</span>
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">field</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">COMPONENT_SEP</span><span class="p">)]</span></div>
+
+
+
+<div class="viewcode-block" id="decode_repeated_component">
+<a class="viewcode-back" href="../../codecs.html#astm.codec.decode_repeated_component">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">decode_repeated_component</span><span class="p">(</span><span class="n">component</span><span class="p">,</span> <span class="n">encoding</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Decodes ASTM field repeated component.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">decode_component</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">encoding</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">component</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">REPEAT_SEP</span><span class="p">)]</span></div>
+
+
+
+<div class="viewcode-block" id="encode">
+<a class="viewcode-back" href="../../codecs.html#astm.codec.encode">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">encode</span><span class="p">(</span><span class="n">records</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="n">ENCODING</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">seq</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Encodes list of records into single ASTM message, also called as &quot;packed&quot;</span>
+<span class="sd">    message.</span>
+
+<span class="sd">    If you need to get each record as standalone message use :func:`iter_encode`</span>
+<span class="sd">    instead.</span>
+
+<span class="sd">    If the result message is too large (greater than specified `size` if it&#39;s</span>
+<span class="sd">    not :const:`None`), than it will be split by chunks.</span>
+
+<span class="sd">    :param records: List of ASTM records.</span>
+<span class="sd">    :type records: list</span>
+
+<span class="sd">    :param encoding: Data encoding.</span>
+<span class="sd">    :type encoding: str</span>
+
+<span class="sd">    :param size: Chunk size in bytes.</span>
+<span class="sd">    :type size: int</span>
+
+<span class="sd">    :param seq: Frame start sequence number.</span>
+<span class="sd">    :type seq: int</span>
+
+<span class="sd">    :return: List of ASTM message chunks.</span>
+<span class="sd">    :rtype: list</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="n">encode_message</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">records</span><span class="p">,</span> <span class="n">encoding</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">size</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">split</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">size</span><span class="p">))</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">msg</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="iter_encode">
+<a class="viewcode-back" href="../../codecs.html#astm.codec.iter_encode">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">iter_encode</span><span class="p">(</span><span class="n">records</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="n">ENCODING</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">seq</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Encodes and emits each record as separate message.</span>
+
+<span class="sd">    If the result message is too large (greater than specified `size` if it&#39;s</span>
+<span class="sd">    not :const:`None`), than it will be split by chunks.</span>
+
+<span class="sd">    :yields: ASTM message chunks.</span>
+<span class="sd">    :rtype: str</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">records</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">encode_message</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="p">[</span><span class="n">record</span><span class="p">],</span> <span class="n">encoding</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">size</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">split</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+                <span class="n">seq</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">yield</span> <span class="n">chunk</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">seq</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">yield</span> <span class="n">msg</span></div>
+
+
+
+<div class="viewcode-block" id="encode_message">
+<a class="viewcode-back" href="../../codecs.html#astm.codec.encode_message">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">encode_message</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">records</span><span class="p">,</span> <span class="n">encoding</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Encodes ASTM message.</span>
+
+<span class="sd">    :param seq: Frame sequence number.</span>
+<span class="sd">    :type seq: int</span>
+
+<span class="sd">    :param records: List of ASTM records.</span>
+<span class="sd">    :type records: list</span>
+
+<span class="sd">    :param encoding: Data encoding.</span>
+<span class="sd">    :type encoding: str</span>
+
+<span class="sd">    :return: ASTM complete message with checksum and other control characters.</span>
+<span class="sd">    :rtype: str</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">RECORD_SEP</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">encode_record</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="n">encoding</span><span class="p">)</span>
+                           <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">records</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="nb">str</span><span class="p">(</span><span class="n">seq</span> <span class="o">%</span> <span class="mi">8</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(),</span> <span class="n">data</span><span class="p">,</span> <span class="n">CR</span><span class="p">,</span> <span class="n">ETX</span><span class="p">))</span>
+    <span class="k">return</span> <span class="sa">b</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">STX</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">make_checksum</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">CR</span><span class="p">,</span> <span class="n">LF</span><span class="p">])</span></div>
+
+
+
+<div class="viewcode-block" id="encode_record">
+<a class="viewcode-back" href="../../codecs.html#astm.codec.encode_record">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">encode_record</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="n">encoding</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Encodes single ASTM record.</span>
+
+<span class="sd">    :param record: ASTM record. Each :class:`str`-typed item counted as field</span>
+<span class="sd">                   value, one level nested :class:`list` counted as components</span>
+<span class="sd">                   and second leveled - as repeated components.</span>
+<span class="sd">    :type record: list</span>
+
+<span class="sd">    :param encoding: Data encoding.</span>
+<span class="sd">    :type encoding: str</span>
+
+<span class="sd">    :returns: Encoded ASTM record.</span>
+<span class="sd">    :rtype: str</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">fields</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">_append</span> <span class="o">=</span> <span class="n">fields</span><span class="o">.</span><span class="n">append</span>
+    <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">record</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+            <span class="n">_append</span><span class="p">(</span><span class="n">field</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
+            <span class="n">_append</span><span class="p">(</span><span class="n">encode_component</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">encoding</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">field</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">_append</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">_append</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">encoding</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">FIELD_SEP</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="encode_component">
+<a class="viewcode-back" href="../../codecs.html#astm.codec.encode_component">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">encode_component</span><span class="p">(</span><span class="n">component</span><span class="p">,</span> <span class="n">encoding</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Encodes ASTM record field components.&quot;&quot;&quot;</span>
+    <span class="n">items</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">_append</span> <span class="o">=</span> <span class="n">items</span><span class="o">.</span><span class="n">append</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">component</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+            <span class="n">_append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">encode_repeated_component</span><span class="p">(</span><span class="n">component</span><span class="p">,</span> <span class="n">encoding</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">item</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">_append</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">_append</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">encoding</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">COMPONENT_SEP</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">items</span><span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="n">COMPONENT_SEP</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="encode_repeated_component">
+<a class="viewcode-back" href="../../codecs.html#astm.codec.encode_repeated_component">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">encode_repeated_component</span><span class="p">(</span><span class="n">components</span><span class="p">,</span> <span class="n">encoding</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Encodes repeated components.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">REPEAT_SEP</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">encode_component</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">encoding</span><span class="p">)</span>
+                           <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">components</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="make_checksum">
+<a class="viewcode-back" href="../../codecs.html#astm.codec.make_checksum">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">make_checksum</span><span class="p">(</span><span class="n">message</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculates checksum for specified message.</span>
+
+<span class="sd">    :param message: ASTM message.</span>
+<span class="sd">    :type message: bytes</span>
+
+<span class="sd">    :returns: Checksum value that is actually byte sized integer in hex base</span>
+<span class="sd">    :rtype: bytes</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">message</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">ord</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">hex</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">message</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0xFF</span><span class="p">)[</span><span class="mi">2</span><span class="p">:]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="make_chunks">
+<a class="viewcode-back" href="../../astm.html#astm.codec.make_chunks">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">make_chunks</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+    <span class="n">iter_bytes</span> <span class="o">=</span> <span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="p">[</span><span class="sa">b</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">izip_longest</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">iter_bytes</span><span class="p">]</span> <span class="o">*</span> <span class="n">n</span><span class="p">,</span> <span class="n">fillvalue</span><span class="o">=</span><span class="sa">b</span><span class="s1">&#39;&#39;</span><span class="p">)]</span></div>
+
+
+
+<div class="viewcode-block" id="split">
+<a class="viewcode-back" href="../../codecs.html#astm.codec.split">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">split</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Split `msg` into chunks with specified `size`.</span>
+
+<span class="sd">    Chunk `size` value couldn&#39;t be less then 7 since each chunk goes with at</span>
+<span class="sd">    least 7 special characters: STX, frame number, ETX or ETB, checksum and</span>
+<span class="sd">    message terminator.</span>
+
+<span class="sd">    :param msg: ASTM message.</span>
+<span class="sd">    :type msg: bytes</span>
+
+<span class="sd">    :param size: Chunk size in bytes.</span>
+<span class="sd">    :type size: int</span>
+
+<span class="sd">    :yield: `bytes`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">stx</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">tail</span> <span class="o">=</span> <span class="n">msg</span><span class="p">[:</span><span class="mi">1</span><span class="p">],</span> <span class="n">msg</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">],</span> <span class="n">msg</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="o">-</span><span class="mi">6</span><span class="p">],</span> <span class="n">msg</span><span class="p">[</span><span class="o">-</span><span class="mi">6</span><span class="p">:]</span>
+    <span class="k">assert</span> <span class="n">stx</span> <span class="o">==</span> <span class="n">STX</span>
+    <span class="k">assert</span> <span class="n">frame</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">tail</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">CRLF</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">size</span> <span class="o">&gt;=</span> <span class="mi">7</span>
+    <span class="n">frame</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+    <span class="n">chunks</span> <span class="o">=</span> <span class="n">make_chunks</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">size</span> <span class="o">-</span> <span class="mi">7</span><span class="p">)</span>
+    <span class="n">chunks</span><span class="p">,</span> <span class="n">last</span> <span class="o">=</span> <span class="n">chunks</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">chunks</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">chunks</span><span class="p">):</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">((</span><span class="n">idx</span> <span class="o">+</span> <span class="n">frame</span><span class="p">)</span> <span class="o">%</span> <span class="mi">8</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(),</span> <span class="n">chunk</span><span class="p">,</span> <span class="n">ETB</span><span class="p">])</span>
+        <span class="k">yield</span> <span class="sa">b</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">STX</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">make_checksum</span><span class="p">(</span><span class="n">item</span><span class="p">),</span> <span class="n">CRLF</span><span class="p">])</span>
+    <span class="n">item</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">((</span><span class="n">idx</span> <span class="o">+</span> <span class="n">frame</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="mi">8</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(),</span> <span class="n">last</span><span class="p">,</span> <span class="n">CR</span><span class="p">,</span> <span class="n">ETX</span><span class="p">])</span>
+    <span class="k">yield</span> <span class="sa">b</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">STX</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">make_checksum</span><span class="p">(</span><span class="n">item</span><span class="p">),</span> <span class="n">CRLF</span><span class="p">])</span></div>
+
+
+
+<div class="viewcode-block" id="join">
+<a class="viewcode-back" href="../../codecs.html#astm.codec.join">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">join</span><span class="p">(</span><span class="n">chunks</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Merges ASTM message `chunks` into single message.</span>
+
+<span class="sd">    :param chunks: List of chunks as `bytes`.</span>
+<span class="sd">    :type chunks: iterable</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;1&#39;</span> <span class="o">+</span> <span class="sa">b</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="o">-</span><span class="mi">5</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">chunks</span><span class="p">)</span> <span class="o">+</span> <span class="n">ETX</span>
+    <span class="k">return</span> <span class="sa">b</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">STX</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">make_checksum</span><span class="p">(</span><span class="n">msg</span><span class="p">),</span> <span class="n">CRLF</span><span class="p">])</span></div>
+
+
+
+<div class="viewcode-block" id="is_chunked_message">
+<a class="viewcode-back" href="../../codecs.html#astm.codec.is_chunked_message">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_chunked_message</span><span class="p">(</span><span class="n">message</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Checks plain message for chunked byte.&quot;&quot;&quot;</span>
+    <span class="n">length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">message</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="n">ETB</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">message</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="n">message</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">ETB</span><span class="p">)</span> <span class="o">==</span> <span class="n">length</span> <span class="o">-</span> <span class="mi">5</span></div>
+
+</pre></div>
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2025, Prasoon Pratham
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer no-toc">
+      
+      
+      
+    </aside>
+  </div>
+</div><script src="../../_static/documentation_options.js?v=8d563738"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/scripts/furo.js?v=5fa4622c"></script>
+    </body>
+</html>
