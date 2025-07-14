@@ -29,3 +29,20 @@ classifiers = [
 [project.urls]
 "Homepage" = "https://github.com/PrasoonPratham/astmio"
 "Bug Tracker" = "https://github.com/PrasoonPratham/astmio/issues"
+
+[project.optional-dependencies]
+dev = ["ruff"]
+
+[tool.ruff]
+line-length = 88
+indent-width = 4
+
+[tool.ruff.lint]
+select = ["E", "F", "W"]
+ignore = []
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"

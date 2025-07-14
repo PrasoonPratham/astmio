@@ -16,22 +16,41 @@
 
 from astm.server import BaseRecordsDispatcher
 from astm.mapping import (
-    Component, ConstantField, ComponentField, DateTimeField, IntegerField,
-    SetField, TextField, NotUsedField, DateField
+    Component,
+    ConstantField,
+    ComponentField,
+    DateTimeField,
+    IntegerField,
+    SetField,
+    TextField,
+    NotUsedField,
+    DateField,
 )
 from .common import (
-    Header, Terminator, CommonPatient as Patient,
+    Header,
+    Terminator,
+    CommonPatient as Patient,
     CommonOrder,
     CommonResult,
     CommonComment,
-    Sender
+    Sender,
 )
 
 
-__all__ = ['RecordsDispatcher',
-           'Header', 'Patient', 'Order', 'Result', 'Terminator',
-           'CommentData', 'CompletionDate', 'Instrument', 'Operator',
-           'Sender', 'Test']
+__all__ = [
+    "RecordsDispatcher",
+    "Header",
+    "Patient",
+    "Order",
+    "Result",
+    "Terminator",
+    "CommentData",
+    "CompletionDate",
+    "Instrument",
+    "Operator",
+    "Sender",
+    "Test",
+]
 
 #: Instrument (analyser) information structure.
 #:
@@ -45,9 +64,9 @@ __all__ = ['RecordsDispatcher',
 #: :type position: str
 #:
 Instrument = Component.build(
-    TextField(name='_'),
-    TextField(name='rack', length=5),
-    TextField(name='position', length=3),
+    TextField(name="_"),
+    TextField(name="rack", length=5),
+    TextField(name="position", length=3),
 )
 
 
@@ -87,17 +106,17 @@ Instrument = Component.build(
 #: :type type: str
 #:
 Test = Component.build(
-    NotUsedField(name='_'),
-    NotUsedField(name='__'),
-    NotUsedField(name='___'),
-    TextField(name='assay_code', required=True, length=20),
-    TextField(name='assay_name', length=8),
-    TextField(name='dilution', length=10),
-    TextField(name='status', length=1),
-    TextField(name='reagent_lot', length=15),
-    TextField(name='reagent_number', length=5),
-    TextField(name='control_lot', length=25),
-    SetField(name='type', values=('CE', 'TX'))
+    NotUsedField(name="_"),
+    NotUsedField(name="__"),
+    NotUsedField(name="___"),
+    TextField(name="assay_code", required=True, length=20),
+    TextField(name="assay_name", length=8),
+    TextField(name="dilution", length=10),
+    TextField(name="status", length=1),
+    TextField(name="reagent_lot", length=15),
+    TextField(name="reagent_number", length=5),
+    TextField(name="control_lot", length=25),
+    SetField(name="type", values=("CE", "TX")),
 )
 
 
@@ -110,8 +129,8 @@ Test = Component.build(
 #: :type code_on_analyzer: str
 #:
 Operator = Component.build(
-    TextField(name='code_on_labonline', length=12),
-    TextField(name='code_on_analyzer', length=20),
+    TextField(name="code_on_labonline", length=12),
+    TextField(name="code_on_analyzer", length=20),
 )
 
 
@@ -124,8 +143,8 @@ Operator = Component.build(
 #: :type analyzer: datetime.datetime
 #:
 CompletionDate = Component.build(
-    DateTimeField(name='labonline'),
-    DateTimeField(name='analyzer'),
+    DateTimeField(name="labonline"),
+    DateTimeField(name="analyzer"),
 )
 
 #: Instrument (analyser) information structure.
@@ -140,22 +159,24 @@ CompletionDate = Component.build(
 #: :type position: str
 #:
 Instrument = Component.build(
-    NotUsedField(name='_'),
-    TextField(name='rack', length=5),
-    TextField(name='position', length=3),
+    NotUsedField(name="_"),
+    TextField(name="rack", length=5),
+    TextField(name="position", length=3),
 )
 
 #: Comment control text structure.
 #:
 CommentData = Component.build(
-    SetField(name='code', values=('PC', 'RC', 'SC', 'TC',
-        'CK', 'SE', 'CL', 'TA', 'SS', 'HQ', 'AL', 'PT')),
-    TextField(name='value'),
-    TextField(name='field_1'),
-    TextField(name='field_2'),
-    TextField(name='field_3'),
-    TextField(name='field_4'),
-    TextField(name='field_5'),
+    SetField(
+        name="code",
+        values=("PC", "RC", "SC", "TC", "CK", "SE", "CL", "TA", "SS", "HQ", "AL", "PT"),
+    ),
+    TextField(name="value"),
+    TextField(name="field_1"),
+    TextField(name="field_2"),
+    TextField(name="field_3"),
+    TextField(name="field_4"),
+    TextField(name="field_5"),
 )
 
 
@@ -261,9 +282,10 @@ class Order(CommonOrder):
     :param laboratory: Production laboratory. Not used.
     :type laboratory: None
     """
-    action_code = SetField(values=(None, 'Q'))
+
+    action_code = SetField(values=(None, "Q"))
     instrument = ComponentField(Instrument)
-    report_type = ConstantField(default='F')
+    report_type = ConstantField(default="F")
     test = ComponentField(Test)
 
 
@@ -327,14 +349,30 @@ class Result(CommonResult):
     :param instrument: Instrument ID. Required.
     :type instrument: :class:`Instrument`
     """
+
     abnormal_flag = SetField(
         field=IntegerField(),
         length=4,
-        values=(0, 1, 2, 3,
-                10, 11, 12, 13,
-                1000, 1001, 1002, 1003,
-                1010, 1011, 1012, 1013))
-    abnormality_nature = SetField(values=('N', 'L', 'H', 'LL', 'HH'))
+        values=(
+            0,
+            1,
+            2,
+            3,
+            10,
+            11,
+            12,
+            13,
+            1000,
+            1001,
+            1002,
+            1003,
+            1010,
+            1011,
+            1012,
+            1013,
+        ),
+    )
+    abnormality_nature = SetField(values=("N", "L", "H", "LL", "HH"))
     completed_at = ComponentField(CompletionDate)
     created_at = DateField()
     instrument = TextField(length=16)
@@ -342,7 +380,7 @@ class Result(CommonResult):
     references = TextField()
     sampled_at = DateField()
     started_at = DateTimeField(required=True)
-    status = SetField(values=('F', 'R'))
+    status = SetField(values=("F", "R"))
     test = ComponentField(Test)
     units = TextField(length=20)
 
@@ -366,20 +404,22 @@ class Comment(CommonComment):
     :param ctype: Comment type. Always ``G``.
     :type ctype: str
     """
-    source = ConstantField(default='I')
+
+    source = ConstantField(default="I")
     data = ComponentField(CommentData)
 
 
 class RecordsDispatcher(BaseRecordsDispatcher):
     """Omnilab specific records dispatcher. Automatically wraps records by
     related mappings."""
+
     def __init__(self, *args, **kwargs):
         super(RecordsDispatcher, self).__init__(*args, **kwargs)
         self.wrappers = {
-            'H': Header,
-            'P': Patient,
-            'O': Order,
-            'R': Result,
-            'C': Comment,
-            'L': Terminator
+            "H": Header,
+            "P": Patient,
+            "O": Order,
+            "R": Result,
+            "C": Comment,
+            "L": Terminator,
         }

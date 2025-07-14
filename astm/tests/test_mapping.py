@@ -13,34 +13,35 @@ import unittest
 import warnings
 from astm import mapping
 
-class FieldTestCase(unittest.TestCase):
 
+class FieldTestCase(unittest.TestCase):
     def test_init_default(self):
         f = mapping.Field()
-        self.assertTrue(hasattr(f, 'name'))
-        self.assertTrue(hasattr(f, 'default'))
+        self.assertTrue(hasattr(f, "name"))
+        self.assertTrue(hasattr(f, "default"))
         self.assertEqual(f.name, None)
         self.assertEqual(f.default, None)
 
     def test_init_with_custom_name(self):
-        f = mapping.Field(name='foo')
-        self.assertEqual(f.name, 'foo')
+        f = mapping.Field(name="foo")
+        self.assertEqual(f.name, "foo")
 
     def test_init_with_custom_default_value(self):
-        f = mapping.Field(default='foo')
-        self.assertEqual(f.default, 'foo')
+        f = mapping.Field(default="foo")
+        self.assertEqual(f.default, "foo")
 
     def test_callable_default_value(self):
         class Dummy(mapping.Mapping):
-            field = mapping.Field(default=lambda: 'foobar')
-        self.assertEqual(Dummy().field, 'foobar')
+            field = mapping.Field(default=lambda: "foobar")
+
+        self.assertEqual(Dummy().field, "foobar")
 
 
 class NotUsedFieldTestCase(unittest.TestCase):
-
     def setUp(self):
         class Dummy(mapping.Mapping):
             field = mapping.NotUsedField()
+
         self.Dummy = Dummy
 
     def test_get_value(self):
@@ -57,10 +58,10 @@ class NotUsedFieldTestCase(unittest.TestCase):
 
 
 class IntegerTestCase(unittest.TestCase):
-
     def setUp(self):
         class Dummy(mapping.Mapping):
             field = mapping.IntegerField()
+
         self.Dummy = Dummy
 
     def test_get_value(self):
@@ -74,62 +75,62 @@ class IntegerTestCase(unittest.TestCase):
 
     def test_set_string_value(self):
         obj = self.Dummy()
-        obj.field = '42'
+        obj.field = "42"
         self.assertEqual(obj.field, 42)
-        self.assertRaises(TypeError, setattr, obj, 'field', 'foo')
+        self.assertRaises(TypeError, setattr, obj, "field", "foo")
 
 
 class DecimalFieldTestCase(unittest.TestCase):
-
     def setUp(self):
         class Dummy(mapping.Mapping):
             field = mapping.DecimalField()
+
         self.Dummy = Dummy
 
     def test_get_value(self):
         obj = self.Dummy(field=3.14)
-        self.assertEqual(obj.field, decimal.Decimal('3.14'))
+        self.assertEqual(obj.field, decimal.Decimal("3.14"))
 
     def test_set_value(self):
         obj = self.Dummy()
         obj.field = 3.14
-        self.assertEqual(obj.field, decimal.Decimal('3.14'))
+        self.assertEqual(obj.field, decimal.Decimal("3.14"))
 
     def test_set_int_value(self):
         obj = self.Dummy()
         obj.field = 42
-        self.assertEqual(obj.field, decimal.Decimal('42'))
+        self.assertEqual(obj.field, decimal.Decimal("42"))
 
 
 class TextFieldTestCase(unittest.TestCase):
-
     def setUp(self):
         class Dummy(mapping.Mapping):
             field = mapping.TextField()
+
         self.Dummy = Dummy
 
     def test_get_value(self):
-        obj = self.Dummy(field='foo')
-        self.assertEqual(obj.field, 'foo')
+        obj = self.Dummy(field="foo")
+        self.assertEqual(obj.field, "foo")
 
     def test_set_value(self):
         obj = self.Dummy()
-        obj.field = 'привет'
-        self.assertEqual(obj.field, 'привет')
+        obj.field = "привет"
+        self.assertEqual(obj.field, "привет")
 
     def test_set_utf8_value(self):
         obj = self.Dummy()
-        obj.field = 'привет'.encode('utf-8')
-        self.assertEqual(obj.field, 'привет')
+        obj.field = "привет".encode("utf-8")
+        self.assertEqual(obj.field, "привет")
 
     def test_fail_set_non_utf8_value(self):
         obj = self.Dummy()
         try:
-            obj.field = 'привет'.encode('cp1251')
+            obj.field = "привет".encode("cp1251")
         except UnicodeDecodeError:
             pass
         else:
-            self.fail('%s expected' % UnicodeDecodeError)
+            self.fail("%s expected" % UnicodeDecodeError)
 
     def test_fail_set_non_string_value(self):
         obj = self.Dummy()
@@ -138,19 +139,19 @@ class TextFieldTestCase(unittest.TestCase):
         except TypeError:
             pass
         else:
-            self.fail('%s expected' % TypeError)
+            self.fail("%s expected" % TypeError)
 
     def test_raw_value(self):
         obj = self.Dummy()
-        obj.field = 'привет'
-        self.assertEqual(obj._data['field'], 'привет')
+        obj.field = "привет"
+        self.assertEqual(obj._data["field"], "привет")
 
 
 class DateFieldTestCase(unittest.TestCase):
-
     def setUp(self):
         class Dummy(mapping.Mapping):
             field = mapping.DateField()
+
         self.Dummy = Dummy
         self.datetime = datetime.datetime(2009, 2, 13, 23, 31, 30)
         self.date = datetime.datetime(2009, 2, 13)
@@ -176,20 +177,21 @@ class DateFieldTestCase(unittest.TestCase):
     def test_raw_value(self):
         obj = self.Dummy()
         obj.field = self.datetime
-        self.assertEqual(obj._data['field'],
-                         self.date.strftime(obj._fields[0][1].format))
+        self.assertEqual(
+            obj._data["field"], self.date.strftime(obj._fields[0][1].format)
+        )
 
     def test_set_string_value(self):
         obj = self.Dummy()
-        obj.field = '20090213'
-        self.assertRaises(ValueError, setattr, obj, 'field', '1234567')
+        obj.field = "20090213"
+        self.assertRaises(ValueError, setattr, obj, "field", "1234567")
 
 
 class TimeFieldTestCase(unittest.TestCase):
-
     def setUp(self):
         class Dummy(mapping.Mapping):
             field = mapping.TimeField()
+
         self.Dummy = Dummy
         self.datetime = datetime.datetime(2009, 2, 13, 23, 31, 30)
         self.time = datetime.time(23, 31, 30)
@@ -215,20 +217,21 @@ class TimeFieldTestCase(unittest.TestCase):
     def test_raw_value(self):
         obj = self.Dummy()
         obj.field = self.datetime
-        self.assertEqual(obj._data['field'],
-                         self.time.strftime(obj._fields[0][1].format))
+        self.assertEqual(
+            obj._data["field"], self.time.strftime(obj._fields[0][1].format)
+        )
 
     def test_set_string_value(self):
         obj = self.Dummy()
-        obj.field = '111213'
-        self.assertRaises(ValueError, setattr, obj, 'field', '314159')
+        obj.field = "111213"
+        self.assertRaises(ValueError, setattr, obj, "field", "314159")
 
 
 class DatetimeFieldTestCase(unittest.TestCase):
-
     def setUp(self):
         class Dummy(mapping.Mapping):
             field = mapping.DateTimeField()
+
         self.Dummy = Dummy
         self.datetime = datetime.datetime(2009, 2, 13, 23, 31, 30)
         self.date = datetime.datetime(2009, 2, 13)
@@ -254,216 +257,223 @@ class DatetimeFieldTestCase(unittest.TestCase):
     def test_raw_value(self):
         obj = self.Dummy()
         obj.field = self.datetime
-        self.assertEqual(obj._data['field'],
-                         self.datetime.strftime(obj._fields[0][1].format))
+        self.assertEqual(
+            obj._data["field"], self.datetime.strftime(obj._fields[0][1].format)
+        )
 
     def test_set_string_value(self):
         obj = self.Dummy()
-        obj.field = '20090213233130'
-        self.assertRaises(ValueError, setattr, obj, 'field', '12345678901234')
+        obj.field = "20090213233130"
+        self.assertRaises(ValueError, setattr, obj, "field", "12345678901234")
 
 
 class ConstantFieldTestCase(unittest.TestCase):
-
     def test_get_value(self):
         class Dummy(mapping.Mapping):
             field = mapping.ConstantField(default=42)
+
         obj = Dummy()
         self.assertEqual(obj.field, 42)
 
     def test_set_value_if_none_default(self):
         class Dummy(mapping.Mapping):
-            field = mapping.ConstantField(default='foo')
+            field = mapping.ConstantField(default="foo")
+
         obj = Dummy()
-        obj.field = 'foo'
-        self.assertEqual(obj.field, 'foo')
+        obj.field = "foo"
+        self.assertEqual(obj.field, "foo")
 
     def test_fail_override_setted_value(self):
         class Dummy(mapping.Mapping):
-            field = mapping.ConstantField(default='foo')
+            field = mapping.ConstantField(default="foo")
+
         obj = Dummy()
-        obj.field = 'foo'
-        self.assertEqual(obj.field, 'foo')
-        self.assertRaises(ValueError, setattr, obj, 'field', 'bar')
+        obj.field = "foo"
+        self.assertEqual(obj.field, "foo")
+        self.assertRaises(ValueError, setattr, obj, "field", "bar")
 
     def test_restrict_new_values_by_default_one(self):
         class Dummy(mapping.Mapping):
-            field = mapping.ConstantField(default='foo')
+            field = mapping.ConstantField(default="foo")
+
         obj = Dummy()
-        self.assertRaises(ValueError, setattr, obj, 'field', 'bar')
-        obj.field = 'foo'
-        self.assertEqual(obj.field, 'foo')
+        self.assertRaises(ValueError, setattr, obj, "field", "bar")
+        obj.field = "foo"
+        self.assertEqual(obj.field, "foo")
 
     def test_raw_value(self):
         class Dummy(mapping.Mapping):
-            field = mapping.ConstantField(default='foo')
+            field = mapping.ConstantField(default="foo")
+
         obj = Dummy()
-        obj.field = 'foo'
-        self.assertEqual(obj._data['field'], 'foo')
+        obj.field = "foo"
+        self.assertEqual(obj._data["field"], "foo")
 
     def test_raw_value_should_be_string(self):
         class Dummy(mapping.Mapping):
             field = mapping.ConstantField(default=42)
+
         obj = Dummy()
         obj.field = 42
-        self.assertEqual(obj._data['field'], '42')
+        self.assertEqual(obj._data["field"], "42")
 
     def test_always_required(self):
-        field = mapping.ConstantField(default='test')
+        field = mapping.ConstantField(default="test")
         assert field.required
-        self.assertRaises(TypeError, mapping.ConstantField, default='test', required=False)
+        self.assertRaises(
+            TypeError, mapping.ConstantField, default="test", required=False
+        )
 
     def test_default_value_should_be_defined(self):
         self.assertRaises(ValueError, mapping.ConstantField)
 
 
 class SetFieldTestCase(unittest.TestCase):
-
     def setUp(self):
         class Dummy(mapping.Mapping):
-            field = mapping.SetField(values=['foo', 'bar', 'baz'])
+            field = mapping.SetField(values=["foo", "bar", "baz"])
+
         self.Dummy = Dummy
 
     def test_get_value(self):
-        obj = self.Dummy(field='foo')
-        self.assertEqual(obj.field, 'foo')
+        obj = self.Dummy(field="foo")
+        self.assertEqual(obj.field, "foo")
 
     def test_set_value(self):
         obj = self.Dummy()
-        obj.field = 'bar'
-        self.assertEqual(obj.field, 'bar')
+        obj.field = "bar"
+        self.assertEqual(obj.field, "bar")
 
     def test_restrict_new_values_by_specified_set(self):
         obj = self.Dummy()
-        self.assertRaises(ValueError, setattr, obj, 'field', 'boo')
+        self.assertRaises(ValueError, setattr, obj, "field", "boo")
 
     def test_reject_any_value(self):
         class Dummy(mapping.Mapping):
             field = mapping.SetField()
+
         obj = Dummy()
-        self.assertRaises(ValueError, setattr, obj, 'field', 'bar')
-        self.assertRaises(ValueError, setattr, obj, 'field', 'foo')
+        self.assertRaises(ValueError, setattr, obj, "field", "bar")
+        self.assertRaises(ValueError, setattr, obj, "field", "foo")
         obj.field = None
 
     def test_custom_field(self):
         class Dummy(mapping.Mapping):
-            field = mapping.SetField(values=[1, 2, 3],
-                                     field=mapping.IntegerField())
+            field = mapping.SetField(values=[1, 2, 3], field=mapping.IntegerField())
+
         obj = Dummy()
         obj.field = 1
-        self.assertEqual(obj._data['field'], '1')
+        self.assertEqual(obj._data["field"], "1")
         obj.field = 2
-        self.assertEqual(obj._data['field'], '2')
+        self.assertEqual(obj._data["field"], "2")
         obj.field = 3
-        self.assertEqual(obj._data['field'], '3')
-
+        self.assertEqual(obj._data["field"], "3")
 
     def test_raw_value(self):
         obj = self.Dummy()
-        obj.field = 'foo'
-        self.assertEqual(obj._data['field'], 'foo')
+        obj.field = "foo"
+        self.assertEqual(obj._data["field"], "foo")
 
 
 class ComponentFieldTestCase(unittest.TestCase):
-
     def setUp(self):
         class Dummy(mapping.Mapping):
             field = mapping.ComponentField(
-                mapping = mapping.Component.build(
-                    mapping.Field(name='foo'),
-                    mapping.IntegerField(name='bar'),
-                    mapping.ConstantField(name='baz', default='42')
+                mapping=mapping.Component.build(
+                    mapping.Field(name="foo"),
+                    mapping.IntegerField(name="bar"),
+                    mapping.ConstantField(name="baz", default="42"),
                 )
             )
+
         self.Dummy = Dummy
 
     def test_get_value(self):
-        obj = self.Dummy(field=['foo', 14, '42'])
-        self.assertEqual(obj.field, ['foo', 14, '42'])
+        obj = self.Dummy(field=["foo", 14, "42"])
+        self.assertEqual(obj.field, ["foo", 14, "42"])
 
     def test_set_value(self):
         obj = self.Dummy()
-        self.assertRaises(TypeError, setattr, obj, 'field', 42)
-        self.assertRaises(ValueError, setattr, obj, 'field', [1, 2, 3])
-        obj.field = ['test', 24, '42']
-        self.assertEqual(obj.field, ['test', 24, '42'])
+        self.assertRaises(TypeError, setattr, obj, "field", 42)
+        self.assertRaises(ValueError, setattr, obj, "field", [1, 2, 3])
+        obj.field = ["test", 24, "42"]
+        self.assertEqual(obj.field, ["test", 24, "42"])
 
     def test_iter(self):
-        obj = self.Dummy(field=['foo', 14, '42'])
-        self.assertEqual(list(obj.field), ['foo', 14, '42'])
+        obj = self.Dummy(field=["foo", 14, "42"])
+        self.assertEqual(list(obj.field), ["foo", 14, "42"])
 
     def test_raw_value(self):
         obj = self.Dummy()
-        obj.field = ['foo', 14, '42']
-        self.assertEqual(obj._data['field'], ['foo', 14, '42'])
+        obj.field = ["foo", 14, "42"]
+        self.assertEqual(obj._data["field"], ["foo", 14, "42"])
 
     def test_set_string_value(self):
         obj = self.Dummy()
-        obj.field = 'foo'
-        self.assertEqual(obj.field[0], 'foo')
+        obj.field = "foo"
+        self.assertEqual(obj.field[0], "foo")
         self.assertEqual(obj.field[1], None)
-        self.assertEqual(obj.field[2], '42')
+        self.assertEqual(obj.field[2], "42")
 
 
 class RepeatedComponentFieldTestCase(unittest.TestCase):
-
     def setUp(self):
         class Dummy(mapping.Mapping):
             field = mapping.RepeatedComponentField(
                 mapping.Component.build(
-                    mapping.TextField(name='key'),
-                    mapping.IntegerField(name='value'),
+                    mapping.TextField(name="key"),
+                    mapping.IntegerField(name="value"),
                 )
             )
+
         class Thing(mapping.Mapping):
             numbers = mapping.RepeatedComponentField(
-                mapping.Component.build(
-                    mapping.IntegerField(name='value')
-                )
+                mapping.Component.build(mapping.IntegerField(name="value"))
             )
+
         self.Dummy = Dummy
         self.Thing = Thing
 
     def test_get_value(self):
-        obj = self.Dummy(field=[['foo', 1], ['bar', 2], ['baz', 3]])
-        self.assertEqual(obj.field, [['foo', 1], ['bar', 2], ['baz', 3]])
+        obj = self.Dummy(field=[["foo", 1], ["bar", 2], ["baz", 3]])
+        self.assertEqual(obj.field, [["foo", 1], ["bar", 2], ["baz", 3]])
 
     def test_set_value(self):
         obj = self.Dummy()
-        self.assertRaises(TypeError, setattr, obj, 'field', 42)
-        obj.field = [['foo', 42]]
-        self.assertEqual(obj.field, [['foo', 42]])
+        self.assertRaises(TypeError, setattr, obj, "field", 42)
+        obj.field = [["foo", 42]]
+        self.assertEqual(obj.field, [["foo", 42]])
 
     def test_fail_on_set_strings(self):
         obj = self.Dummy()
-        obj.field = 'foo' # WHY?
-        #self.assertRaises(TypeError, setattr, obj, 'field', 'foo')
+        obj.field = "foo"  # WHY?
+        # self.assertRaises(TypeError, setattr, obj, 'field', 'foo')
 
     def test_iter(self):
-        obj = self.Dummy(field=[['foo', 14]])
-        self.assertEqual(list(obj.field), [['foo', 14]])
+        obj = self.Dummy(field=[["foo", 14]])
+        self.assertEqual(list(obj.field), [["foo", 14]])
 
     def test_getter_returns_list(self):
-        obj = self.Dummy([['foo', 42]])
+        obj = self.Dummy([["foo", 42]])
         self.assertTrue(isinstance(obj.field, list))
 
     def test_proxy_delitem(self):
-        obj = self.Dummy([['foo', 1], ['bar', 2]])
+        obj = self.Dummy([["foo", 1], ["bar", 2]])
         del obj.field[0]
         self.assertEqual(len(obj.field), 1)
-        self.assertEqual(obj.field[0], ['bar', 2])
+        self.assertEqual(obj.field[0], ["bar", 2])
 
     def test_proxy_append(self):
-        obj = self.Dummy([['foo', 1]])
-        self.assertEqual(obj.field[0], ['foo', 1])
-        obj.field.append(['bar', 2])
-        self.assertEqual(obj.field[1], ['bar', 2])
+        obj = self.Dummy([["foo", 1]])
+        self.assertEqual(obj.field[0], ["foo", 1])
+        obj.field.append(["bar", 2])
+        self.assertEqual(obj.field[1], ["bar", 2])
 
     def test_proxy_extend(self):
-        obj = self.Dummy([['foo', 1]])
-        obj.field.extend([['bar', 2], ['baz', 3]])
+        obj = self.Dummy([["foo", 1]])
+        obj.field.extend([["bar", 2], ["baz", 3]])
         self.assertEqual(len(obj.field), 3)
-        self.assertEqual(obj.field[2], ['baz', 3])
+        self.assertEqual(obj.field[2], ["baz", 3])
 
     def test_proxy_contains(self):
         obj = self.Thing(numbers=[[i] for i in range(5)])
@@ -489,7 +499,7 @@ class RepeatedComponentFieldTestCase(unittest.TestCase):
 
     def test_fail_proxy_index_negative_start(self):
         obj = self.Thing(numbers=[[1], [2], [3]])
-        self.assertRaises(ValueError, obj.numbers.index, 2, -1 ,3)
+        self.assertRaises(ValueError, obj.numbers.index, 2, -1, 3)
 
     def test_proxy_insert(self):
         obj = self.Thing(numbers=[[1], [2], [3]])
@@ -530,10 +540,10 @@ class RepeatedComponentFieldTestCase(unittest.TestCase):
         class Dummy(mapping.Mapping):
             numbers = mapping.RepeatedComponentField(
                 mapping.Component.build(
-                    mapping.IntegerField(name='a'),
-                    mapping.IntegerField(name='b')
+                    mapping.IntegerField(name="a"), mapping.IntegerField(name="b")
                 )
             )
+
         obj = Dummy(numbers=[[4, 2], [2, 3], [0, 1]])
         self.assertRaises(NotImplementedError, obj.numbers.sort)
 
@@ -645,66 +655,70 @@ class RepeatedComponentFieldTestCase(unittest.TestCase):
 
 
 class MappingTestCase(unittest.TestCase):
-
     def setUp(self):
         class Dummy(mapping.Mapping):
-            foo = mapping.Field(default='bar')
-            bar = mapping.ComponentField(mapping=mapping.Component.build(
-                mapping.IntegerField(name='a'),
-                mapping.IntegerField(name='b'),
-                mapping.IntegerField(name='c'),
-            ), default=[1,2,3])
+            foo = mapping.Field(default="bar")
+            bar = mapping.ComponentField(
+                mapping=mapping.Component.build(
+                    mapping.IntegerField(name="a"),
+                    mapping.IntegerField(name="b"),
+                    mapping.IntegerField(name="c"),
+                ),
+                default=[1, 2, 3],
+            )
+
         class Thing(mapping.Mapping):
             numbers = mapping.RepeatedComponentField(
                 mapping.Component.build(
-                    mapping.IntegerField(name='a'),
-                    mapping.IntegerField(name='b')
+                    mapping.IntegerField(name="a"), mapping.IntegerField(name="b")
                 )
             )
+
         self.Dummy = Dummy
         self.Thing = Thing
 
     def test_equal(self):
-        obj = self.Dummy('foo', [3, 2, 1])
-        self.assertEqual(obj, ['foo', (3, 2, 1)])
-        self.assertNotEqual(obj, ['foo'])
+        obj = self.Dummy("foo", [3, 2, 1])
+        self.assertEqual(obj, ["foo", (3, 2, 1)])
+        self.assertNotEqual(obj, ["foo"])
 
     def test_iter(self):
-        obj = self.Dummy('foo', [3, 2, 1])
-        self.assertEqual(list(obj), ['foo', [3, 2, 1]])
+        obj = self.Dummy("foo", [3, 2, 1])
+        self.assertEqual(list(obj), ["foo", [3, 2, 1]])
 
     def test_len(self):
-        obj = self.Dummy('foo', [3, 2, 1])
+        obj = self.Dummy("foo", [3, 2, 1])
         self.assertEqual(len(obj), 2)
         self.assertEqual(len(obj.bar), 3)
 
     def test_contains(self):
-        obj = self.Dummy('foo', [3, 2, 1])
-        assert 'foo' in obj
+        obj = self.Dummy("foo", [3, 2, 1])
+        assert "foo" in obj
 
     def test_getitem(self):
-        obj = self.Dummy('foo', [3, 2, 1])
+        obj = self.Dummy("foo", [3, 2, 1])
         self.assertEqual(obj[1][0], 3)
 
     def test_setitem(self):
-        obj = self.Dummy('foo', [3, 2, 1])
+        obj = self.Dummy("foo", [3, 2, 1])
         obj[1][0] = 42
         self.assertEqual(obj[1][0], 42)
 
     def test_delitem(self):
-        obj = self.Dummy('foo', [3, 2, 1])
+        obj = self.Dummy("foo", [3, 2, 1])
         del obj[1][1]
         self.assertEqual(obj[1][1], None)
 
     def test_to_astm_record(self):
-        obj = self.Dummy('foo', [3, 2, 1])
-        self.assertEqual(obj.to_astm(), ['foo', ['3', '2', '1']])
+        obj = self.Dummy("foo", [3, 2, 1])
+        self.assertEqual(obj.to_astm(), ["foo", ["3", "2", "1"]])
         obj = self.Thing(numbers=[[4, 2], [2, 3], [0, 1]])
-        self.assertEqual(obj.to_astm(), [[['4', '2'], ['2', '3'], ['0', '1']]])
+        self.assertEqual(obj.to_astm(), [[["4", "2"], ["2", "3"], ["0", "1"]]])
 
     def test_required_field(self):
         class Dummy(mapping.Mapping):
             field = mapping.Field(required=True)
+
         obj = Dummy()
         self.assertTrue(obj.field is None)
         self.assertRaises(ValueError, obj.to_astm)
@@ -712,12 +726,13 @@ class MappingTestCase(unittest.TestCase):
     def test_field_max_length(self):
         class Dummy(mapping.Mapping):
             field = mapping.Field(length=10)
+
         obj = Dummy()
-        obj.field = '-' * 9
+        obj.field = "-" * 9
         obj.field = None
-        obj.field = '-' * 10
-        self.assertRaises(ValueError, setattr, obj, 'field', '-' * 11)
+        obj.field = "-" * 10
+        self.assertRaises(ValueError, setattr, obj, "field", "-" * 11)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

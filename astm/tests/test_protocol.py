@@ -12,6 +12,7 @@ from astm import constants
 from astm.tests.utils import DummyMixIn, track_call
 from astm import protocol
 
+
 class DummyTimer(object):
     def __init__(self, timeout, callback):
         self.timeout = timeout
@@ -33,7 +34,6 @@ class DummyProto(DummyMixIn, protocol.ASTMProtocol):
 
 
 class DispatcherTestCase(unittest.TestCase):
-
     def test_found_terminator(self):
         obj = DummyProto()
         obj.dispatch = track_call(obj.dispatch)
@@ -47,7 +47,7 @@ class DispatcherTestCase(unittest.TestCase):
     def test_found_terminator_skip_empty(self):
         obj = DummyProto()
         obj.dispatch = track_call(obj.dispatch)
-        obj.inbox.append('')
+        obj.inbox.append("")
         obj.inbox.append(None)
         obj.found_terminator()
         self.assertTrue(not obj.dispatch.was_called)
@@ -85,15 +85,15 @@ class DispatcherTestCase(unittest.TestCase):
     def test_default_hanlder(self):
         obj = DummyProto()
         obj.default_handler = track_call(obj.default_handler)
-        self.assertRaises(ValueError, obj.dispatch, b'foo')
+        self.assertRaises(ValueError, obj.dispatch, b"foo")
         self.assertTrue(obj.default_handler.was_called)
 
     def test_push_event_response(self):
         obj = DummyProto()
-        obj.on_message = lambda: '42'
+        obj.on_message = lambda: "42"
         obj.dispatch(constants.STX)
-        self.assertEqual(obj.outbox.pop(), '42')
+        self.assertEqual(obj.outbox.pop(), "42")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

@@ -7,6 +7,7 @@
 # you should have received as part of this distribution.
 #
 
+
 class BaseASTMError(Exception):
     """Base ASTM error."""
 
@@ -22,5 +23,3 @@ class NotAccepted(BaseException):
 class Rejected(BaseASTMError):
     """Should be raised after unsuccessful attempts to send data
     (receiver sends with <NAK> reply)."""
-
-

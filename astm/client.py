@@ -9,13 +9,11 @@
 import asyncio
 import logging
 from .codec import encode
-from .constants import ACK, ENQ, EOT, NAK, ENCODING
-from .exceptions import NotAccepted
-from .mapping import Record
+from .constants import ACK, ENQ, EOT, ENCODING
 
 log = logging.getLogger(__name__)
 
-__all__ = ['Client']
+__all__ = ["Client"]
 
 
 class Client:
@@ -34,10 +32,10 @@ class Client:
     :param timeout: Time to wait for response from server in seconds.
     :type timeout: int
     """
+
     encoding = ENCODING
 
-    def __init__(self, host='localhost', port=15200,
-                 encoding=None, timeout=10):
+    def __init__(self, host="localhost", port=15200, encoding=None, timeout=10):
         self.host = host
         self.port = port
         self.encoding = encoding or self.encoding
@@ -49,16 +47,15 @@ class Client:
         """
         Connects to the server.
         """
-        self._reader, self._writer = await asyncio.open_connection(
-            self.host, self.port)
-        peername = self._writer.get_extra_info('peername')
-        log.info('Connection established to %s', peername)
+        self._reader, self._writer = await asyncio.open_connection(self.host, self.port)
+        peername = self._writer.get_extra_info("peername")
+        log.info("Connection established to %s", peername)
 
     async def _read(self):
         try:
             return await asyncio.wait_for(self._reader.read(1), self.timeout)
         except asyncio.TimeoutError:
-            log.error('Connection timed out.')
+            log.error("Connection timed out.")
             self.close()
             await self.wait_closed()
             return None
@@ -85,7 +82,7 @@ class Client:
 
         response = await self._read()
         if response != ACK:
-            log.error('Server did not acknowledge session start.')
+            log.error("Server did not acknowledge session start.")
             self._writer.write(EOT)
             await self._writer.drain()
             return False
@@ -97,14 +94,14 @@ class Client:
             await self._writer.drain()
             response = await self._read()
             if response != ACK:
-                log.error('Server did not acknowledge message: %r', message)
+                log.error("Server did not acknowledge message: %r", message)
                 self._writer.write(EOT)
                 await self._writer.drain()
                 return False
-        
+
         self._writer.write(EOT)
         await self._writer.drain()
-        log.info('Session finished successfully.')
+        log.info("Session finished successfully.")
         return True
 
     def close(self):
@@ -122,4 +119,4 @@ class Client:
             await self._writer.wait_closed()
             self._reader = None
             self._writer = None
-            log.info('Connection closed.')
+            log.info("Connection closed.")

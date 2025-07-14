@@ -16,16 +16,26 @@ required fields for most implementations. Others are marked as
 ASTM realisation.
 """
 
-
 from datetime import datetime
 from .mapping import (
-    Record, ConstantField, DateTimeField, IntegerField, NotUsedField,
-    TextField, RepeatedComponentField, Component
-
+    Record,
+    ConstantField,
+    DateTimeField,
+    IntegerField,
+    NotUsedField,
+    TextField,
+    RepeatedComponentField,
+    Component,
 )
 
-__all__ = ['HeaderRecord', 'PatientRecord', 'OrderRecord',
-           'ResultRecord', 'CommentRecord', 'TerminatorRecord']
+__all__ = [
+    "HeaderRecord",
+    "PatientRecord",
+    "OrderRecord",
+    "ResultRecord",
+    "CommentRecord",
+    "TerminatorRecord",
+]
 
 #: +-----+--------------+---------------------------------+-------------------+
 #: |  #  | ASTM Field # | ASTM Name                       | Python alias      |
@@ -60,25 +70,26 @@ __all__ = ['HeaderRecord', 'PatientRecord', 'OrderRecord',
 #: +-----+--------------+---------------------------------+-------------------+
 #:
 HeaderRecord = Record.build(
-    ConstantField(name='type', default='H'),
-    RepeatedComponentField(Component.build(
-        ConstantField(name='_', default=''),
-        TextField(name='__')
-    ), name='delimeter', default=[[], ['', '&']]),
+    ConstantField(name="type", default="H"),
+    RepeatedComponentField(
+        Component.build(ConstantField(name="_", default=""), TextField(name="__")),
+        name="delimeter",
+        default=[[], ["", "&"]],
+    ),
     # ^^^ workaround to define field:
     # ConstantField(name='delimeter', default='\^&'),
-    NotUsedField(name='message_id'),
-    NotUsedField(name='password'),
-    NotUsedField(name='sender'),
-    NotUsedField(name='address'),
-    NotUsedField(name='reserved'),
-    NotUsedField(name='phone'),
-    NotUsedField(name='caps'),
-    NotUsedField(name='receiver'),
-    NotUsedField(name='comments'),
-    ConstantField(name='processing_id', default='P'),
-    NotUsedField(name='version'),
-    DateTimeField(name='timestamp', default=datetime.now, required=True),
+    NotUsedField(name="message_id"),
+    NotUsedField(name="password"),
+    NotUsedField(name="sender"),
+    NotUsedField(name="address"),
+    NotUsedField(name="reserved"),
+    NotUsedField(name="phone"),
+    NotUsedField(name="caps"),
+    NotUsedField(name="receiver"),
+    NotUsedField(name="comments"),
+    ConstantField(name="processing_id", default="P"),
+    NotUsedField(name="version"),
+    DateTimeField(name="timestamp", default=datetime.now, required=True),
 )
 
 
@@ -139,41 +150,41 @@ HeaderRecord = Record.build(
 #: +-----+--------------+---------------------------------+-------------------+
 #:
 PatientRecord = Record.build(
-    ConstantField(name='type', default='P'),
-    IntegerField(name='seq', default=1, required=True),
-    NotUsedField(name='practice_id'),
-    NotUsedField(name='laboratory_id'),
-    NotUsedField(name='id'),
-    NotUsedField(name='name'),
-    NotUsedField(name='maiden_name'),
-    NotUsedField(name='birthdate'),
-    NotUsedField(name='sex'),
-    NotUsedField(name='race'),
-    NotUsedField(name='address'),
-    NotUsedField(name='reserved'),
-    NotUsedField(name='phone'),
-    NotUsedField(name='physician_id'),
-    NotUsedField(name='special_1'),
-    NotUsedField(name='special_2'),
-    NotUsedField(name='height'),
-    NotUsedField(name='weight'),
-    NotUsedField(name='diagnosis'),
-    NotUsedField(name='medication'),
-    NotUsedField(name='diet'),
-    NotUsedField(name='practice_field_1'),
-    NotUsedField(name='practice_field_2'),
-    NotUsedField(name='admission_date'),
-    NotUsedField(name='admission_status'),
-    NotUsedField(name='location'),
-    NotUsedField(name='diagnostic_code_nature'),
-    NotUsedField(name='diagnostic_code'),
-    NotUsedField(name='religion'),
-    NotUsedField(name='martial_status'),
-    NotUsedField(name='isolation_status'),
-    NotUsedField(name='language'),
-    NotUsedField(name='hospital_service'),
-    NotUsedField(name='hospital_institution'),
-    NotUsedField(name='dosage_category'),
+    ConstantField(name="type", default="P"),
+    IntegerField(name="seq", default=1, required=True),
+    NotUsedField(name="practice_id"),
+    NotUsedField(name="laboratory_id"),
+    NotUsedField(name="id"),
+    NotUsedField(name="name"),
+    NotUsedField(name="maiden_name"),
+    NotUsedField(name="birthdate"),
+    NotUsedField(name="sex"),
+    NotUsedField(name="race"),
+    NotUsedField(name="address"),
+    NotUsedField(name="reserved"),
+    NotUsedField(name="phone"),
+    NotUsedField(name="physician_id"),
+    NotUsedField(name="special_1"),
+    NotUsedField(name="special_2"),
+    NotUsedField(name="height"),
+    NotUsedField(name="weight"),
+    NotUsedField(name="diagnosis"),
+    NotUsedField(name="medication"),
+    NotUsedField(name="diet"),
+    NotUsedField(name="practice_field_1"),
+    NotUsedField(name="practice_field_2"),
+    NotUsedField(name="admission_date"),
+    NotUsedField(name="admission_status"),
+    NotUsedField(name="location"),
+    NotUsedField(name="diagnostic_code_nature"),
+    NotUsedField(name="diagnostic_code"),
+    NotUsedField(name="religion"),
+    NotUsedField(name="martial_status"),
+    NotUsedField(name="isolation_status"),
+    NotUsedField(name="language"),
+    NotUsedField(name="hospital_service"),
+    NotUsedField(name="hospital_institution"),
+    NotUsedField(name="dosage_category"),
 )
 
 
@@ -234,37 +245,37 @@ PatientRecord = Record.build(
 #: +-----+--------------+--------------------------------+--------------------+
 #:
 OrderRecord = Record.build(
-    ConstantField(name='type', default='O'),
-    IntegerField(name='seq', default=1, required=True),
-    NotUsedField(name='sample_id'),
-    NotUsedField(name='instrument'),
-    NotUsedField(name='test'),
-    NotUsedField(name='priority'),
-    NotUsedField(name='created_at'),
-    NotUsedField(name='sampled_at'),
-    NotUsedField(name='collected_at'),
-    NotUsedField(name='volume'),
-    NotUsedField(name='collector'),
-    NotUsedField(name='action_code'),
-    NotUsedField(name='danger_code'),
-    NotUsedField(name='clinical_info'),
-    NotUsedField(name='delivered_at'),
-    NotUsedField(name='biomaterial'),
-    NotUsedField(name='physician'),
-    NotUsedField(name='physician_phone'),
-    NotUsedField(name='user_field_1'),
-    NotUsedField(name='user_field_2'),
-    NotUsedField(name='laboratory_field_1'),
-    NotUsedField(name='laboratory_field_2'),
-    NotUsedField(name='modified_at'),
-    NotUsedField(name='instrument_charge'),
-    NotUsedField(name='instrument_section'),
-    NotUsedField(name='report_type'),
-    NotUsedField(name='reserved'),
-    NotUsedField(name='location_ward'),
-    NotUsedField(name='infection_flag'),
-    NotUsedField(name='specimen_service'),
-    NotUsedField(name='laboratory')
+    ConstantField(name="type", default="O"),
+    IntegerField(name="seq", default=1, required=True),
+    NotUsedField(name="sample_id"),
+    NotUsedField(name="instrument"),
+    NotUsedField(name="test"),
+    NotUsedField(name="priority"),
+    NotUsedField(name="created_at"),
+    NotUsedField(name="sampled_at"),
+    NotUsedField(name="collected_at"),
+    NotUsedField(name="volume"),
+    NotUsedField(name="collector"),
+    NotUsedField(name="action_code"),
+    NotUsedField(name="danger_code"),
+    NotUsedField(name="clinical_info"),
+    NotUsedField(name="delivered_at"),
+    NotUsedField(name="biomaterial"),
+    NotUsedField(name="physician"),
+    NotUsedField(name="physician_phone"),
+    NotUsedField(name="user_field_1"),
+    NotUsedField(name="user_field_2"),
+    NotUsedField(name="laboratory_field_1"),
+    NotUsedField(name="laboratory_field_2"),
+    NotUsedField(name="modified_at"),
+    NotUsedField(name="instrument_charge"),
+    NotUsedField(name="instrument_section"),
+    NotUsedField(name="report_type"),
+    NotUsedField(name="reserved"),
+    NotUsedField(name="location_ward"),
+    NotUsedField(name="infection_flag"),
+    NotUsedField(name="specimen_service"),
+    NotUsedField(name="laboratory"),
 )
 
 #: +-----+--------------+--------------------------------+--------------------+
@@ -301,20 +312,20 @@ OrderRecord = Record.build(
 #: +-----+--------------+--------------------------------+--------------------+
 #:
 ResultRecord = Record.build(
-    ConstantField(name='type', default='R'),
-    IntegerField(name='seq', default=1, required=True),
-    NotUsedField(name='test'),
-    NotUsedField(name='value'),
-    NotUsedField(name='units'),
-    NotUsedField(name='references'),
-    NotUsedField(name='abnormal_flag'),
-    NotUsedField(name='abnormality_nature'),
-    NotUsedField(name='status'),
-    NotUsedField(name='norms_changed_at'),
-    NotUsedField(name='operator'),
-    NotUsedField(name='started_at'),
-    NotUsedField(name='completed_at'),
-    NotUsedField(name='instrument'),
+    ConstantField(name="type", default="R"),
+    IntegerField(name="seq", default=1, required=True),
+    NotUsedField(name="test"),
+    NotUsedField(name="value"),
+    NotUsedField(name="units"),
+    NotUsedField(name="references"),
+    NotUsedField(name="abnormal_flag"),
+    NotUsedField(name="abnormality_nature"),
+    NotUsedField(name="status"),
+    NotUsedField(name="norms_changed_at"),
+    NotUsedField(name="operator"),
+    NotUsedField(name="started_at"),
+    NotUsedField(name="completed_at"),
+    NotUsedField(name="instrument"),
 )
 
 #: +-----+--------------+---------------------------------+-------------------+
@@ -332,11 +343,11 @@ ResultRecord = Record.build(
 #: +-----+--------------+---------------------------------+-------------------+
 #:
 CommentRecord = Record.build(
-    ConstantField(name='type', default='C'),
-    IntegerField(name='seq', default=1, required=True),
-    NotUsedField(name='source'),
-    NotUsedField(name='data'),
-    NotUsedField(name='ctype')
+    ConstantField(name="type", default="C"),
+    IntegerField(name="seq", default=1, required=True),
+    NotUsedField(name="source"),
+    NotUsedField(name="data"),
+    NotUsedField(name="ctype"),
 )
 
 #: +-----+--------------+---------------------------------+-------------------+
@@ -350,9 +361,9 @@ CommentRecord = Record.build(
 #: +-----+--------------+---------------------------------+-------------------+
 #:
 TerminatorRecord = Record.build(
-    ConstantField(name='type', default='L'),
-    ConstantField(name='seq', default=1, field=IntegerField()),
-    ConstantField(name='code', default='N')
+    ConstantField(name="type", default="L"),
+    ConstantField(name="seq", default=1, field=IntegerField()),
+    ConstantField(name="code", default="N"),
 )
 
 #: +-----+--------------+---------------------------------+-------------------+
@@ -402,27 +413,27 @@ TerminatorRecord = Record.build(
 #: +-----+--------------+---------------------------------+-------------------+
 #:
 ScientificRecord = Record.build(
-    ConstantField(name='type', default='S'),
-    IntegerField(name='seq', default=1, required=True),
-    NotUsedField(name='method'),
-    NotUsedField(name='instrument'),
-    NotUsedField(name='reagents'),
-    NotUsedField(name='units'),
-    NotUsedField(name='qc'),
-    NotUsedField(name='biomaterial'),
-    NotUsedField(name='reserved'),
-    NotUsedField(name='container'),
-    NotUsedField(name='sample_id'),
-    NotUsedField(name='analyte'),
-    NotUsedField(name='result'),
-    NotUsedField(name='result_units'),
-    NotUsedField(name='sampled_at'),
-    NotUsedField(name='completed_at'),
-    NotUsedField(name='preanalytics'),
-    NotUsedField(name='diagnosis'),
-    NotUsedField(name='birthdate'),
-    NotUsedField(name='sex'),
-    NotUsedField(name='race'),
+    ConstantField(name="type", default="S"),
+    IntegerField(name="seq", default=1, required=True),
+    NotUsedField(name="method"),
+    NotUsedField(name="instrument"),
+    NotUsedField(name="reagents"),
+    NotUsedField(name="units"),
+    NotUsedField(name="qc"),
+    NotUsedField(name="biomaterial"),
+    NotUsedField(name="reserved"),
+    NotUsedField(name="container"),
+    NotUsedField(name="sample_id"),
+    NotUsedField(name="analyte"),
+    NotUsedField(name="result"),
+    NotUsedField(name="result_units"),
+    NotUsedField(name="sampled_at"),
+    NotUsedField(name="completed_at"),
+    NotUsedField(name="preanalytics"),
+    NotUsedField(name="diagnosis"),
+    NotUsedField(name="birthdate"),
+    NotUsedField(name="sex"),
+    NotUsedField(name="race"),
 )
 
 #: +-----+--------------+---------------------------------+-------------------+
@@ -440,6 +451,6 @@ ScientificRecord = Record.build(
 #:   manufacturer.
 #:
 ManufacturerInfoRecord = Record.build(
-    ConstantField(name='type', default='M'),
-    IntegerField(name='seq', default=1, required=True),
+    ConstantField(name="type", default="M"),
+    IntegerField(name="seq", default=1, required=True),
 )

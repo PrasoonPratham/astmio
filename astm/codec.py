@@ -12,9 +12,19 @@ try:
 except ImportError:  # Python 2
     from collections import Iterable
 from .constants import (
-    STX, ETX, ETB, CR, LF, CRLF,
-    FIELD_SEP, COMPONENT_SEP, RECORD_SEP, REPEAT_SEP, ENCODING
+    STX,
+    ETX,
+    ETB,
+    CR,
+    LF,
+    CRLF,
+    FIELD_SEP,
+    COMPONENT_SEP,
+    RECORD_SEP,
+    REPEAT_SEP,
+    ENCODING,
 )
+
 try:
     from itertools import izip_longest
 except ImportError:  # Python 3
@@ -50,12 +60,12 @@ def decode(data, encoding=ENCODING):
     :rtype: list
     """
     if not isinstance(data, bytes):
-        raise TypeError('bytes expected, got %r' % data)
+        raise TypeError("bytes expected, got %r" % data)
     if data.startswith(STX):  # may be decode message \x02...\x03CS\r\n
         seq, records, cs = decode_message(data, encoding)
         return records
     byte = data[:1].decode()
-    if  byte.isdigit():
+    if byte.isdigit():
         seq, records = decode_frame(data, encoding)
         return records
     return [decode_record(data, encoding)]
@@ -83,10 +93,10 @@ def decode_message(message, encoding):
         * :exc:`AssertionError` if checksum verification fails.
     """
     if not isinstance(message, bytes):
-        raise TypeError('bytes expected, got %r' % message)
+        raise TypeError("bytes expected, got %r" % message)
 
     if not message.startswith(STX):
-        raise ValueError('Malformed ASTM message: Must start with STX.')
+        raise ValueError("Malformed ASTM message: Must start with STX.")
 
     # Find the last ETX or ETB, as this marks the end of the frame data
     frame_end_pos = message.rfind(ETX)
@@ -94,36 +104,39 @@ def decode_message(message, encoding):
         frame_end_pos = message.rfind(ETB)
 
     if frame_end_pos == -1:
-        raise ValueError('Malformed ASTM message: No ETX or ETB found.')
+        raise ValueError("Malformed ASTM message: No ETX or ETB found.")
 
     # The frame content for checksum includes the end character (ETX or ETB)
-    frame_for_checksum = message[1:frame_end_pos + 1]
+    frame_for_checksum = message[1 : frame_end_pos + 1]
 
     # The trailer contains the checksum and final CR/LF
-    trailer = message[frame_end_pos + 1:]
+    trailer = message[frame_end_pos + 1 :]
     cs = trailer.rstrip(CRLF)
 
     # Verify checksum
     ccs = make_checksum(frame_for_checksum)
     if cs != ccs:
-        log.warning('Checksum failure: expected %r, calculated %r. Data may be corrupt.',
-                    cs, ccs)
+        log.warning(
+            "Checksum failure: expected %r, calculated %r. Data may be corrupt.",
+            cs,
+            ccs,
+        )
 
     # The actual records are in the frame *before* the ETX/ETB
     frame_content = frame_for_checksum[:-1]
     seq, records = decode_frame(frame_content, encoding)
 
-    return seq, records, cs.decode('ascii') if cs else None
+    return seq, records, cs.decode("ascii") if cs else None
 
 
 def decode_frame(frame, encoding):
     """Decodes ASTM frame: list of records optionally preceded by a sequence number."""
     if not isinstance(frame, bytes):
-        raise TypeError('bytes expected, got %r' % frame)
+        raise TypeError("bytes expected, got %r" % frame)
 
     seq_byte = frame[:1]
     if seq_byte.isdigit():
-        seq = int(seq_byte.decode('ascii'))
+        seq = int(seq_byte.decode("ascii"))
         records_data = frame[1:]
     else:
         seq = None
@@ -131,8 +144,11 @@ def decode_frame(frame, encoding):
 
     # Records are separated by RECORD_SEP (\r).
     # A trailing separator will produce an empty string, which we should ignore.
-    return seq, [decode_record(record, encoding)
-                 for record in records_data.split(RECORD_SEP) if record]
+    return seq, [
+        decode_record(record, encoding)
+        for record in records_data.split(RECORD_SEP)
+        if record
+    ]
 
 
 def decode_record(record, encoding):
@@ -151,14 +167,14 @@ def decode_record(record, encoding):
 
 def decode_component(field, encoding):
     """Decodes ASTM field component."""
-    return [[None, item.decode(encoding)][bool(item)]
-            for item in field.split(COMPONENT_SEP)]
+    return [
+        [None, item.decode(encoding)][bool(item)] for item in field.split(COMPONENT_SEP)
+    ]
 
 
 def decode_repeated_component(component, encoding):
     """Decodes ASTM field repeated component."""
-    return [decode_component(item, encoding)
-            for item in component.split(REPEAT_SEP)]
+    return [decode_component(item, encoding) for item in component.split(REPEAT_SEP)]
 
 
 def encode(records, encoding=ENCODING, size=None, seq=1):
@@ -227,10 +243,9 @@ def encode_message(seq, records, encoding):
     :return: ASTM complete message with checksum and other control characters.
     :rtype: str
     """
-    data = RECORD_SEP.join(encode_record(record, encoding)
-                           for record in records)
-    data = b''.join((str(seq % 8).encode(), data, CR, ETX))
-    return b''.join([STX, data, make_checksum(data), CR, LF])
+    data = RECORD_SEP.join(encode_record(record, encoding) for record in records)
+    data = b"".join((str(seq % 8).encode(), data, CR, ETX))
+    return b"".join([STX, data, make_checksum(data), CR, LF])
 
 
 def encode_record(record, encoding):
@@ -255,7 +270,7 @@ def encode_record(record, encoding):
         elif isinstance(field, Iterable):
             _append(encode_component(field, encoding))
         elif field is None:
-            _append(b'')
+            _append(b"")
         else:
             _append(field.encode(encoding))
     return FIELD_SEP.join(fields)
@@ -271,7 +286,7 @@ def encode_component(component, encoding):
         elif isinstance(item, Iterable):
             return encode_repeated_component(component, encoding)
         elif item is None:
-            _append(b'')
+            _append(b"")
         else:
             _append(item.encode(encoding))
 
@@ -280,8 +295,7 @@ def encode_component(component, encoding):
 
 def encode_repeated_component(components, encoding):
     """Encodes repeated components."""
-    return REPEAT_SEP.join(encode_component(item, encoding)
-                           for item in components)
+    return REPEAT_SEP.join(encode_component(item, encoding) for item in components)
 
 
 def make_checksum(message):
@@ -299,9 +313,8 @@ def make_checksum(message):
 
 
 def make_chunks(s, n):
-    iter_bytes = (s[i:i + 1] for i in range(len(s)))
-    return [b''.join(item)
-            for item in izip_longest(*[iter_bytes] * n, fillvalue=b'')]
+    iter_bytes = (s[i : i + 1] for i in range(len(s)))
+    return [b"".join(item) for item in izip_longest(*[iter_bytes] * n, fillvalue=b"")]
 
 
 def split(msg, size):
@@ -329,10 +342,10 @@ def split(msg, size):
     chunks, last = chunks[:-1], chunks[-1]
     idx = 0
     for idx, chunk in enumerate(chunks):
-        item = b''.join([str((idx + frame) % 8).encode(), chunk, ETB])
-        yield b''.join([STX, item, make_checksum(item), CRLF])
-    item = b''.join([str((idx + frame + 1) % 8).encode(), last, CR, ETX])
-    yield b''.join([STX, item, make_checksum(item), CRLF])
+        item = b"".join([str((idx + frame) % 8).encode(), chunk, ETB])
+        yield b"".join([STX, item, make_checksum(item), CRLF])
+    item = b"".join([str((idx + frame + 1) % 8).encode(), last, CR, ETX])
+    yield b"".join([STX, item, make_checksum(item), CRLF])
 
 
 def join(chunks):
@@ -341,8 +354,8 @@ def join(chunks):
     :param chunks: List of chunks as `bytes`.
     :type chunks: iterable
     """
-    msg = b'1' + b''.join(c[2:-5] for c in chunks) + ETX
-    return b''.join([STX, msg, make_checksum(msg), CRLF])
+    msg = b"1" + b"".join(c[2:-5] for c in chunks) + ETX
+    return b"".join([STX, msg, make_checksum(msg), CRLF])
 
 
 def is_chunked_message(message):

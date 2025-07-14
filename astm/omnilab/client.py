@@ -15,20 +15,38 @@
 """
 
 from astm.mapping import (
-    Component, ConstantField, ComponentField, IntegerField, DateTimeField,
-    RepeatedComponentField, SetField, TextField, NotUsedField
+    Component,
+    ConstantField,
+    ComponentField,
+    IntegerField,
+    DateTimeField,
+    RepeatedComponentField,
+    SetField,
+    TextField,
+    NotUsedField,
 )
 from .common import (
-    Header, Terminator,
+    Header,
+    Terminator,
     CommonPatient,
     CommonOrder,
     CommonResult,
     CommonComment,
-    Sender
+    Sender,
 )
 
-__all__ = ['Header', 'Patient', 'Order', 'Result', 'Comment', 'Terminator',
-           'CommentData', 'PatientAge', 'Sender', 'Test']
+__all__ = [
+    "Header",
+    "Patient",
+    "Order",
+    "Result",
+    "Comment",
+    "Terminator",
+    "CommentData",
+    "PatientAge",
+    "Sender",
+    "Test",
+]
 
 #: Patient age structure.
 #:
@@ -39,8 +57,8 @@ __all__ = ['Header', 'Patient', 'Order', 'Result', 'Comment', 'Terminator',
 #: :type unit: str
 #:
 PatientAge = Component.build(
-    IntegerField(name='value'),
-    SetField(name='unit', values=('years', 'months', 'days'))
+    IntegerField(name="value"),
+    SetField(name="unit", values=("years", "months", "days")),
 )
 
 #: Test :class:`~astm.mapping.Component` also known as Universal Test ID.
@@ -61,18 +79,17 @@ PatientAge = Component.build(
 #: :type assay_name: str
 #:
 Test = Component.build(
-    NotUsedField(name='_'),
-    NotUsedField(name='__'),
-    NotUsedField(name='___'),
-    TextField(name='assay_code', required=True, length=20),
-    TextField(name='assay_name', length=8),
+    NotUsedField(name="_"),
+    NotUsedField(name="__"),
+    NotUsedField(name="___"),
+    TextField(name="assay_code", required=True, length=20),
+    TextField(name="assay_name", length=8),
 )
 
 #: Comment control data structure.
 #:
 CommentData = Component.build(
-    SetField(name='code', values=('PC', 'RC', 'SC', 'TC')),
-    TextField(name='value')
+    SetField(name="code", values=("PC", "RC", "SC", "TC")), TextField(name="value")
 )
 
 
@@ -187,6 +204,7 @@ class Patient(CommonPatient):
     :param dosage_category: Dosage category. Not used.
     :type dosage_category: None
     """
+
     physician_id = TextField(length=35)
     special_1 = ComponentField(PatientAge)
 
@@ -299,11 +317,12 @@ class Order(CommonOrder):
                        Length: 20.
     :type laboratory: str
     """
-    action_code = SetField(default='N', values=('C', 'A', 'N', 'R'))
+
+    action_code = SetField(default="N", values=("C", "A", "N", "R"))
     created_at = DateTimeField(required=True)
     laboratory = TextField(length=20)
     laboratory_field_1 = TextField(length=20)
-    report_type = ConstantField(default='O')
+    report_type = ConstantField(default="O")
     sampled_at = DateTimeField()
     test = RepeatedComponentField(Test)
 
@@ -355,6 +374,7 @@ class Result(CommonResult):
     :param instrument: Instrument ID. Not used.
     :type instrument: None
     """
+
     test = ComponentField(Test)
 
 
@@ -377,5 +397,6 @@ class Comment(CommonComment):
     :param ctype: Comment type. Always ``G``.
     :type ctype: str
     """
-    source = ConstantField(default='L')
+
+    source = ConstantField(default="L")
     data = ComponentField(CommentData)

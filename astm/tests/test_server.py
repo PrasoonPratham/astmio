@@ -43,7 +43,7 @@ class TestDispatcher(BaseRecordsDispatcher):
 
 
 class ServerTestCase(unittest.IsolatedAsyncioTestCase):
-    host = '127.0.0.1'
+    host = "127.0.0.1"
     port = 0
 
     async def asyncSetUp(self):
@@ -74,7 +74,7 @@ class ServerTestCase(unittest.IsolatedAsyncioTestCase):
         await writer.drain()
         response = await reader.read(1)
         self.assertEqual(response, constants.ACK)
-        
+
         # Send terminator
         terminator = records.TerminatorRecord()
         message = codec.encode_message(2, [terminator.to_astm()])
@@ -90,15 +90,14 @@ class ServerTestCase(unittest.IsolatedAsyncioTestCase):
         # Check dispatcher calls
         self.assertTrue(self.dispatcher.was_called)
         self.assertEqual(len(self.dispatcher.records), 2)
-        self.assertEqual(self.dispatcher.records[0][0], 'H')
-        self.assertEqual(self.dispatcher.records[1][0], 'L')
-        
+        self.assertEqual(self.dispatcher.records[0][0], "H")
+        self.assertEqual(self.dispatcher.records[1][0], "L")
+
         writer.close()
         await writer.wait_closed()
 
 
 class RecordsDispatcherTestCase(unittest.TestCase):
-
     def setUp(self):
         d = BaseRecordsDispatcher()
         for key, value in d.dispatch.items():
@@ -107,62 +106,64 @@ class RecordsDispatcherTestCase(unittest.TestCase):
         self.dispatcher = d
 
     def test_dispatch_header(self):
-        message = codec.encode_message(1, [['H']], 'ascii')
+        message = codec.encode_message(1, [["H"]], "ascii")
         self.dispatcher(message)
-        self.assertTrue(self.dispatcher.dispatch['H'].was_called)
+        self.assertTrue(self.dispatcher.dispatch["H"].was_called)
 
     def test_dispatch_comment(self):
-        message = codec.encode_message(1, [['C']], 'ascii')
+        message = codec.encode_message(1, [["C"]], "ascii")
         self.dispatcher(message)
-        self.assertTrue(self.dispatcher.dispatch['C'].was_called)
+        self.assertTrue(self.dispatcher.dispatch["C"].was_called)
 
     def test_dispatch_patient(self):
-        message = codec.encode_message(1, [['P']], 'ascii')
+        message = codec.encode_message(1, [["P"]], "ascii")
         self.dispatcher(message)
-        self.assertTrue(self.dispatcher.dispatch['P'].was_called)
+        self.assertTrue(self.dispatcher.dispatch["P"].was_called)
 
     def test_dispatch_order(self):
-        message = codec.encode_message(1, [['O']], 'ascii')
+        message = codec.encode_message(1, [["O"]], "ascii")
         self.dispatcher(message)
-        self.assertTrue(self.dispatcher.dispatch['O'].was_called)
+        self.assertTrue(self.dispatcher.dispatch["O"].was_called)
 
     def test_dispatch_result(self):
-        message = codec.encode_message(1, [['R']], 'ascii')
+        message = codec.encode_message(1, [["R"]], "ascii")
         self.dispatcher(message)
-        self.assertTrue(self.dispatcher.dispatch['R'].was_called)
+        self.assertTrue(self.dispatcher.dispatch["R"].was_called)
 
     def test_dispatch_scientific(self):
-        message = codec.encode_message(1, [['S']], 'ascii')
+        message = codec.encode_message(1, [["S"]], "ascii")
         self.dispatcher(message)
-        self.assertTrue(self.dispatcher.dispatch['S'].was_called)
+        self.assertTrue(self.dispatcher.dispatch["S"].was_called)
 
     def test_dispatch_manufacturer_info(self):
-        message = codec.encode_message(1, [['M']], 'ascii')
+        message = codec.encode_message(1, [["M"]], "ascii")
         self.dispatcher(message)
-        self.assertTrue(self.dispatcher.dispatch['M'].was_called)
+        self.assertTrue(self.dispatcher.dispatch["M"].was_called)
 
     def test_dispatch_terminator(self):
-        message = codec.encode_message(1, [['L']], 'ascii')
+        message = codec.encode_message(1, [["L"]], "ascii")
         self.dispatcher(message)
-        self.assertTrue(self.dispatcher.dispatch['L'].was_called)
+        self.assertTrue(self.dispatcher.dispatch["L"].was_called)
 
     def test_wrap_before_dispatch(self):
         class Thing(object):
             def __init__(self, *args):
                 self.args = args
+
         def handler(record):
             assert isinstance(record, Thing)
-        message = codec.encode_message(1, [['H']], 'ascii')
-        self.dispatcher.wrappers['H'] = Thing
-        self.dispatcher.dispatch['H'] = track_call(handler)
+
+        message = codec.encode_message(1, [["H"]], "ascii")
+        self.dispatcher.wrappers["H"] = Thing
+        self.dispatcher.dispatch["H"] = track_call(handler)
         self.dispatcher(message)
-        self.assertTrue(self.dispatcher.dispatch['H'].was_called)
+        self.assertTrue(self.dispatcher.dispatch["H"].was_called)
 
     def test_provide_default_handler_for_unknown_message_type(self):
-        message = codec.encode_message(1, [['FOO']], 'ascii')
+        message = codec.encode_message(1, [["FOO"]], "ascii")
         self.dispatcher(message)
         self.assertTrue(self.dispatcher.on_unknown.was_called)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

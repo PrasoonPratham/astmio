@@ -9,8 +9,8 @@
 
 
 class DummyMixIn(object):
-    _input_buffer = ''
-    addr = ('localhost', 15200)
+    _input_buffer = ""
+    addr = ("localhost", 15200)
 
     def flush(self):
         pass
@@ -20,7 +20,6 @@ class DummyMixIn(object):
 
 
 class CallLogger(object):
-
     def __init__(self, func):
         self.func = func
         self.was_called = False

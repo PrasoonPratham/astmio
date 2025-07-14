@@ -21,15 +21,15 @@ class MockServer:
         self.response_map = {}
 
     async def handle_connection(self, reader, writer):
-        peername = writer.get_extra_info('peername')
-        self.requests.append(('connect', peername))
+        peername = writer.get_extra_info("peername")
+        self.requests.append(("connect", peername))
         while True:
             try:
                 data = await reader.read(1024)
                 if not data:
                     break
-                self.requests.append(('data', data))
-                
+                self.requests.append(("data", data))
+
                 response = self.get_response(data)
                 if response:
                     writer.write(response)
@@ -42,16 +42,17 @@ class MockServer:
 
     def get_response(self, data):
         if data == constants.ENQ:
-            return self.response_map.get('enq', constants.ACK)
-        if data.endswith(b'\r'):
-             return self.response_map.get('message', constants.ACK)
+            return self.response_map.get("enq", constants.ACK)
+        if data.endswith(b"\r"):
+            return self.response_map.get("message", constants.ACK)
         if data == constants.EOT:
-            return self.response_map.get('eot', None)
+            return self.response_map.get("eot", None)
         return None
 
     async def start(self):
         self._server = await asyncio.start_server(
-            self.handle_connection, self.host, self.port)
+            self.handle_connection, self.host, self.port
+        )
 
     async def stop(self):
         if self._server:
@@ -60,7 +61,7 @@ class MockServer:
 
 
 class ClientTestCase(unittest.IsolatedAsyncioTestCase):
-    host = '127.0.0.1'
+    host = "127.0.0.1"
     port = 0
 
     async def asyncSetUp(self):
@@ -75,27 +76,24 @@ class ClientTestCase(unittest.IsolatedAsyncioTestCase):
         await self.client.wait_closed()
 
     async def test_send_records(self):
-        recs = [
-            records.HeaderRecord().to_astm(),
-            records.TerminatorRecord().to_astm()
-        ]
-        
+        recs = [records.HeaderRecord().to_astm(), records.TerminatorRecord().to_astm()]
+
         # Expect server to ACK all messages
         self.server.response_map = {
-            'enq': constants.ACK,
-            'message': constants.ACK,
-            'eot': None
+            "enq": constants.ACK,
+            "message": constants.ACK,
+            "eot": None,
         }
-        
+
         result = await self.client.send(recs)
         self.assertTrue(result)
-        
+
         # Verify the sequence of requests received by the mock server
-        self.assertEqual(self.server.requests[0][0], 'connect')
-        self.assertEqual(self.server.requests[1], ('data', constants.ENQ))
-        self.assertIn(b'H|', self.server.requests[2][1])
-        self.assertIn(b'L|', self.server.requests[3][1])
-        self.assertEqual(self.server.requests[4], ('data', constants.EOT))
+        self.assertEqual(self.server.requests[0][0], "connect")
+        self.assertEqual(self.server.requests[1], ("data", constants.ENQ))
+        self.assertIn(b"H|", self.server.requests[2][1])
+        self.assertIn(b"L|", self.server.requests[3][1])
+        self.assertEqual(self.server.requests[4], ("data", constants.EOT))
 
     async def test_server_naks_message(self):
         recs = [
@@ -103,17 +101,14 @@ class ClientTestCase(unittest.IsolatedAsyncioTestCase):
         ]
 
         # Expect server to NAK the message
-        self.server.response_map = {
-            'enq': constants.ACK,
-            'message': constants.NAK
-        }
-        
+        self.server.response_map = {"enq": constants.ACK, "message": constants.NAK}
+
         result = await self.client.send(recs)
         self.assertFalse(result)
-        
+
         # Verify the client sends EOT after a NAK
-        self.assertEqual(self.server.requests[3], ('data', constants.EOT))
+        self.assertEqual(self.server.requests[3], ("data", constants.EOT))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

@@ -9,12 +9,22 @@
 
 from astm import __version__
 from astm.mapping import (
-    Component, ConstantField, ComponentField, DateField, DateTimeField,
-    IntegerField, SetField, TextField
+    Component,
+    ConstantField,
+    ComponentField,
+    DateField,
+    DateTimeField,
+    IntegerField,
+    SetField,
+    TextField,
 )
 from astm.records import (
-    HeaderRecord, PatientRecord, OrderRecord, ResultRecord, CommentRecord,
-    TerminatorRecord
+    HeaderRecord,
+    PatientRecord,
+    OrderRecord,
+    ResultRecord,
+    CommentRecord,
+    TerminatorRecord,
 )
 
 #: Information about sender.
@@ -26,8 +36,8 @@ from astm.records import (
 #: :type version: str
 #:
 Sender = Component.build(
-    TextField(name='name', default='python-astm'),
-    TextField(name='version', default=__version__)
+    TextField(name="name", default="python-astm"),
+    TextField(name="version", default=__version__),
 )
 
 
@@ -40,8 +50,7 @@ Sender = Component.build(
 #: :type first: str
 #:
 PatientName = Component.build(
-    TextField(name='last', length=50),
-    TextField(name='first', length=50)
+    TextField(name="last", length=50), TextField(name="first", length=50)
 )
 
 
@@ -92,8 +101,8 @@ class Header(HeaderRecord):
     """
 
     sender = ComponentField(Sender)
-    processing_id = ConstantField(default='P')
-    version = ConstantField(default='E 1394-97')
+    processing_id = ConstantField(default="P")
+    version = ConstantField(default="E 1394-97")
 
 
 class CommonPatient(PatientRecord):
@@ -207,19 +216,20 @@ class CommonPatient(PatientRecord):
     :param dosage_category: Dosage category. Not used.
     :type dosage_category: None
     """
+
     birthdate = DateField()
     laboratory_id = TextField(required=True, length=16)
     location = TextField(length=20)
     name = ComponentField(PatientName)
     practice_id = TextField(required=True, length=12)
-    sex = SetField(values=('M', 'F', None, 'I'))
+    sex = SetField(values=("M", "F", None, "I"))
     special_2 = SetField(values=(0, 1), field=IntegerField())
 
 
 class CommonOrder(OrderRecord):
     biomaterial = TextField(length=20)
     laboratory_field_2 = TextField(length=12)
-    priority = SetField(default='S', values=('S', 'R'))
+    priority = SetField(default="S", values=("S", "R"))
     sample_id = TextField(required=True, length=12)
     user_field_1 = TextField(length=20)
     user_field_2 = TextField(length=1024)
@@ -231,7 +241,7 @@ class CommonResult(ResultRecord):
 
 
 class CommonComment(CommentRecord):
-    ctype = ConstantField(default='G')
+    ctype = ConstantField(default="G")
 
 
 class Terminator(TerminatorRecord):

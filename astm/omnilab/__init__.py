@@ -7,5 +7,6 @@
 # you should have received as part of this distribution.
 #
 
-from . import client
-from . import server
+__all__ = ["client", "server"]
+
+from . import client, server

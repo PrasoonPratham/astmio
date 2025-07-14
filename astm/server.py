@@ -10,30 +10,30 @@ import asyncio
 import logging
 from .codec import decode_message, is_chunked_message, join
 from .constants import ACK, EOT, NAK, ENQ, ENCODING
-from .exceptions import InvalidState, NotAccepted
 
 log = logging.getLogger(__name__)
 
-__all__ = ['BaseRecordsDispatcher', 'Server']
+__all__ = ["BaseRecordsDispatcher", "Server"]
 
 
 class BaseRecordsDispatcher(object):
     """Abstract dispatcher of received ASTM records.
     You need to override its handlers or extend the dispatcher for your needs.
     """
+
     encoding = ENCODING
 
     def __init__(self, encoding=None):
         self.encoding = encoding or self.encoding
         self.dispatch = {
-            'H': self.on_header,
-            'C': self.on_comment,
-            'P': self.on_patient,
-            'O': self.on_order,
-            'R': self.on_result,
-            'S': self.on_scientific,
-            'M': self.on_manufacturer_info,
-            'L': self.on_terminator
+            "H": self.on_header,
+            "C": self.on_comment,
+            "P": self.on_patient,
+            "O": self.on_order,
+            "R": self.on_result,
+            "S": self.on_scientific,
+            "M": self.on_manufacturer_info,
+            "L": self.on_terminator,
         }
         self.wrappers = {}
 
@@ -52,10 +52,10 @@ class BaseRecordsDispatcher(object):
     def wrap(self, record):
         """
         Wraps record to high-level object if wrapper is defined.
-        
+
         :param record: ASTM record.
         :type record: list
-        
+
         :return: High-level wrapper or raw record.
         """
         rtype = record[0]
@@ -64,7 +64,7 @@ class BaseRecordsDispatcher(object):
         return record
 
     def _default_handler(self, record):
-        log.warning('Record remains unprocessed: %s', record)
+        log.warning("Record remains unprocessed: %s", record)
 
     def on_header(self, record):
         """Header record handler."""
@@ -109,14 +109,14 @@ async def handle_connection(reader, writer, dispatcher, encoding, timeout):
     """
     chunks = []
     is_transfer_state = False
-    peername = writer.get_extra_info('peername')
-    log.info('Connection from %s', peername)
+    peername = writer.get_extra_info("peername")
+    log.info("Connection from %s", peername)
 
     async def read(n=1):
         try:
             return await asyncio.wait_for(reader.read(n), timeout)
         except asyncio.TimeoutError:
-            log.warning('Connection timed out for %s', peername)
+            log.warning("Connection timed out for %s", peername)
             writer.close()
             await writer.wait_closed()
             return None
@@ -132,7 +132,7 @@ async def handle_connection(reader, writer, dispatcher, encoding, timeout):
                 writer.write(ACK)
                 await writer.drain()
             else:
-                log.error('ENQ is not expected.')
+                log.error("ENQ is not expected.")
                 writer.write(NAK)
                 await writer.drain()
 
@@ -140,20 +140,20 @@ async def handle_connection(reader, writer, dispatcher, encoding, timeout):
             if is_transfer_state:
                 is_transfer_state = False
             else:
-                log.error('EOT is not expected.')
-        
-        elif data in (ACK, NAK):
-            log.warning('%r is not expected on server side.', data)
+                log.error("EOT is not expected.")
 
-        else: # Message frame
+        elif data in (ACK, NAK):
+            log.warning("%r is not expected on server side.", data)
+
+        else:  # Message frame
             if not is_transfer_state:
-                log.error('Message frame is not expected.')
+                log.error("Message frame is not expected.")
                 writer.write(NAK)
                 await writer.drain()
                 continue
-            
-            frame = data + await reader.readuntil(b'\r')
-            
+
+            frame = data + await reader.readuntil(b"\r")
+
             try:
                 if is_chunked_message(frame):
                     chunks.append(frame)
@@ -166,11 +166,11 @@ async def handle_connection(reader, writer, dispatcher, encoding, timeout):
                 writer.write(ACK)
                 await writer.drain()
             except Exception:
-                log.exception('Error handling message: %r', frame)
+                log.exception("Error handling message: %r", frame)
                 writer.write(NAK)
                 await writer.drain()
 
-    log.info('Connection closed for %s', peername)
+    log.info("Connection closed for %s", peername)
 
 
 class Server:
@@ -194,10 +194,12 @@ class Server:
     :param encoding: Dispatcher's encoding.
     :type encoding: str
     """
+
     dispatcher = BaseRecordsDispatcher
 
-    def __init__(self, host='localhost', port=15200,
-                 dispatcher=None, timeout=None, encoding=None):
+    def __init__(
+        self, host="localhost", port=15200, dispatcher=None, timeout=None, encoding=None
+    ):
         self.host = host
         self.port = port
         self.timeout = timeout
@@ -210,16 +212,17 @@ class Server:
         """Starts the server."""
         self._server = await asyncio.start_server(
             lambda r, w: handle_connection(
-                r, w,
+                r,
+                w,
                 self.dispatcher(encoding=self.encoding),
                 self.encoding,
-                self.timeout
+                self.timeout,
             ),
             self.host,
-            self.port
+            self.port,
         )
-        addrs = ', '.join(str(s.getsockname()) for s in self._server.sockets)
-        log.info('Serving on %s', addrs)
+        addrs = ", ".join(str(s.getsockname()) for s in self._server.sockets)
+        log.info("Serving on %s", addrs)
 
     async def serve_forever(self):
         """Starts the server and waits until it is stopped."""
