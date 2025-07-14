@@ -1,5 +1,4 @@
-
 Licence
-*******
+=======
 
-.. literalinclude:: ../COPYING
+.. include:: ../LICENSE.original
