@@ -9,16 +9,15 @@
 
 import unittest
 from astm import codec
-from astm.compat import u
 from astm.constants import STX, ETX, ETB, CR, LF, CRLF
 
 def f(s, e='latin-1'):
-    return u(s).format(STX=u(STX),
-                       ETX=u(ETX),
-                       ETB=u(ETB),
-                       CR=u(CR),
-                       LF=u(LF),
-                       CRLF=u(CRLF)).encode(e)
+    return s.format(STX=str(STX),
+                       ETX=str(ETX),
+                       ETB=str(ETB),
+                       CR=str(CR),
+                       LF=str(LF),
+                       CRLF=str(CRLF)).encode(e)
 
 class DecodeTestCase(unittest.TestCase):
 
@@ -219,11 +218,11 @@ class ChunkedEncodingTestCase(unittest.TestCase):
 class ChecksummTestCase(unittest.TestCase):
 
     def test_common(self):
-        msg = u('2P|1|2776833|||王^大^明||||||||||||||||||||\x0D\x03')
+        msg = '2P|1|2776833|||王^大^明||||||||||||||||||||\x0D\x03'
         self.assertEqual(b'CF', codec.make_checksum(msg))
 
     def test_bytes(self):
-        msg = u('2P|1|2776833|||王^大^明||||||||||||||||||||\x0D\x03').encode('utf8')
+        msg = '2P|1|2776833|||王^大^明||||||||||||||||||||\x0D\x03'.encode('utf8')
         self.assertEqual(b'4B', codec.make_checksum(msg))
 
     def test_short(self):

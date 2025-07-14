@@ -12,7 +12,6 @@ import decimal
 import unittest
 import warnings
 from astm import mapping
-from astm.compat import u
 
 class FieldTestCase(unittest.TestCase):
 
@@ -115,18 +114,18 @@ class TextFieldTestCase(unittest.TestCase):
 
     def test_set_value(self):
         obj = self.Dummy()
-        obj.field = u('привет')
-        self.assertEqual(obj.field, u('привет'))
+        obj.field = 'привет'
+        self.assertEqual(obj.field, 'привет')
 
     def test_set_utf8_value(self):
         obj = self.Dummy()
-        obj.field = u('привет').encode('utf-8')
-        self.assertEqual(obj.field, u('привет'))
+        obj.field = 'привет'.encode('utf-8')
+        self.assertEqual(obj.field, 'привет')
 
     def test_fail_set_non_utf8_value(self):
         obj = self.Dummy()
         try:
-            obj.field = u('привет').encode('cp1251')
+            obj.field = 'привет'.encode('cp1251')
         except UnicodeDecodeError:
             pass
         else:
@@ -143,8 +142,8 @@ class TextFieldTestCase(unittest.TestCase):
 
     def test_raw_value(self):
         obj = self.Dummy()
-        obj.field = u('привет')
-        self.assertEqual(obj._data['field'], u('привет'))
+        obj.field = 'привет'
+        self.assertEqual(obj._data['field'], 'привет')
 
 
 class DateFieldTestCase(unittest.TestCase):

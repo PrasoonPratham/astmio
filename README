@@ -1,4 +1,4 @@
-# ASTMIO
+ASTMIO
 
 `astmio` is a Python library designed to handle ASTM communication protocols used in medical and laboratory equipment. It provides tools to parse, build, and transmit ASTM E1381/E1394 messages over serial connections, making it easy to integrate lab machines like blood analyzers with custom Laboratory Information Systems (LIS).
 
