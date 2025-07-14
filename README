@@ -1,0 +1,29 @@
+# ASTMIO
+
+Python implementation of ASTM E1381/1394 data protocol.
+
+This project aims to solve three tasks:
+
+1. Provide decoder ASTM data to Python objects and encode them back to valid
+   ASTM messages.
+
+2. Provide ability to create your own ASTM client and server applications
+   followed by common specification routines.
+
+3. Provide ready-to-use "drivers" for various ASTM-driven analysers,
+   middlewares and other software or hardware solutions.
+
+
+Depending on your needs you may use this project in one of these ways.
+Currently, all communication routines are implemented for TCP/IP protocol driven
+by a bit improved standard asynclib.
+
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Acknowledgements
+
+This project is a fork of the original python ₹astm` library created by Alexander Shorin. The original project, licensed under the 3-Clause BSD License, can be found at [https://pypi.org/project/astm]. Many thanks to the original author for their work.
+
