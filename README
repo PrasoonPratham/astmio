@@ -9,6 +9,7 @@ ASTMIO
 *   Customizable message mapping and field-level access
 *   Built with extensibility in mind for LIS and middleware integration
 
+<!-- Triggering docs build -->
 Read the docs for more info:
 http://python-astm.readthedocs.org
 
