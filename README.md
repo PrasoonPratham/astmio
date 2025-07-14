@@ -9,9 +9,7 @@ ASTMIO
 *   Customizable message mapping and field-level access
 *   Built with extensibility in mind for LIS and middleware integration
 
-<!-- Triggering docs build -->
-Read the docs for more info:
-https://PrasoonPratham.github.io/astmio/
+Read the docs for more info: https://PrasoonPratham.github.io/astmio/
 
 ## License
 
@@ -19,5 +17,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Acknowledgements
 
-This project is a fork of the original `python-astm` library created by Alexander Shorin. The original project, licensed under the 3-Clause BSD License, can be found at [https://pypi.org/project/astm]. Many thanks to the original author for their work.
+This project is a fork of the original `python-astm` library created by Alexander Shorin. The original project, licensed under the 3-Clause BSD License, can be found at [the original PyPI project](https://pypi.org/project/astm/). Many thanks to the original author for their work.
 
