@@ -1,4 +1,4 @@
-1.0.0 (2024-07-17)
+1.0.0 (2025-06-17)
 --------------------
 
 - **Major Parser Overhaul & Modernization (v1.0.0)**:
@@ -10,7 +10,7 @@
   - The library is now pure Python 3, ensuring future compatibility.
   - The codebase has been cleaned and simplified.
 
-0.8.1 (2024-07-17)
+0.8.1 (2025-06-17)
 --------------------
 
 - Fix parsing of messages with missing frame number.
