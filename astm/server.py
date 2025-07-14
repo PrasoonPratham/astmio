@@ -6,56 +6,21 @@
 # This software is licensed as described in the file COPYING, which
 # you should have received as part of this distribution.
 #
-
+import asyncio
 import logging
-import socket
-from .asynclib import Dispatcher, loop
 from .codec import decode_message, is_chunked_message, join
-from .constants import ACK, CRLF, EOT, NAK, ENCODING
+from .constants import ACK, EOT, NAK, ENQ, ENCODING
 from .exceptions import InvalidState, NotAccepted
-from .protocol import ASTMProtocol
 
 log = logging.getLogger(__name__)
 
-__all__ = ['BaseRecordsDispatcher', 'RequestHandler', 'Server']
+__all__ = ['BaseRecordsDispatcher', 'Server']
 
 
 class BaseRecordsDispatcher(object):
-    """Abstract dispatcher of received ASTM records by :class:`RequestHandler`.
-    You need to override his handlers or extend dispatcher for your needs.
-    For instance::
-
-        class Dispatcher(BaseRecordsDispatcher):
-
-            def __init__(self, encoding=None):
-                super(Dispatcher, self).__init__(encoding)
-                # extend it for your needs
-                self.dispatch['M'] = self.my_handler
-                # map custom wrappers for ASTM records to their type if you
-                # don't like to work with raw data.
-                self.wrapper['M'] = MyWrapper
-
-            def on_header(self, record):
-                # initialize state for this session
-                ...
-
-            def on_patient(self, record):
-                # handle patient info
-                ...
-
-            # etc handlers
-
-            def my_handler(self, record):
-                # handle custom record that wasn't implemented yet by
-                # python-astm due to some reasons
-                ...
-
-    After defining our dispatcher, we left only to let :class:`Server` use it::
-
-        server = Server(dispatcher=Dispatcher)
+    """Abstract dispatcher of received ASTM records.
+    You need to override its handlers or extend the dispatcher for your needs.
     """
-
-    #: Encoding of received messages.
     encoding = ENCODING
 
     def __init__(self, encoding=None):
@@ -73,11 +38,26 @@ class BaseRecordsDispatcher(object):
         self.wrappers = {}
 
     def __call__(self, message):
+        """
+        Decodes and dispatches incoming message.
+
+        :param message: Message to dispatch.
+        :type message: bytes
+        """
         seq, records, cs = decode_message(message, self.encoding)
         for record in records:
-            self.dispatch.get(record[0], self.on_unknown)(self.wrap(record))
+            handler = self.dispatch.get(record[0], self.on_unknown)
+            handler(self.wrap(record))
 
     def wrap(self, record):
+        """
+        Wraps record to high-level object if wrapper is defined.
+        
+        :param record: ASTM record.
+        :type record: list
+        
+        :return: High-level wrapper or raw record.
+        """
         rtype = record[0]
         if rtype in self.wrappers:
             return self.wrappers[rtype](*record)
@@ -123,84 +103,79 @@ class BaseRecordsDispatcher(object):
         self._default_handler(record)
 
 
-class RequestHandler(ASTMProtocol):
-    """ASTM protocol request handler.
-
-    :param sock: Socket object.
-
-    :param dispatcher: Request handler records dispatcher instance.
-    :type dispatcher: :class:`BaseRecordsDispatcher`
-
-    :param timeout: Number of seconds to wait for incoming data before
-                    connection closing.
-    :type timeout: int
+async def handle_connection(reader, writer, dispatcher, encoding, timeout):
     """
-    def __init__(self, sock, dispatcher, timeout=None):
-        super(RequestHandler, self).__init__(sock, timeout=timeout)
-        self._chunks = []
-        host, port = sock.getpeername() if sock is not None else (None, None)
-        self.client_info = {'host': host, 'port': port}
-        self.dispatcher = dispatcher
-        self._is_transfer_state = False
-        self.terminator = 1
+    Handles single client connection.
+    """
+    chunks = []
+    is_transfer_state = False
+    peername = writer.get_extra_info('peername')
+    log.info('Connection from %s', peername)
 
-    def on_enq(self):
-        if not self._is_transfer_state:
-            self._is_transfer_state = True
-            self.terminator = [CRLF, EOT]
-            return ACK
-        else:
-            log.error('ENQ is not expected')
-            return NAK
+    async def read(n=1):
+        try:
+            return await asyncio.wait_for(reader.read(n), timeout)
+        except asyncio.TimeoutError:
+            log.warning('Connection timed out for %s', peername)
+            writer.close()
+            await writer.wait_closed()
+            return None
 
-    def on_ack(self):
-        raise NotAccepted('Server should not be ACKed.')
+    while True:
+        data = await read()
+        if not data:
+            break
 
-    def on_nak(self):
-        raise NotAccepted('Server should not be NAKed.')
+        if data == ENQ:
+            if not is_transfer_state:
+                is_transfer_state = True
+                writer.write(ACK)
+                await writer.drain()
+            else:
+                log.error('ENQ is not expected.')
+                writer.write(NAK)
+                await writer.drain()
 
-    def on_eot(self):
-        if self._is_transfer_state:
-            self._is_transfer_state = False
-            self.terminator = 1
-        else:
-            raise InvalidState('Server is not ready to accept EOT message.')
+        elif data == EOT:
+            if is_transfer_state:
+                is_transfer_state = False
+            else:
+                log.error('EOT is not expected.')
+        
+        elif data in (ACK, NAK):
+            log.warning('%r is not expected on server side.', data)
 
-    def on_message(self):
-        if not self._is_transfer_state:
-            self.discard_input_buffers()
-            return NAK
-        else:
+        else: # Message frame
+            if not is_transfer_state:
+                log.error('Message frame is not expected.')
+                writer.write(NAK)
+                await writer.drain()
+                continue
+            
+            frame = data + await reader.readuntil(b'\r')
+            
             try:
-                self.handle_message(self._last_recv_data)
-                return ACK
+                if is_chunked_message(frame):
+                    chunks.append(frame)
+                elif chunks:
+                    chunks.append(frame)
+                    dispatcher(join(chunks))
+                    chunks = []
+                else:
+                    dispatcher(frame)
+                writer.write(ACK)
+                await writer.drain()
             except Exception:
-                log.exception('Error occurred on message handling.')
-                return NAK
+                log.exception('Error handling message: %r', frame)
+                writer.write(NAK)
+                await writer.drain()
 
-    def handle_message(self, message):
-        self.is_chunked_transfer = is_chunked_message(message)
-        if self.is_chunked_transfer:
-            self._chunks.append(message)
-        elif self._chunks:
-            self._chunks.append(message)
-            self.dispatcher(join(self._chunks))
-            self._chunks = []
-        else:
-            self.dispatcher(message)
-
-    def discard_input_buffers(self):
-        self._chunks = []
-        return super(RequestHandler, self).discard_input_buffers()
-
-    def on_timeout(self):
-        """Closes connection on timeout."""
-        super(RequestHandler, self).on_timeout()
-        self.close()
+    log.info('Connection closed for %s', peername)
 
 
-class Server(Dispatcher):
-    """Asyncore driven ASTM server.
+class Server:
+    """
+    Asynchronous ASTM server.
 
     :param host: Server IP address or hostname.
     :type host: str
@@ -208,49 +183,57 @@ class Server(Dispatcher):
     :param port: Server port number.
     :type port: int
 
-    :param request: Custom server request handler. If omitted  the
-                    :class:`RequestHandler` will be used by default.
+    :param dispatcher: Custom request handler records dispatcher.
+                       If omitted the :class:`BaseRecordsDispatcher` will be
+                       used by default.
+    :type dispatcher: :class:`BaseRecordsDispatcher`
 
-    :param dispatcher: Custom request handler records dispatcher. If omitted the
-                       :class:`BaseRecordsDispatcher` will be used by default.
-
-    :param timeout: :class:`RequestHandler` connection timeout. If :const:`None`
-                    request handler will wait for data before connection
-                    closing.
+    :param timeout: Connection timeout in seconds.
     :type timeout: int
 
-    :param encoding: :class:`Dispatcher <BaseRecordsDispatcher>`\'s encoding.
+    :param encoding: Dispatcher's encoding.
     :type encoding: str
     """
-
-    request = RequestHandler
     dispatcher = BaseRecordsDispatcher
 
     def __init__(self, host='localhost', port=15200,
-                 request=None, dispatcher=None,
-                 timeout=None, encoding=None):
-        super(Server, self).__init__()
-        self.create_socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.set_reuse_addr()
-        self.bind((host, port))
-        self.listen(5)
-        self.pool = []
+                 dispatcher=None, timeout=None, encoding=None):
+        self.host = host
+        self.port = port
         self.timeout = timeout
         self.encoding = encoding
-        if request is not None:
-            self.request = request
         if dispatcher is not None:
             self.dispatcher = dispatcher
+        self._server = None
 
-    def handle_accept(self):
-        pair = self.accept()
-        if pair is None:
-            return
-        sock, addr = pair
-        self.request(sock, self.dispatcher(self.encoding), timeout=self.timeout)
-        super(Server, self).handle_accept()
+    async def start(self):
+        """Starts the server."""
+        self._server = await asyncio.start_server(
+            lambda r, w: handle_connection(
+                r, w,
+                self.dispatcher(encoding=self.encoding),
+                self.encoding,
+                self.timeout
+            ),
+            self.host,
+            self.port
+        )
+        addrs = ', '.join(str(s.getsockname()) for s in self._server.sockets)
+        log.info('Serving on %s', addrs)
 
-    def serve_forever(self, *args, **kwargs):
-        """Enters into the :func:`polling loop <asynclib.loop>` to let server
-        handle incoming requests."""
-        loop(*args, **kwargs)
+    async def serve_forever(self):
+        """Starts the server and waits until it is stopped."""
+        if self._server is None:
+            await self.start()
+        async with self._server:
+            await self._server.serve_forever()
+
+    def close(self):
+        """Stops the server."""
+        if self._server:
+            self._server.close()
+
+    async def wait_closed(self):
+        """Waits until server is fully closed."""
+        if self._server:
+            await self._server.wait_closed()
