@@ -16,8 +16,38 @@ from .codec import (
     encode_record,
     make_checksum,
 )
+from .dataclasses import (
+    ConnectionConfig,
+    ConnectionStatus,
+    DeviceProfile,
+    MessageMetrics,
+    PerformanceMetrics,
+    SecurityConfig,
+    ValidationResult,
+)
+from .enums import (
+    AbnormalFlag,
+    CommentType,
+    ConnectionState,
+    ErrorCode,
+    Priority,
+    ProcessingId,
+    RecordType,
+    ResultStatus,
+    Sex,
+    TerminationCode,
+)
 from .exceptions import BaseASTMError, InvalidState, NotAccepted
 from .mapping import Component, Record
+from .modern_records import (
+    ASTMBaseRecord,
+    CommentRecord as ModernCommentRecord,
+    HeaderRecord as ModernHeaderRecord,
+    OrderRecord as ModernOrderRecord,
+    PatientRecord as ModernPatientRecord,
+    ResultRecord as ModernResultRecord,
+    TerminatorRecord as ModernTerminatorRecord,
+)
 from .records import (
     CommentRecord,
     HeaderRecord,
@@ -52,6 +82,33 @@ __all__ = [
     "TerminatorRecord",
     "Client",
     "Server",
+    # Modern enums
+    "RecordType",
+    "ProcessingId",
+    "Sex",
+    "Priority",
+    "AbnormalFlag",
+    "ResultStatus",
+    "CommentType",
+    "TerminationCode",
+    "ConnectionState",
+    "ErrorCode",
+    # Modern dataclasses
+    "ConnectionConfig",
+    "ConnectionStatus",
+    "DeviceProfile",
+    "MessageMetrics",
+    "ValidationResult",
+    "SecurityConfig",
+    "PerformanceMetrics",
+    # Modern records
+    "ASTMBaseRecord",
+    "ModernHeaderRecord",
+    "ModernPatientRecord",
+    "ModernOrderRecord",
+    "ModernResultRecord",
+    "ModernCommentRecord",
+    "ModernTerminatorRecord",
 ]
 
 import logging

@@ -8,7 +8,9 @@
 #
 import asyncio
 import logging
-from .codec import encode
+from typing import Iterable, Optional, Union
+
+from .codec import encode, ASTMRecord
 from .constants import ACK, ENQ, EOT, ENCODING
 
 log = logging.getLogger(__name__)
@@ -35,15 +37,21 @@ class Client:
 
     encoding = ENCODING
 
-    def __init__(self, host="localhost", port=15200, encoding=None, timeout=10):
+    def __init__(
+        self, 
+        host: str = "localhost", 
+        port: int = 15200, 
+        encoding: Optional[str] = None, 
+        timeout: Union[int, float] = 10
+    ) -> None:
         self.host = host
         self.port = port
         self.encoding = encoding or self.encoding
         self.timeout = timeout
-        self._reader = None
-        self._writer = None
+        self._reader: Optional[asyncio.StreamReader] = None
+        self._writer: Optional[asyncio.StreamWriter] = None
 
-    async def connect(self):
+    async def connect(self) -> None:
         """
         Connects to the server.
         """
@@ -51,7 +59,7 @@ class Client:
         peername = self._writer.get_extra_info("peername")
         log.info("Connection established to %s", peername)
 
-    async def _read(self):
+    async def _read(self) -> Optional[bytes]:
         try:
             return await asyncio.wait_for(self._reader.read(1), self.timeout)
         except asyncio.TimeoutError:
@@ -60,7 +68,7 @@ class Client:
             await self.wait_closed()
             return None
 
-    async def send(self, records, chunk_size=None):
+    async def send(self, records: Iterable[ASTMRecord], chunk_size: Optional[int] = None) -> bool:
         """
         Sends ASTM records to the server.
 
@@ -104,14 +112,14 @@ class Client:
         log.info("Session finished successfully.")
         return True
 
-    def close(self):
+    def close(self) -> None:
         """
         Closes the connection to the server.
         """
         if self._writer:
             self._writer.close()
 
-    async def wait_closed(self):
+    async def wait_closed(self) -> None:
         """
         Waits until the connection is fully closed.
         """

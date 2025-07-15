@@ -8,7 +8,9 @@
 #
 import asyncio
 import logging
-from .codec import decode_message, is_chunked_message, join
+from typing import Any, Callable, Dict, List, Optional, Type, Union
+
+from .codec import decode_message, is_chunked_message, join, ASTMRecord
 from .constants import ACK, EOT, NAK, ENQ, ENCODING
 
 log = logging.getLogger(__name__)
@@ -16,16 +18,16 @@ log = logging.getLogger(__name__)
 __all__ = ["BaseRecordsDispatcher", "Server"]
 
 
-class BaseRecordsDispatcher(object):
+class BaseRecordsDispatcher:
     """Abstract dispatcher of received ASTM records.
     You need to override its handlers or extend the dispatcher for your needs.
     """
 
     encoding = ENCODING
 
-    def __init__(self, encoding=None):
+    def __init__(self, encoding: Optional[str] = None) -> None:
         self.encoding = encoding or self.encoding
-        self.dispatch = {
+        self.dispatch: Dict[str, Callable[[Any], None]] = {
             "H": self.on_header,
             "C": self.on_comment,
             "P": self.on_patient,
@@ -35,9 +37,9 @@ class BaseRecordsDispatcher(object):
             "M": self.on_manufacturer_info,
             "L": self.on_terminator,
         }
-        self.wrappers = {}
+        self.wrappers: Dict[str, Type[Any]] = {}
 
-    def __call__(self, message):
+    def __call__(self, message: bytes) -> None:
         """
         Decodes and dispatches incoming message.
 
@@ -49,7 +51,7 @@ class BaseRecordsDispatcher(object):
             handler = self.dispatch.get(record[0], self.on_unknown)
             handler(self.wrap(record))
 
-    def wrap(self, record):
+    def wrap(self, record: ASTMRecord) -> Any:
         """
         Wraps record to high-level object if wrapper is defined.
 
@@ -63,56 +65,62 @@ class BaseRecordsDispatcher(object):
             return self.wrappers[rtype](*record)
         return record
 
-    def _default_handler(self, record):
+    def _default_handler(self, record: Any) -> None:
         log.warning("Record remains unprocessed: %s", record)
 
-    def on_header(self, record):
+    def on_header(self, record: Any) -> None:
         """Header record handler."""
         self._default_handler(record)
 
-    def on_comment(self, record):
+    def on_comment(self, record: Any) -> None:
         """Comment record handler."""
         self._default_handler(record)
 
-    def on_patient(self, record):
+    def on_patient(self, record: Any) -> None:
         """Patient record handler."""
         self._default_handler(record)
 
-    def on_order(self, record):
+    def on_order(self, record: Any) -> None:
         """Order record handler."""
         self._default_handler(record)
 
-    def on_result(self, record):
+    def on_result(self, record: Any) -> None:
         """Result record handler."""
         self._default_handler(record)
 
-    def on_scientific(self, record):
+    def on_scientific(self, record: Any) -> None:
         """Scientific record handler."""
         self._default_handler(record)
 
-    def on_manufacturer_info(self, record):
+    def on_manufacturer_info(self, record: Any) -> None:
         """Manufacturer information record handler."""
         self._default_handler(record)
 
-    def on_terminator(self, record):
+    def on_terminator(self, record: Any) -> None:
         """Terminator record handler."""
         self._default_handler(record)
 
-    def on_unknown(self, record):
+    def on_unknown(self, record: Any) -> None:
         """Fallback handler for dispatcher."""
         self._default_handler(record)
 
 
-async def handle_connection(reader, writer, dispatcher, encoding, timeout):
+async def handle_connection(
+    reader: asyncio.StreamReader, 
+    writer: asyncio.StreamWriter, 
+    dispatcher: BaseRecordsDispatcher, 
+    encoding: Optional[str], 
+    timeout: Optional[Union[int, float]]
+) -> None:
     """
     Handles single client connection.
     """
-    chunks = []
+    chunks: List[bytes] = []
     is_transfer_state = False
     peername = writer.get_extra_info("peername")
     log.info("Connection from %s", peername)
 
-    async def read(n=1):
+    async def read(n: int = 1) -> Optional[bytes]:
         try:
             return await asyncio.wait_for(reader.read(n), timeout)
         except asyncio.TimeoutError:
@@ -198,17 +206,22 @@ class Server:
     dispatcher = BaseRecordsDispatcher
 
     def __init__(
-        self, host="localhost", port=15200, dispatcher=None, timeout=None, encoding=None
-    ):
+        self, 
+        host: str = "localhost", 
+        port: int = 15200, 
+        dispatcher: Optional[Type[BaseRecordsDispatcher]] = None, 
+        timeout: Optional[Union[int, float]] = None, 
+        encoding: Optional[str] = None
+    ) -> None:
         self.host = host
         self.port = port
         self.timeout = timeout
         self.encoding = encoding
         if dispatcher is not None:
             self.dispatcher = dispatcher
-        self._server = None
+        self._server: Optional[asyncio.Server] = None
 
-    async def start(self):
+    async def start(self) -> None:
         """Starts the server."""
         self._server = await asyncio.start_server(
             lambda r, w: handle_connection(
@@ -224,19 +237,19 @@ class Server:
         addrs = ", ".join(str(s.getsockname()) for s in self._server.sockets)
         log.info("Serving on %s", addrs)
 
-    async def serve_forever(self):
+    async def serve_forever(self) -> None:
         """Starts the server and waits until it is stopped."""
         if self._server is None:
             await self.start()
         async with self._server:
             await self._server.serve_forever()
 
-    def close(self):
+    def close(self) -> None:
         """Stops the server."""
         if self._server:
             self._server.close()
 
-    async def wait_closed(self):
+    async def wait_closed(self) -> None:
         """Waits until server is fully closed."""
         if self._server:
             await self._server.wait_closed()
