@@ -1,3 +1,16 @@
+1.0.1 (2025-01-XX)
+--------------------
+
+- **Pydantic v2 Compatibility & Bug Fixes**:
+  - Fixed Pydantic field name validation issues by converting private attributes to use `PrivateAttr`
+  - Updated all structured logging calls to use standard Python logging format strings
+  - Enhanced profile validation system to handle both dictionary and string field mappings
+  - Improved message splitting logic with graceful error handling and fallback behavior
+  - Fixed test assertions to match updated validation error messages
+  - Added missing fields to `ParserConfig` class (`patient_name_field`, `sample_id_field`, `test_separator`, `component_separator`)
+  - Enhanced `validate_profile()` function to preserve error details while maintaining backward compatibility
+  - Full compatibility with modern Python and Pydantic versions while preserving existing API
+
 1.0.0 (2025-06-17)
 --------------------
 
