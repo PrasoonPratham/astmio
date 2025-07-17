@@ -9,7 +9,7 @@
 import asyncio
 import logging
 from .codec import decode_message, is_chunked_message, join
-from .constants import ACK, EOT, NAK, ENQ, ENCODING
+from .constants import ACK, EOT, CR, LF, NAK, ENQ, ENCODING
 from .exceptions import InvalidState, NotAccepted
 
 log = logging.getLogger(__name__)
@@ -102,7 +102,6 @@ class BaseRecordsDispatcher(object):
         """Fallback handler for dispatcher."""
         self._default_handler(record)
 
-
 async def handle_connection(reader, writer, dispatcher, encoding, timeout):
     """
     Handles single client connection.
@@ -153,6 +152,8 @@ async def handle_connection(reader, writer, dispatcher, encoding, timeout):
                 continue
             
             frame = data + await reader.readuntil(b'\r')
+            # Need to strip the LF(b'\n') char to decode the record
+            frame = frame.lstrip(b'\n')
             
             try:
                 if is_chunked_message(frame):
@@ -171,7 +172,6 @@ async def handle_connection(reader, writer, dispatcher, encoding, timeout):
                 await writer.drain()
 
     log.info('Connection closed for %s', peername)
-
 
 class Server:
     """
@@ -194,23 +194,28 @@ class Server:
     :param encoding: Dispatcher's encoding.
     :type encoding: str
     """
-    dispatcher = BaseRecordsDispatcher
-
+    
     def __init__(self, host='localhost', port=15200,
                  dispatcher=None, timeout=None, encoding=None):
         self.host = host
         self.port = port
         self.timeout = timeout
         self.encoding = encoding
-        if dispatcher is not None:
-            self.dispatcher = dispatcher
+        self.dispatcher = self._create_dispatcher(dispatcher)
         self._server = None
+
+    def _create_dispatcher(self,dispatcher):
+        if dispatcher is None:
+            return BaseRecordsDispatcher()
+        else:
+            return dispatcher
 
     async def start(self):
         """Starts the server."""
         self._server = await asyncio.start_server(
             lambda r, w: handle_connection(
-                r, w,
+                r, 
+                w,
                 self.dispatcher(encoding=self.encoding),
                 self.encoding,
                 self.timeout
