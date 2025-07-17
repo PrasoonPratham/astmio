@@ -84,3 +84,7 @@ venv.bak/
 hipaa_audit.db
 hipaa_audit.db-shm
 hipaa_audit.db-wal
+medical_audit.db
+production_hipaa_audit.db
+custom_audit.db
+production_hipaa_audit.db

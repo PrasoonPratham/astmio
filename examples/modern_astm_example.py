@@ -2,19 +2,39 @@
 """
 Modern ASTM Library Example - Clean API with Plugins
 
-This example demonstrates the new clean API with pip-like plugin installation.
-It's as easy as using pip!
+This example demonstrates the new clean API with proper plugin installation.
+Install plugins with: pip install astmio[hipaa]
 """
 
 import asyncio
 import astmio
 
-# Install plugins like pip commands
-print("🚀 Installing plugins...")
-astmio.install("hipaa", db_path="medical_audit.db")
-astmio.install("metrics")
+# Import plugins directly (install with: pip install astmio[hipaa])
+print("🚀 Loading plugins...")
+try:
+    from astmio.plugins.hipaa import HIPAAAuditPlugin
+    hipaa_plugin = HIPAAAuditPlugin(db_path="medical_audit.db")
+    print("✅ HIPAA plugin loaded")
+except ImportError:
+    print("❌ HIPAA plugin not available. Install with: pip install astmio[hipaa]")
+    hipaa_plugin = None
 
-print(f"✅ Installed plugins: {astmio.list_installed()}")
+try:
+    from astmio.plugins.metrics import MetricsPlugin
+    metrics_plugin = MetricsPlugin()
+    print("✅ Metrics plugin loaded")
+except ImportError:
+    print("❌ Metrics plugin not available. Install with: pip install astmio[metrics]")
+    metrics_plugin = None
+
+# Collect available plugins
+plugins = []
+if hipaa_plugin:
+    plugins.append(hipaa_plugin)
+if metrics_plugin:
+    plugins.append(metrics_plugin)
+
+print(f"✅ Available plugins: {[p.name for p in plugins]}")
 
 
 # Define clean, simple handlers
@@ -25,8 +45,7 @@ def handle_patient(record, server):
         patient_name = record[5] if len(record) > 5 else "Unknown"
         print(f"👤 Patient: {patient_name} (ID: {patient_id})")
         
-        # Get HIPAA plugin for custom logging
-        hipaa_plugin = server.get_plugin("hipaa")
+        # Check if HIPAA plugin is available
         if hipaa_plugin:
             print(f"   📋 HIPAA audit logging active")
 
@@ -78,7 +97,7 @@ async def demo_clean_api():
     server = astmio.create_server(
         handlers=handlers,
         port=15203,
-        plugins=["hipaa", "metrics"]  # Just plugin names!
+        plugins=plugins  # Pass plugin instances!
     )
     
     print(f"🔌 Server plugins: {server.list_plugins()}")
@@ -106,7 +125,6 @@ async def demo_clean_api():
     await server_task
     
     # Generate HIPAA compliance report
-    hipaa_plugin = server.get_plugin("hipaa")
     if hipaa_plugin:
         report = hipaa_plugin.generate_compliance_report(
             "2025-01-01T00:00:00Z",
@@ -153,7 +171,7 @@ async def demo_simple_usage():
         handlers=handlers,
         port=15204,
         duration=2.0,
-        plugins=["hipaa"]  # Even simpler plugin installation!
+        plugins=[hipaa_plugin] if hipaa_plugin else []  # Use plugin instances!
     )
     
     print("   Server finished")
@@ -165,32 +183,37 @@ async def demo_plugin_management():
     print("🔌 Plugin Management Demo")
     print("="*50)
     
-    # List available plugins
-    print(f"📦 Available plugins: {astmio.list_installed()}")
+    # Show available plugins
+    print(f"📦 Available plugins: {astmio.get_available_plugins()}")
     
-    # Install a plugin with custom config
-    print("\n📥 Installing HIPAA plugin with custom config...")
-    astmio.install("hipaa", 
-                   db_path="custom_audit.db",
-                   retention_days=365,
-                   auto_backup=True)
+    # Create a plugin instance with custom config
+    print("\n📥 Creating HIPAA plugin with custom config...")
+    if astmio.is_hipaa_available():
+        from astmio.plugins.hipaa import HIPAAAuditPlugin
+        custom_hipaa = HIPAAAuditPlugin(
+            db_path="custom_audit.db",
+            retention_days=365,
+            auto_backup=True
+        )
+        print(f"   HIPAA plugin created: {custom_hipaa.name} v{custom_hipaa.version}")
     
-    # Create server and access plugin
-    server = astmio.create_server(
-        handlers={'H': lambda r, s: print(f"Header: {r}")},
-        plugins=["hipaa"]
-    )
-    
-    # Access plugin directly
-    hipaa_plugin = server.get_plugin("hipaa")
-    if hipaa_plugin:
-        print(f"   HIPAA plugin version: {hipaa_plugin.version}")
-        print(f"   HIPAA plugin config: {hipaa_plugin.config}")
-    
-    # Uninstall plugin
-    print("\n📤 Uninstalling plugin...")
-    astmio.uninstall("hipaa")
-    print(f"   Remaining plugins: {astmio.list_installed()}")
+        # Create server with the custom plugin
+        server = astmio.create_server(
+            handlers={'H': lambda r, s: print(f"Header: {r}")},
+            plugins=[custom_hipaa]
+        )
+        
+        # Access plugin directly
+        server_plugins = server.list_plugins()
+        print(f"   Server plugins: {server_plugins}")
+        
+        # Get plugin instance
+        hipaa_plugin = server.get_plugin("hipaa")
+        if hipaa_plugin:
+            print(f"   HIPAA plugin version: {hipaa_plugin.version}")
+            print(f"   HIPAA plugin config: {hipaa_plugin.config}")
+    else:
+        print("   HIPAA plugin not available. Install with: pip install astmio[hipaa]")
 
 
 async def main():
@@ -210,7 +233,8 @@ async def main():
     print("="*50)
     
     print("\n💡 Key Features:")
-    print("   • astmio.install('plugin_name') - Install plugins like pip")
+    print("   • pip install astmio[hipaa] - Install plugins with pip")
+    print("   • from astmio.plugins.hipaa import HIPAAAuditPlugin - Import plugins")
     print("   • astmio.send_astm_data(records) - One-liner to send data")
     print("   • astmio.create_server(handlers, plugins=[...]) - Clean server creation")
     print("   • async with astmio.astm_client(...) - Context manager client")
