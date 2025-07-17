@@ -1,0 +1,595 @@
+ - [ACK]
+E[CR][LF]
+[STX]
+2P|
+1|[CR][ETX]BB[CR][LF]
+ - [ACK]
+[STX]
+3
+O|1|2025105870
+|^400^1|^^^HC
+G5^1||
+||||
+m||||
+|||||Seru
+||
+||||
+F[CR][ETX]
+ - [ACK]
+60[CR][LF]
+[STX]
+1|^^^HCG5^1|0.56|mIU/mL||N|
+4R|
+|F||||202
+[CR][ETX]17[CR][LF]
+5070118022
+7|575707
+ - [ACK]
+[STX]
+5L|
+1|F[CR][ETX]00[CR][LF]
+ - [ACK]
+[EOT]
+[ENQ]
+ - [ACK]
+[STX]
+1H|
+\^&|||ACCESS^575
+707||
+|P|1|2
+|||LIS|
+07011
+025
+85020[CR][ETX]2
+ - [ACK]
+E[CR][LF]
+[STX]
+2P
+ - [ACK]
+|1|[CR][ETX]BB[CR][LF]
+[STX]
+3O|
+1|25086305|^1434^1|^
+^^Insuli
+n^1|||||
+||||||Se
+||||
+|||F[CR]
+[CR][LF]
+rum|||
+ - [ACK]
+[ETX]12
+[STX]
+4R|1|^^^Insulin^1|16.6
+4|uIU/mL||N||F||||
+202507
+0118
+112
+7|57570
+7[CR][ETX]30
+ - [ACK]
+[CR][LF]
+[STX]
+5L|1|F[CR][ETX]00[CR][LF]
+ - [ACK]
+[EOT]
+[ENQ]
+ - [ACK]
+[STX]
+1H|\^&|||ACCE
+SS^575707|||||LIS||P|
+1|202507
+01185020
+[CR][ETX]2E[CR][LF]
+ - [ACK]
+[STX]
+2
+P|1|[CR][ETX]BB[CR][LF]
+ - [ACK]
+[STX]
+3O|1|25020053|^131
+6^4|^^^HCG5^
+1|||||||||||Serum|
+||||||
+|||
+F[CR][ETX]2D[CR][LF]
+ - [ACK]
+[STX]
+4R|1|^^^H
+CG5^1|108.66|mIU/mL||N
+||F||||20250
+701182626|57
+5707[CR][ETX]86[CR]
+ - [ACK]
+[LF]
+[STX]
+5L|1|F[CR][ETX]00[CR][LF]
+ - [ACK]
+[EOT]
+[ENQ]
+ - [ACK]
+[STX]
+1H|
+\^&|||ACCE
+SS^575707|||||LIS||P|1|202
+507011850
+20[CR][ETX]
+ - [ACK]
+2E[CR][LF]
+[STX]
+2P|
+ - [ACK]
+1|[CR][ETX]BB[CR][LF]
+[STX]
+V125Ag^
+3O|
+2|^^^O
+er
+um|||
+1|25020052|^1316^
+1||||||
+|||||S
+|||||
+||F[CR][ETX]
+ - [ACK]
+08[CR][LF]
+[STX]
+4R|
+1|^^^OV125Ag
+^1|16.4|U/mL
+||N||F|||
+|20
+25070
+11831
+50|57
+5707[CR][ETX]
+ - [ACK]
+3D[CR][LF]
+[STX]
+5L|
+1|F[CR][ETX]00[CR][LF]
+ - [ACK]
+[EOT]
+[ENQ]
+ - [ACK]
+[STX]
+1H|\
+^&|||ACCESS^575707|||||LIS||P|1
+1185020[CR][ETX]
+ - [ACK]
+|2025070
+2E[CR][LF]
+[STX]
+[ETX]BB[CR][LF]
+ - [ACK]
+2P|1|[CR]
+[STX]
+3O|1|2
+5059247|^1434^1
+rum|||||
+|||||F
+[CR][ETX]6C[CR][LF]
+|^^^B12II^1|||||
+||||||Se
+ - [ACK]
+[STX]
+1|^^^B12II^1|1
+35|pg/mL|222 to 143
+al|L|N|F|
+4R|
+701183638
+9^norm
+ - [ACK]
+|||2
+0250
+|5757
+07[CR]
+[ETX]A9
+[CR][LF]
+[STX]
+5C|
+1|I|ORL|I[CR][ETX]28[CR][LF]
+ - [ACK]
+[STX]
+6L|1
+|F[CR][ETX]0
+ - [ACK]
+1[CR][LF]
+[EOT]
+[ENQ]
+ - [ACK]
+[STX]
+1H|\^
+&|||ACCESS
+^575707|||||
+LIS||P|
+1|20250701185
+020[CR]
+[ETX]2E[CR][LF]
+ - [ACK]
+[STX]
+2P|1|[CR][ETX]
+ - [ACK]
+BB[CR][LF]
+[STX]
+3O|1|2025105867|^1316^1|^^^B12
+|||||
+|Serum|||||
+II^1|
+|||||||||
+F[CR]
+[ETX]CD
+ - [ACK]
+[CR][LF]
+[STX]
+4R|1|^^^B12II^1|131|pg/mL|222 
+to 1439^normal|
+L|N|F
+||||20250
+7
+01
+184
+50
+2|
+575707
+[CR][ETX]
+ - [ACK]
+9C[CR][LF]
+[STX]
+5C
+|1|I|ORL|I[CR][ETX]28[CR]
+ - [ACK]
+[LF]
+[STX]
+1|F[CR][ETX]01[CR][LF]
+ - [ACK]
+6L|
+[EOT]
+[ENQ]
+ - [ACK]
+[STX]
+1H|
+\^&|||ACCESS^575707|||||LIS||P|1
+|20250701
+185020[CR][ETX]2
+E[CR][LF]
+ - [ACK]
+[STX]
+P
+2
+|1
+|[CR][ETX]
+ - [ACK]
+BB[CR][LF]
+[STX]
+1|2400093420|^1316
+B12II^1||||
+|||
+3O|
+um||
+^3|^^^
+||||Ser
+|||
+||
+||
+|F
+[CR][ETX]C
+ - [ACK]
+3[CR][LF]
+[STX]
+4R|
+II^1|547|pg/mL|
+|N|N|F
+||||2
+normal
+1|^^^B12
+222 to 1439^
+0250
+7011845
+38|5
+[CR][ETX]
+75707
+ - [ACK]
+B2[CR][LF]
+[STX]
+5L|
+1|F[CR][ETX]00[CR][LF]
+ - [ACK]
+[EOT]
+[ENQ]
+ - [ACK]
+[STX]
+1H|\^&|||ACCE
+SS^575707|||||LIS||P|1|20
+25070
+ - [ACK]
+1190035[CR][ETX]
+30[CR][LF]
+[STX]
+2P|
+1|[CR][ETX]BB[CR][LF]
+ - [ACK]
+[STX]
+3O|1
+Ser
+|240012999
+0|^1319^1|^^^
+OV125Ag^1||||||||
+|||
+um|||
+||||
+|||F[CR][ETX]7
+ - [ACK]
+E[CR][LF]
+[STX]
+^OV1
+4R|1|^^
+|20250
+25Ag^1|20.4|
+||F|||
+U/mL||N
+70
+11
+9011
+4|5
+7570
+7[CR][ETX]36[CR][LF]
+ - [ACK]
+[STX]
+5L|
+[CR][LF]
+1|F[CR][ETX]00
+ - [ACK]
+[EOT]
+[ENQ]
+ - [ACK]
+[STX]
+ESS^5757
+1H|
+\^&|||ACC
+111[CR][ETX]
+2B[CR][LF]
+07|||||LI
+S||P|1
+|2025
+0701190
+ - [ACK]
+[STX]
+2P|
+1|[CR][ETX]BB[CR][LF]
+ - [ACK]
+[STX]
+3O|
+1|2400129990|^13
+Ag^2||||||
+19^1|^^^OV125
+|||||Se
+rum||
+|||
+|
+|||
+|F
+ - [ACK]
+[CR][ETX]
+7F[CR][LF]
+[STX]
+4R
+^^^OV125Ag^
+|1|
+2|15.9|
+U/mL||N||F
+||||20250
+701
+19
+015
+0|
+57
+570
+7[CR][ETX]4
+ - [ACK]
+0[CR][LF]
+[STX]
+5L|
+1|F[CR][ETX]0
+ - [ACK]
+0[CR][LF]
+[EOT]
+[ENQ]
+ - [ACK]
+[STX]
+1H|
+|||LIS||
+P|1|202507
+\^&|||ACCES
+S^575707||
+ - [ACK]
+01191
+911[CR][ETX]
+34[CR][LF]
+[STX]
+2P|1
+|[CR][ETX]BB[CR][LF]
+ - [ACK]
+[STX]
+3O|
+0^1|^^^TSH
+1|25086307|^40
+3^1|||
+||||||
+||Ser
+um|||
+|||||
+||F
+[CR][ETX]
+ - [ACK]
+1C[CR][LF]
+[STX]
+4R|
+1|^^^TSH3
+|20250
+U/mL||N||F|||
+^1|4.751|uI
+701191
+950
+|5757
+07[CR][ETX]75
+ - [ACK]
+[CR][LF]
+[STX]
+5L|1|F[CR][ETX]00
+ - [ACK]
+[CR][LF]
+[EOT]
+[ENQ]
+ - [ACK]
+[STX]
+^&|||A
+CCESS^575707|||
+||LIS||
+1H|\
+P|1|2025070
+119262
+3[CR][ETX]35
+ - [ACK]
+[CR][LF]
+[STX]
+2P|1|[CR]
+[ETX]BB[CR][LF]
+ - [ACK]
+[STX]
+3O|1|202510
+5893|^1
+12II^1||||
+|||||||Serum|
+||||
+317^1|^^^B
+|||||F
+[CR][ETX]C
+ - [ACK]
+D[CR][LF]
+[STX]
+1|^^^B12II
+4R|
+al|L
+pg/mL|222
+^1|160|
+ to 14
+39^norm
+|N|F|
+0
+50701
+|||202
+192
+7
+[CR][ETX]9F
+2|5
+75707
+ - [ACK]
+[CR][LF]
+[STX]
+ - [ACK]
+5
+C|1|I|
+ORL|I[CR][ETX]2
+8[CR][LF]
+[STX]
+6L|1|
+ - [ACK]
+F[CR][ETX]01[CR][LF]
+[EOT]
+[ENQ]
+ - [ACK]
+[STX]
+H
+|\^&|||A
+SS^
+CCE
+1
+707|||||LIS||P
+ - [ACK]
+575
+|1|20250701192
+959[CR][ETX]41[CR][LF]
+[STX]
+2
+P|1|[CR][ETX]BB[CR][LF]
+ - [ACK]
+[STX]3
+O|1|2508
+6307|^400^1|^
+^^B12II^1|||||||||||Serum||||||||||F[CR][ETX]31[CR][LF]
+ - [ACK]
+[STX]
+4R|1|^^^B12II^1|
+288|pg/
+mL|222 
+|F||||
+to 1439^normal
+[CR][LF]
+|N|N
+202507011
+|57
+93038
+5707[CR][ETX]AF
+ - [ACK]
+[STX]
+5L
+ - [ACK]
+|1|F[CR][ETX]00[CR][LF]
+[EOT]
+[ENQ]
+ - [ACK]
+[STX]
+1H|
+ACCESS^575707|||||LIS|
+\^&|||
+|P|1|202
+507011936
+50[CR]
+[ETX]36
+ - [ACK]
+[CR][LF]
+[STX]
+P
+2
+B[CR][LF]
+|1
+|[CR][ETX]B
+ - [ACK]
+[STX]
+3O|1
+|2508
+6307|^400^1
+|^^^B
+12II^1|||||
+|||||
+|Ser
+um|
+||
+|||
+|||
+|F
+[CR][ETX]31[CR]
+ - [ACK]
+[LF]
+[STX]
+4R|1|^^
+288|pg/mL|222 t
+ormal|N
+|202
+^B12II^1|
+7
+o 1439^n
+|N|F
+|||
+507011
+93038
+|57570
+ - [ACK]
+[CR][ETX]A
+F[CR][LF]
+[STX]
+5L
+|1|F[CR][ETX]0
+0[CR][LF]
+ - [ACK]

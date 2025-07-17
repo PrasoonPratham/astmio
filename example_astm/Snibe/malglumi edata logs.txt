@@ -1,0 +1,461 @@
+ - - - [ACK] - - - - - 
+[EOT]
+[ENQ]
+ - [ACK]
+[ACK]
+ - - - [ACK] - - - - - 
+[STX]
+H|\^&||PSWD|Maglumi User|||||Lis||P|E1394-97|20250701[CR]
+P|1[CR]
+O|1|25059232||^^^TT3 II\^^^TT4 II\^^
+^TSH II[CR]
+R|1|^^^TT3 II|1.171|ng/mL|0.75 to 2.1|N||||||20250630151157[CR]
+R|2|^^^TT4 II|10.78|ug/dL|5 to 13|N||||||20250630150745[CR]
+R|3|^^^TSH II|3.007|uIU/mL|0.3 to 4.5|N||||||20250630152021[CR]
+L|1|N[CR][ETX][EOT]
+[ENQ]
+ - [ACK]
+[ACK]
+ - - - [ACK] - - - - - 
+[STX]
+H|\^&||PSWD|Maglumi User|||||Lis||P|E1394-97|20250701[CR]
+P|1[CR]
+O|1|25059649||^^^TT3 II\^^^TT4 II\^^^TSH II[CR]
+R|1|^^^TT3 II|1.623|ng/mL|0.75 to 2.1|N||||||20250630185402[CR]
+R|2|^^^TT4 II|11.64|ug/dL|5 to 13|N||||||20250630184950[CR]
+R|3|^^^TSH II|3.53|uIU/mL|0.3 to 4.5|N||||||
+20250630185814[CR]
+L|1|N[CR]
+[ETX]
+ - [ACK]
+[ACK]
+ - - - [ACK] - - - - - 
+[EOT]
+[ENQ]
+ - [ACK]
+[ACK]
+ - - - [ACK] - - - - - 
+[STX]
+H|\^&||PSWD|Maglumi User|||||Lis||P|E1394-97|20250701[CR]
+P|1[CR]
+O|1|25061215||^^^TT3 II\^^^TT4 II\^^^TSH II[CR]
+R|1|^^^TT3 II|1.204|ng/mL|0.75 to 2.1|N||||||20250630201350[CR]
+R|2|^^^TT4 II|9.363|ug/dL|5 to 13|N||||||20250630200732[CR]
+R|3|^^^TSH II|0.958|uIU/mL|0.3 to 4.5|N||||||202506
+30201556[CR]
+L|1|N[CR]
+[ETX]
+ - [ACK]
+[ACK]
+ - - - [ACK] - - - - - 
+[EOT]
+[ENQ]
+ - [ACK]
+[ACK]
+ - - - [ACK] - - - - - 
+[STX]
+H|\^&||PSWD|Maglumi User|||||Lis||P|E1394-97|20250701[CR]
+P|1[CR]
+O|1|25086339||^^^TT3 II\^^^TT4 II\
+^^^TSH II[CR]
+R|1|^^^TT3 II|1.364|ng/mL|0.75 to 2.1|N||||
+||20250630185402[CR]
+R|2|^^^TT4 II|8.518|ug/dL|5 to 13|N||||||20250630184950[CR]
+R|3|^^^TSH II|3.729|uIU/mL|0
+.3 to 4.5|N||||||20250630185814[CR]
+L|1|N[CR]
+[ETX]
+ - [ACK]
+[ACK]
+ - - - [ACK] - - - - - 
+[EOT]
+[ENQ]
+ - [ACK]
+[ACK]
+ - - - [ACK] - - - - - 
+[STX]
+H|\^&||PSWD|Maglumi User|||||Lis||P|E1394-97|20250701[CR]
+P|1[CR]
+O|1|25141511||^^^Vit B12 II\^^^TT3 II\^^^TT4 II\^^^TSH II[CR]
+R|1|^^^Vit B12 II|195.6|pg/mL|192 to 827|N||||||20250630201144[CR]
+R|2|^^^TT3 II|1.021|ng/mL|0.75 to 2.1|N||||||20250630195908[CR]
+R|3|^^^TT4 II|8.035|ug/dL|5 to 13|N||||||20250630195250[CR]
+R|4|^^^TSH II|1.655|uIU/mL|0.3 to 4.5|N||||||20250630200320[CR]
+L|1|N[CR]
+[ETX]
+ - [ACK]
+[ACK]
+ - - - [ACK] - - - - - 
+[EOT]
+[ENQ]
+ - [ACK]
+[ACK]
+ - - - [ACK] - - - - - 
+[STX]
+H|\^&||PSWD|Maglumi User|||||Lis||P|E1394-97|20250701[CR]
+P|1[CR]
+O|1|25141515||^^^TT4 II\^^^TSH II\^^^TSH II[CR]
+R|1|^^^TT4 II|8.421|ug/dL|5 to 13|N||||||20250630191502[CR]
+R|2|^^^TSH II|1.399|uIU/mL|0.3 to 4.5|N|||
+|||20250630192120[CR]
+R|3|^^^TSH II|1.411|uIU/mL|0.3 to 4.5|N||||||20250630203450[CR]
+L|1|N[CR]
+[ETX]
+ - [ACK]
+[ACK]
+ - - - [ACK] - - - - - 
+[EOT]
+[ENQ]
+ - [ACK]
+[ACK]
+ - - - [ACK] - - - - - 
+[STX]
+H|\^&||PSWD|Maglumi User|||||Lis||P|E1394-97|20250701[CR]
+P|1[CR]
+O|1|25145898||^^^TSH II\^^^TT3 II\^^^TT4 II[CR]
+R|1|^^^TSH II|4.036|uIU/mL|0.3 to 4.5|N||||||20250630122458[CR]
+R|2|^^^TT3 II|1.001|ng/mL|0.75 t
+o 2.1|N||||||20250630123322[CR]R|3|^^^TT4 II|9.911|ug/dL|5 to 13|N||||||20250630122910[CR]
+L|1|N[CR]
+[ETX]
+ - [ACK]
+[ACK]
+ - - - [ACK] - - - - - 
+[EOT]
+[ENQ]
+ - [ACK]
+[ACK]
+ - - - [ACK] - - - - - 
+[STX]
+H|\^&||PSWD|Maglumi User|||||Lis||P|E
+1394-97|20250701[CR]
+P|1[CR]
+O|1|25146439||^^^TT3 II\^^^TT4 II[CR]
+R|1|^^^TT3 II|1.851|ng/mL|0.75 to 2.1|N
+||||||20250630195908[CR]
+R|2|^^^TT4 II|10.39|ug/dL|5 to 13
+|N||||||20250630195456[CR]
+L|1|N[CR]
+[ETX]
+ - [ACK]
+[ACK]
+ - - - [ACK] - - - - - 
+[EOT]
+[ENQ]
+ - [ACK]
+[ACK]
+ - - - [ACK] - - - - - 
+[STX]
+H|\^&||PSWD|Maglumi User|||||Lis||P|E1394-
+97|20250701[CR]
+P|1[CR]
+O|1|25146543||^^^TT3 II\^^^TT4 II\^^^TSH
+ II[CR]
+R|1|^^^TT3 II|1.112|ng/mL|0.75 to 2.1|N|
+|||||20250630195908[CR]
+R|2|^^^TT4 II|9.216|ug/dL|5 to 13|N||||||2
+0250630195250[CR]
+R|3|^^^TSH II|2.42|uIU/mL|0.3 to 4.5|N||||||2025063020032
+0[CR]
+L|1|N[CR]
+[ETX]
+ - [ACK]
+[ACK]
+ - - - [ACK] - - - - - 
+[EOT]
+[ENQ]
+ - [ACK]
+[ACK]
+ - - - [ACK] - - - - - 
+[STX]
+H|\^&||PSWD|Maglumi User|||||Lis||P|E1
+394-97|20250701[CR]
+P|1[CR]
+O|1|A0080910||^^^TSH II[CR]
+R|1|^^^TSH II|2.035|uIU/mL|0.3 to 4.5|N|||
+|||20250630200320[CR]
+L|1|N[CR]
+[ETX]
+ - [ACK]
+[ACK]
+ - - - [ACK] - - - - - 
+[EOT]
+[ENQ]
+ - [ACK]
+[ACK]
+ - - - [ACK] - - - - - 
+[STX]
+H|\^&||PSWD|Maglumi User|||||Lis||P|E1394-97|20250701[CR]
+P|1[CR]
+O|1|25059247||^^^TSH II[CR]
+R|1|^^^TSH II|1.456|uIU/mL|0.3 to 4.5|N||||||202507011950
+54[CR]
+L|1|N[CR]
+[ETX]
+ - [ACK]
+[ACK]
+ - - - [ACK] - - - - - 
+ - - - [ACK] - - - - - 
+[EOT]
+[ENQ]
+ - [ACK]
+[ACK]
+ - - - [ACK] - - - - - 
+[STX]
+H|\^&||PSWD|Maglumi User|||||Lis||P|E1394-97|20250701[CR]
+P|1[CR]
+O|1|2025105940||^^^PRL II[CR]
+R|1|^^^PRL II|10.58|ng/mL|2.52 to 26.81|N||||||20250630115946[CR]
+L|1|N[CR]
+[ETX]
+ - [ACK]
+[ACK]
+ - - - [ACK] - - - - - 
+[EOT]
+[ENQ]
+ - [ACK]
+[ACK]
+ - - - [ACK] - - - - - 
+[STX]
+H|\^&||PSWD|Maglumi Use
+r|||||Lis||P|E1394-97|20250701[CR]
+P|1[CR]
+O|1|2025173710||^^^25-OH VD II[CR]
+R|1|^^^25-OH VD II|38.75|ng/mL|30 to 100|N||||||202506301
+90020[CR]
+L|1|N[CR]
+[ETX]
+ - [ACK]
+[ACK]
+ - - - [ACK] - - - - - 
+[EOT]
+[ENQ]
+ - [ACK]
+[ACK]
+ - - - [ACK] - - - - - 
+[STX]
+H|\^&||PSWD|Maglumi User|||||Lis||P|E1394-97|20250701[CR]
+P|1[CR]
+O|1|2400237600||^^^TT3 II\^^^TT4 II\^^^TSH II[CR]
+R|1|^^^TT3 II|1.023|ng/mL|0.75 to 2.1|N|||||
+|20250630155928[CR]
+R|2|^^^TT4 II|7.512|ug/dL|5 to 13|N||||||20250630
+155516[CR]
+R|3|^^^TSH II|2.788|uIU/mL|0.3 to 4.5|N|||||
+|20250630160752[CR]
+L|1|N[CR]
+[ETX]
+ - [ACK]
+[ACK]
+ - - - [ACK] - - - - - 
+[EOT]
+[ENQ]
+ - [ACK]
+[ACK]
+ - - - [ACK] - - - - - 
+[STX]
+H|\^&||PSWD|Maglumi User|||||Lis||P|E1394-97|20250701[CR]
+P|1[CR]
+O|1|2400280288||^^^25-OH VD II[CR]
+R|1|^^^25-OH VD II|37.8|ng/mL|30 to 100|N||||||2
+0250630183508[CR]
+L|1|N[CR]
+[ETX]
+ - [ACK]
+[ACK]
+ - - - [ACK] - - - - - 
+[EOT]
+[ENQ]
+ - [ACK]
+[ACK]
+ - - - [ACK] - - - - - 
+[STX]
+H|\^&||PSWD|Maglumi User|||||Lis||P|E1394-97|20250701[CR]
+P|1[CR]
+O|1|25018425||^^^AMH II\^^^PRL II[CR]
+R|1|^^^AMH II|2.299|ng/mL|0.027 to 13.25|N|||
+|||20250630122046[CR]
+R|2|^^^PRL II|5.892|ng/mL
+|2.52 to 26.81|N||||||20250630120810[CR]
+L|1|N[CR]
+[ETX]
+ - [ACK]
+[ACK]
+ - - - [ACK] - - - - - 
+[EOT]
+[ENQ]
+ - [ACK]
+[ACK]
+ - - - [ACK] - - - - - 
+[STX]
+H|\^&||PSWD|Maglumi User|||||Lis||P|E1394-97|20250701[CR]
+P|1[CR]
+O|1|25018427||^^^TSH II[CR]
+R|1|^^^TSH II|3.439|uIU/mL|0.3 to 4.5|N||||||20250630152021[CR]
+L|1|N[CR]
+[ETX]
+ - [ACK]
+[ACK]
+ - - - [ACK] - - - - - 
+[EOT]
+[ENQ]
+ - [ACK]
+[ACK]
+ - - - [ACK] - - - - - 
+[STX]
+H|\^&||PSWD|Maglumi User|||||Lis||P|E1394-97|202
+50701[CR]
+P|1[CR]
+O|1|25018428||^^^TT3 II\^^^TT4 II\^^^TSH II[CR]
+R|1|^^^TT3 II|1.284|ng/mL|0.75 to 2.1|N||||||
+20250630171614[CR]
+R|2|^^^TT4 II|8.694|ug/dL|5 to 13|N||||||20250630171202[CR]
+R|3|^^^TSH II|1.864|uIU/mL|0.3 to 4.5|N||||
+||20250630172438[CR]
+L|1|N[CR]
+[ETX]
+ - [ACK]
+[ACK]
+ - - - [ACK] - - - - - 
+[EOT]
+[ENQ]
+ - [ACK]
+[ACK]
+ - - - [ACK] - - - - - 
+[STX]
+H|\^&||PSWD|Maglumi User|||||Lis||P|E1394-97|20250701[CR]
+P|1[CR]
+O|1|25020050||^^^TT3 II\^^^TT4 II\^^^TSH II[CR]
+R|1|^^^TT3 II|1.191|ng/mL|0.75 to 2.1|N||||||20250630185402[CR]
+R|2|^^^TT4 II|9.434|ug/dL|5 to 13|N||||||20250630184950[CR]
+R|3|^^^TSH II|2.936|uIU/mL|0.3 to 4.5|N||||||2025063
+0185814[CR]
+L|1|N[CR]
+[ETX]
+ - [ACK]
+[ACK]
+ - - - [ACK] - - - - - 
+[EOT]
+[ENQ]
+ - [ACK]
+[ACK]
+ - - - [ACK] - - - - - 
+[STX]
+H|\^&||PSWD|Maglumi User|||||Li
+s||P|E1394-97|20250701[CR]
+P|1[CR]
+O|1|25020471||^^^TT3 II\^^^TT4 II\^^^TSH II[CR]
+R|1|^^^TT3 II|0.86|ng/mL|0.75 to 2.1|N|||||
+|20250630155928[CR]
+R|2|^^^TT4 II|7.977|ug/dL|5 to 13|N||||||20250630155516[CR]
+R|3|^^^TSH II|2.798|uIU/mL|0.3 to 4.5|N||||||20250630160752[CR]
+L|1|N[CR]
+[ETX]
+ - [ACK]
+[ACK]
+ - - - [ACK] - - - - - 
+[EOT]
+[ENQ]
+ - [ACK]
+[ACK]
+ - - - [ACK] - - - - - 
+[STX]
+H|\^&||PSWD|Maglumi User|||||Lis||P|E1394-97|20250701[CR]
+P|1[CR]
+O|1|25058668||^^^TT3 II\^^^TT4 II\^^
+^TSH II[CR]
+R|1|^^^TT3 II|1.643|ng/mL|0.75 to 2.1|N||||||20250630131333[CR]
+R|2|^^^TT4 II|11.31|ug/dL|5 to 13|N||||||20250630130921[CR]
+R|3|^^^TSH II|0.505|uIU/mL|0.3 to 4.5|N||||||2025063013215
+7[CR]
+L|1|N[CR]
+[ETX]
+ - [ACK]
+[ACK]
+ - - - [ACK] - - - - - 
+[EOT]
+[ENQ]
+ - [ACK]
+[ACK]
+ - - - [ACK] - - - - - 
+[STX]
+H|\^&||PSWD|Maglumi User|||||Lis||P|E1394-97|20250701[CR]
+P|1[CR]
+O|1|25058759||^^^TSH II[CR]
+R|1|^^^TSH II|1.533|uIU/mL|0.3 to 4.5|N||||||20250630184126[CR]
+L|1|N[CR]
+[ETX]
+ - [ACK]
+[ACK]
+ - - - [ACK] - - - - - 
+[EOT]
+[ENQ]
+ - [ACK]
+[ACK]
+ - - - [ACK] - - - - - 
+[STX]
+H|\^&||PSWD|Maglumi User|||||Lis||P|E1394-97|20250701[CR]
+P|1[CR]
+O|1|25059225||^^^TT3 II\^^^TSH II[CR]
+R|1|^^^TT3 II|1.302|ng/mL|0.75 to 2.1|N||||||20250630151157[CR]
+R|2|^^^TSH II|1.745|uIU/mL|0.3 to 4.5|N||||||20250
+630152021[CR]
+L|1|N[CR]
+[ETX]
+ - [ACK]
+[ACK]
+ - - - [ACK] - - - - - 
+[EOT]
+[ENQ]
+ - [ACK]
+[ACK]
+ - - - [ACK] - - - - - 
+[STX]
+H|\^&||PSWD|Maglumi User|||||Lis||P|E1394-97|20250701[CR]
+P|1[CR]
+O|1|25059232||^^^TT3 II\^^^TT4 II\^^
+^TSH II[CR]
+R|1|^^^TT3 II|1.171|ng/mL|0.75 to 2.1|N||||||20250630151157[CR]
+R|2|^^^TT4 II|10.78|ug/dL|5 to 13|N||||||20250630150745[CR]
+R|3|^^^TSH II|3.007|uIU/mL|0.3 to 4.5|N||||||20250630152021[CR]
+L|1|N[CR][ETX][EOT]
+[ENQ]
+ - [ACK]
+[ACK]
+ - - - [ACK] - - - - - 
+[STX]
+H|\^&||PSWD|Maglumi User|||||Lis||P|E1394-97|20250701[CR]
+P|1[CR]
+O|1|25059649||^^^TT3 II\^^^TT4 II\^^^TSH II[CR]
+R|1|^^^TT3 II|1.623|ng/mL|0.75 to 2.1|N||||||20250630185402[CR]
+R|2|^^^TT4 II|11.64|ug/dL|5 to 13|N||||||20250630184950[CR]
+R|3|^^^TSH II|3.53|uIU/mL|0.3 to 4.5|N||||||
+20250630185814[CR]
+L|1|N[CR]
+[ETX]
+ - [ACK]
+[ACK]
+ - - - [ACK] - - - - - 
+[EOT]
+[ENQ]
+ - [ACK]
+[ACK]
+ - - - [ACK] - - - - - 
+[STX]
+H|\^&||PSWD|Maglumi User|||||Lis||P|E1394-97|20250701[CR]
+P|1[CR]
+O|1|25061215||^^^TT3 II\^^^TT4 II\^^^TSH II[CR]
+R|1|^^^TT3 II|1.204|ng/mL|0.75 to 2.1|N||||||20250630201350[CR]
+R|2|^^^TT4 II|9.363|ug/dL|5 to 13|N||||||20250630200732[CR]
+R|3|^^^TSH II|0.958|uIU/mL|0.3 to 4.5|N||||||202506
+30201556[CR]
+L|1|N[CR]
+[ETX]
+ - [ACK]
+[ACK]
+ - - - [ACK] - - - - - 
+[EOT]
+[ENQ]
+ - [ACK]
+[ACK]
+ - - - [ACK] - - - - - 

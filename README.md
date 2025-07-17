@@ -1,21 +1,76 @@
-ASTMIO
 
-`astmio` is a Python library designed to handle ASTM communication protocols used in medical and laboratory equipment. It provides tools to parse, build, and transmit ASTM E1381/E1394 messages over serial connections, making it easy to integrate lab machines like blood analyzers with custom Laboratory Information Systems (LIS).
+# ASTMIO: Modern Asynchronous ASTM E1394/E1381 Server and Client
 
-## Features
+ASTMIO is a completely modernized, asynchronous, and feature-rich Python library for handling the ASTM E1394/E1381 protocol, commonly used in clinical laboratories. This project is a ground-up rewrite of the original `python-astm` library, built on modern Python features like `asyncio`, `structlog`, and a robust plugin system.
 
-*   Full support for ASTM message parsing and encoding
-*   Serial port abstraction for easy device communication
-*   Customizable message mapping and field-level access
-*   Built with extensibility in mind for LIS and middleware integration
+## Key Features
 
-Read the docs for more info: https://PrasoonPratham.github.io/astmio/
+- **Fully Asynchronous:** Built on `asyncio` for high-performance, non-blocking I/O.
+- **Structured Logging:** Uses `structlog` for clear, configurable, and machine-readable logs, with support for JSON formatting and SQLite storage.
+- **Robust Error Handling:** A comprehensive exception hierarchy and automatic reconnection with exponential backoff.
+- **Connection Pooling:** A built-in connection pool for efficient management of client connections.
+- **Device Profiles:** A flexible configuration system for managing different instrument profiles and their specific quirks.
+- **TLS/SSL Support:** Secure communication with TLS/SSL encryption for both the client and server.
+- **Extensible Plugin System:** Easily extend the server's functionality with custom plugins for new record types, codecs, or metrics.
+- **Observability:** Built-in metrics collection and a Prometheus plugin for easy integration with monitoring systems.
+- **Modern Testing:** A comprehensive test suite built on `pytest` and `hypothesis`.
 
-## License
+## Installation
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+```bash
+pip install astmio
+```
 
-## Acknowledgements
+To install with optional features:
 
-This project is a fork of the original `python-astm` library created by Alexander Shorin. The original project, licensed under the 3-Clause BSD License, can be found at [the original PyPI project](https://pypi.org/project/astm/). Many thanks to the original author for their work.
+```bash
+# For structured logging with SQLite
+pip install astmio[logging]
+
+# For device profiles
+pip install astmio[profiles]
+
+# For Prometheus metrics
+pip install astmio[metrics]
+```
+
+## Quick Start
+
+### Server
+
+```python
+import asyncio
+from astmio.server import Server
+
+async def main():
+    server = Server()
+    await server.serve_forever()
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
+### Client
+
+```python
+import asyncio
+from astmio.client import Client
+
+async def main():
+    records = [
+        ['H', '|||||', '20230507'],
+        ['L', '1', 'N']
+    ]
+    client = Client()
+    await client.send(records)
+    client.close()
+    await client.wait_closed()
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
+## Documentation
+
+For more detailed information on the API, plugins, and configuration, please refer to the full documentation (link to be added).
 

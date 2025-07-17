@@ -45,6 +45,7 @@
   - Replace basic logging with structured logging using structlog
   - Add configurable log levels and formatting
   - Implement data masking for sensitive information
+  - Store these logs in SQLite with JSONB
   - _Requirements: 2.2, 8.2_
 
 - [ ] 3.3 Add comprehensive error recovery mechanisms
@@ -81,13 +82,13 @@
 - [ ] 5.1 Implement device profile management
 
   - Create DeviceProfile dataclass with field mappings and quirks
-  - Implement profile loading from YAML/JSON configuration files
+  - Implement profile loading from YAML/JSON configuration files for different machines
   - Add profile validation and error reporting
   - _Requirements: 4.1, 4.4_
 
 - [ ] 5.2 Add flexible field mapping and validation
 
-  - Implement configurable field mapping system
+  - Implement configurable field mapping system for machines like BS240 etc
   - Add custom validation rules and overrides
   - Support device-specific protocol quirks
   - _Requirements: 4.2, 4.3_
@@ -144,7 +145,7 @@
   - _Requirements: 10.3, 10.4_
 
 - [ ] 8. Add observability and metrics
-- [ ] 8.1 Implement metrics collection
+- [ ] 8.1 Implement metrics collection via the plugin system we made
 
   - Add Prometheus metrics for message throughput and latency
   - Implement connection and error statistics
@@ -203,37 +204,22 @@
   - Add architecture and design documentation
   - _Requirements: 7.5_
 
-- [ ] 11. Implement backward compatibility layer
-- [ ] 11.1 Create legacy adapter
-
-  - Implement LegacyAdapter for existing code compatibility
-  - Add deprecation warnings for old API usage
-  - Create migration utilities and helpers
-  - _Requirements: All requirements (compatibility)_
-
-- [ ] 11.2 Add migration tools
-
-  - Create ConfigMigrator for old configuration formats
-  - Implement CodeMigrator for API usage analysis
-  - Generate migration reports and suggestions
-  - _Requirements: All requirements (migration support)_
-
-- [ ] 12. Final integration and validation
-- [ ] 12.1 Integrate all components
+- [ ] 11. Final integration and validation
+- [ ] 11.1 Integrate all components
 
   - Wire together all modernized components
   - Ensure proper dependency injection and configuration
   - Add comprehensive integration tests
   - _Requirements: All requirements_
 
-- [ ] 12.2 Performance optimization and validation
+- [ ] 11.2 Performance optimization and validation
 
   - Profile and optimize critical code paths
   - Validate performance requirements are met
   - Add benchmarking and performance regression tests
   - _Requirements: 9.1, 5.5_
 
-- [ ] 12.3 Final documentation and release preparation
+- [ ] 11.3 Final documentation and release preparation
   - Complete all documentation and examples
   - Prepare release notes and migration guides
   - Validate all requirements are implemented and tested

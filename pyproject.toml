@@ -2,6 +2,9 @@
 requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
+[tool.setuptools]
+packages = ["astmio"]
+
 [project]
 name = "astmio"
 version = "1.0.0a3"
@@ -13,6 +16,10 @@ readme = "README.md"
 requires-python = ">=3.8"
 dependencies = [
     "pydantic>=2.0.0",
+    "structlog>=23.1.0",
+    "dataset>=1.6.2",
+    "PyYAML>=6.0",
+    "prometheus-client>=0.17.0",
 ]
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -34,7 +41,10 @@ classifiers = [
 "Bug Tracker" = "https://github.com/PrasoonPratham/astmio/issues"
 
 [project.optional-dependencies]
-dev = ["ruff"]
+dev = ["ruff", "pytest", "pytest-asyncio", "hypothesis"]
+logging = ["structlog", "dataset"]
+profiles = ["PyYAML"]
+metrics = ["prometheus-client"]
 
 [tool.ruff]
 line-length = 88

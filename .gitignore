@@ -81,3 +81,6 @@ venv.bak/
 
 # macOS
 .DS_Store
+hipaa_audit.db
+hipaa_audit.db-shm
+hipaa_audit.db-wal
