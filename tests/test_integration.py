@@ -26,19 +26,19 @@ class TestIntegration:
         """Simple handlers for testing."""
         received_messages = []
         
-        def handle_header(record):
+        def handle_header(record, server=None):
             received_messages.append(('H', record))
         
-        def handle_patient(record):
+        def handle_patient(record, server=None):
             received_messages.append(('P', record))
         
-        def handle_order(record):
+        def handle_order(record, server=None):
             received_messages.append(('O', record))
         
-        def handle_result(record):
+        def handle_result(record, server=None):
             received_messages.append(('R', record))
         
-        def handle_terminator(record):
+        def handle_terminator(record, server=None):
             received_messages.append(('L', record))
         
         handlers = {

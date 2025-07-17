@@ -29,15 +29,14 @@ from .mapping import (
 )
 
 from typing import Optional, List, Any, Union
-from pydantic import BaseModel, Field, validator, root_validator
+from pydantic import BaseModel, Field, field_validator, model_validator, ConfigDict
 
 # Because the ASTM standard uses list indices for fields, we will use
 # aliased fields to map the list index to a descriptive attribute name.
 # The default value of the alias is the "standard" index for that field.
 
 class ASTMModel(BaseModel):
-    class Config:
-        validate_by_name = True
+    model_config = ConfigDict(validate_by_name=True)
 
 class PatientName(ASTMModel):
     last_name: Optional[str] = None
@@ -65,7 +64,8 @@ class PatientRecord(ASTMModel):
     patient_name: Optional[Union[PatientName, str]] = None
     patient_id: Optional[str] = None  # Keep for backward compatibility
 
-    @validator("patient_name", pre=True)
+    @field_validator("patient_name", mode="before")
+    @classmethod
     def parse_patient_name(cls, v):
         if isinstance(v, str) and v and v != "^^":
             return PatientName.from_string(v)

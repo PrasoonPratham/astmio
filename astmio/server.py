@@ -14,6 +14,7 @@ from .constants import ACK, EOT, NAK, ENQ, ENCODING, STX, ETX, ETB
 from .logging import get_logger, setup_logging
 from .exceptions import ValidationError
 from .dataclasses import DeviceProfile
+from .plugins import PluginManager, BasePlugin
 
 log = get_logger(__name__)
 
@@ -53,6 +54,10 @@ async def handle_connection(
     conn_log = log.bind(peername=peername)
     conn_log.info("Connection established")
     
+    # Emit connection established event
+    client_ip = peername[0] if peername else "unknown"
+    server.emit_event("connection_established", client_ip)
+    
     is_transfer_state = False
     buffer = b""
     
@@ -88,7 +93,7 @@ async def handle_connection(
                     # Process any message before EOT
                     if eot_index > 0:
                         message = buffer[:eot_index]
-                        await process_message(message, handlers, config, writer, conn_log)
+                        await process_message(message, handlers, config, writer, conn_log, server)
                     
                     buffer = buffer[eot_index + 1:]
                     conn_log.debug("Transfer state ended")
@@ -107,7 +112,7 @@ async def handle_connection(
                         if frame_end_pos != -1:
                             # Extract complete message (including checksum)
                             message = buffer[stx_index:frame_end_pos + 5]
-                            await process_message(message, handlers, config, writer, conn_log)
+                            await process_message(message, handlers, config, writer, conn_log, server)
                             buffer = buffer[frame_end_pos + 5:]
                         else:
                             break  # Incomplete message
@@ -135,7 +140,8 @@ async def process_message(
     handlers: Dict[str, Callable],
     config: ServerConfig,
     writer: asyncio.StreamWriter,
-    logger
+    logger,
+    server: "Server"
 ) -> None:
     """Process a single ASTM message."""
     try:
@@ -150,6 +156,9 @@ async def process_message(
                 
             record_type = record_list[0]
             
+            # Emit record processing event for plugins
+            server.emit_event("record_processed", record_list, server)
+            
             if record_type in handlers:
                 try:
                     handler = handlers[record_type]
@@ -157,14 +166,14 @@ async def process_message(
                     # Check if handler is async
                     if asyncio.iscoroutinefunction(handler):
                         await asyncio.wait_for(
-                            handler(record_list), 
+                            handler(record_list, server), 
                             timeout=5.0  # Handler timeout
                         )
                     else:
                         # Run sync handler in executor to avoid blocking
                         loop = asyncio.get_event_loop()
                         await asyncio.wait_for(
-                            loop.run_in_executor(None, handler, record_list),
+                            loop.run_in_executor(None, handler, record_list, server),
                             timeout=5.0
                         )
                 except asyncio.TimeoutError:
@@ -217,6 +226,9 @@ class Server:
         self._server: Optional[asyncio.Server] = None
         self._connections: set = set()
         self._log = log.bind(server_id=f"{config.host}:{config.port}")
+        
+        # Initialize plugin manager
+        self.plugin_manager = PluginManager(self)
         
         # Setup logging
         setup_logging(log_level=config.log_level)
@@ -313,6 +325,33 @@ class Server:
             
         self._server = None
         self._log.info("Server shutdown complete")
+
+    def install_plugin(self, plugin: BasePlugin):
+        """Install a plugin into the server."""
+        self.plugin_manager.register_plugin(plugin)
+        self._log.info(f"Plugin installed: {plugin.name}")
+
+    def uninstall_plugin(self, plugin_name: str):
+        """Uninstall a plugin from the server."""
+        self.plugin_manager.unregister_plugin(plugin_name)
+        self._log.info(f"Plugin uninstalled: {plugin_name}")
+
+    def get_plugin(self, plugin_name: str) -> Optional[BasePlugin]:
+        """Get a plugin by name."""
+        return self.plugin_manager.get_plugin(plugin_name)
+
+    def list_plugins(self) -> List[str]:
+        """List all installed plugins."""
+        return self.plugin_manager.list_plugins()
+
+    def emit_event(self, event_name: str, *args, **kwargs):
+        """Emit an event to all plugins."""
+        self.plugin_manager.emit(event_name, *args, **kwargs)
+
+    def set_profile(self, profile_config):
+        """Set server profile configuration."""
+        self.profile_config = profile_config
+        self._log.info("Server profile configuration set")
 
     async def __aenter__(self):
         """Context manager entry."""
