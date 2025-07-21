@@ -1,4 +1,3 @@
-
 from .. import BasePlugin
 
 
@@ -6,6 +5,7 @@ class RecordPlugin(BasePlugin):
     """
     Base class for record plugins.
     """
+
     name = "RecordPlugin"
 
     def __init__(self, record_type, wrapper):
@@ -21,4 +21,4 @@ class RecordPlugin(BasePlugin):
         dispatcher = manager.server.dispatcher
         if not hasattr(dispatcher, "wrappers"):
             dispatcher.wrappers = {}
-        dispatcher.wrappers[self.record_type] = self.wrapper 
+        dispatcher.wrappers[self.record_type] = self.wrapper

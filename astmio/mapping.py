@@ -14,15 +14,12 @@ import logging
 import time
 import warnings
 from itertools import zip_longest
-from operator import itemgetter
 from typing import (
     Any,
-    Callable,
     Dict,
     Iterable,
     List,
     Optional,
-    Sequence,
     Set,
     Tuple,
     Type,
@@ -312,9 +309,7 @@ class DateTimeField(Field):
     def _get_value(self, value: str) -> datetime.datetime:
         return datetime.datetime.strptime(value, self.format)
 
-    def _set_value(
-        self, value: Union[str, datetime.date, datetime.datetime]
-    ) -> str:
+    def _set_value(self, value: Union[str, datetime.date, datetime.datetime]) -> str:
         if isinstance(value, str):
             dt_value = self._get_value(value)
         elif isinstance(value, (datetime.datetime, datetime.date)):

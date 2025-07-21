@@ -1,7 +1,6 @@
-
 import importlib
 import pkgutil
-from typing import Dict, Type, List, Any, Callable, Optional, Union
+from typing import Dict, Type, List, Any, Callable, Optional
 from collections import defaultdict
 
 from ..logging import get_logger
@@ -13,10 +12,11 @@ class BasePlugin:
     """
     Base class for all plugins.
     """
+
     name: str = "BasePlugin"
     version: str = "1.0.0"
     description: str = "Base plugin class"
-    
+
     def __init__(self, **kwargs):
         """Initialize plugin with configuration."""
         self.config = kwargs
@@ -41,6 +41,7 @@ class PluginManager:
     """
     Manages the lifecycle of plugins and the event system.
     """
+
     def __init__(self, server: Any = None):
         self.server = server
         self._plugins: Dict[str, BasePlugin] = {}
@@ -56,8 +57,11 @@ class PluginManager:
             try:
                 handler(*args, **kwargs)
             except Exception as e:
-                log.error(f"Error in event handler for {event_name}: {e}", 
-                         event=event_name, handler=handler)
+                log.error(
+                    f"Error in event handler for {event_name}: {e}",
+                    event=event_name,
+                    handler=handler,
+                )
 
     def register_plugin(self, plugin: BasePlugin):
         """Register a single plugin."""
@@ -80,14 +84,18 @@ class PluginManager:
 
     def discover_plugins(self, package):
         """Discover and register all plugins within a given package."""
-        for _, name, _ in pkgutil.iter_modules(package.__path__, package.__name__ + "."):
+        for _, name, _ in pkgutil.iter_modules(
+            package.__path__, package.__name__ + "."
+        ):
             try:
                 module = importlib.import_module(name)
                 for item_name in dir(module):
                     item = getattr(module, item_name)
-                    if (isinstance(item, type) and 
-                        issubclass(item, BasePlugin) and 
-                        item is not BasePlugin):
+                    if (
+                        isinstance(item, type)
+                        and issubclass(item, BasePlugin)
+                        and item is not BasePlugin
+                    ):
                         self.register_plugin(item())
             except Exception as e:
                 log.error(f"Failed to discover plugin in {name}: {e}")
@@ -105,14 +113,14 @@ def register_available_plugin(name: str, plugin_class: Type[BasePlugin]):
 def install_plugin(name: str, **kwargs) -> BasePlugin:
     """
     Install a plugin by name (pip-like interface).
-    
+
     Args:
         name: Plugin name
         **kwargs: Plugin configuration
-        
+
     Returns:
         Installed plugin instance
-        
+
     Raises:
         ValueError: If plugin not found
     """
@@ -123,17 +131,19 @@ def install_plugin(name: str, **kwargs) -> BasePlugin:
             # Look for plugin class in the module
             for item_name in dir(module):
                 item = getattr(module, item_name)
-                if (isinstance(item, type) and 
-                    issubclass(item, BasePlugin) and 
-                    item is not BasePlugin):
+                if (
+                    isinstance(item, type)
+                    and issubclass(item, BasePlugin)
+                    and item is not BasePlugin
+                ):
                     _available_plugins[name] = item
                     break
         except ImportError:
             raise ValueError(f"Plugin '{name}' not found")
-    
+
     plugin_class = _available_plugins[name]
     plugin = plugin_class(**kwargs)
-    
+
     log.info(f"Plugin '{name}' installed successfully")
     return plugin
 
@@ -141,7 +151,7 @@ def install_plugin(name: str, **kwargs) -> BasePlugin:
 def uninstall_plugin(name: str):
     """
     Uninstall a plugin by name.
-    
+
     Args:
         name: Plugin name to uninstall
     """
@@ -159,26 +169,30 @@ def list_plugins() -> List[str]:
 def list_available_plugins() -> Dict[str, str]:
     """List all available plugins with descriptions."""
     plugins = {}
-    
+
     # Discover plugins in the plugins directory
     import astmio.plugins
-    
+
     for _, name, _ in pkgutil.iter_modules(astmio.plugins.__path__):
-        if name.startswith('_'):
+        if name.startswith("_"):
             continue
-            
+
         try:
             module = importlib.import_module(f"astmio.plugins.{name}")
             for item_name in dir(module):
                 item = getattr(module, item_name)
-                if (isinstance(item, type) and 
-                    issubclass(item, BasePlugin) and 
-                    item is not BasePlugin):
-                    plugins[name] = getattr(item, 'description', 'No description available')
+                if (
+                    isinstance(item, type)
+                    and issubclass(item, BasePlugin)
+                    and item is not BasePlugin
+                ):
+                    plugins[name] = getattr(
+                        item, "description", "No description available"
+                    )
                     break
         except ImportError:
             continue
-    
+
     return plugins
 
 
@@ -188,13 +202,15 @@ def _register_builtin_plugins():
     try:
         # Register HIPAA plugin
         from .hipaa import HIPAAAuditPlugin
+
         register_available_plugin("hipaa", HIPAAAuditPlugin)
-        
+
         # Register metrics plugin
         from .metrics import MetricsPlugin, PrometheusMetricsPlugin
+
         register_available_plugin("metrics", MetricsPlugin)
         register_available_plugin("prometheus", PrometheusMetricsPlugin)
-        
+
     except ImportError as e:
         log.debug(f"Some built-in plugins not available: {e}")
 
@@ -205,10 +221,10 @@ _register_builtin_plugins()
 
 __all__ = [
     "BasePlugin",
-    "PluginManager", 
+    "PluginManager",
     "install_plugin",
     "uninstall_plugin",
     "list_plugins",
     "list_available_plugins",
-    "register_available_plugin"
-] 
+    "register_available_plugin",
+]

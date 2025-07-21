@@ -1,4 +1,3 @@
-
 from collections import defaultdict
 import time
 from .. import BasePlugin
@@ -9,6 +8,7 @@ class MetricsPlugin(BasePlugin):
     """
     A plugin to collect metrics.
     """
+
     name = "Metrics"
 
     def __init__(self):
@@ -26,7 +26,7 @@ class MetricsPlugin(BasePlugin):
             "processing_time": {
                 "last": 0,
                 "average": 0,
-            }
+            },
         }
         self._last_message_time = time.monotonic()
         self._processing_times = []
@@ -67,7 +67,9 @@ class MetricsPlugin(BasePlugin):
         processing_time = time.monotonic() - self._processing_start_time
         self.metrics["processing_time"]["last"] = processing_time
         self._processing_times.append(processing_time)
-        self.metrics["processing_time"]["average"] = sum(self._processing_times) / len(self._processing_times)
+        self.metrics["processing_time"]["average"] = sum(self._processing_times) / len(
+            self._processing_times
+        )
 
     def get_metrics(self):
         return self.metrics
@@ -77,16 +79,31 @@ class PrometheusMetricsPlugin(MetricsPlugin):
     """
     A metrics plugin that exposes data in Prometheus format.
     """
+
     name = "PrometheusMetrics"
 
     def __init__(self):
         super().__init__()
-        self.messages_total = Counter("astm_messages_total", "Total number of messages received")
-        self.message_types_total = Counter("astm_message_types_total", "Total number of messages received by type", ["type"])
-        self.connections_total = Counter("astm_connections_total", "Total number of connections")
-        self.connections_active = Gauge("astm_connections_active", "Number of active connections")
-        self.connections_errors_total = Counter("astm_connections_errors_total", "Total number of connection errors")
-        self.processing_time_seconds = Histogram("astm_processing_time_seconds", "Time spent processing messages")
+        self.messages_total = Counter(
+            "astm_messages_total", "Total number of messages received"
+        )
+        self.message_types_total = Counter(
+            "astm_message_types_total",
+            "Total number of messages received by type",
+            ["type"],
+        )
+        self.connections_total = Counter(
+            "astm_connections_total", "Total number of connections"
+        )
+        self.connections_active = Gauge(
+            "astm_connections_active", "Number of active connections"
+        )
+        self.connections_errors_total = Counter(
+            "astm_connections_errors_total", "Total number of connection errors"
+        )
+        self.processing_time_seconds = Histogram(
+            "astm_processing_time_seconds", "Time spent processing messages"
+        )
 
     def on_message_received(self, message):
         super().on_message_received(message)
@@ -106,4 +123,4 @@ class PrometheusMetricsPlugin(MetricsPlugin):
 
     def on_processing_end(self):
         super().on_processing_end()
-        self.processing_time_seconds.observe(self.metrics["processing_time"]["last"]) 
+        self.processing_time_seconds.observe(self.metrics["processing_time"]["last"])

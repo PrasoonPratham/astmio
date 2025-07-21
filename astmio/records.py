@@ -28,15 +28,17 @@ from .mapping import (
     Component,
 )
 
-from typing import Optional, List, Any, Union
-from pydantic import BaseModel, Field, field_validator, model_validator, ConfigDict
+from typing import Optional, Any, Union
+from pydantic import BaseModel, field_validator, ConfigDict
 
 # Because the ASTM standard uses list indices for fields, we will use
 # aliased fields to map the list index to a descriptive attribute name.
 # The default value of the alias is the "standard" index for that field.
 
+
 class ASTMModel(BaseModel):
     model_config = ConfigDict(validate_by_name=True)
+
 
 class PatientName(ASTMModel):
     last_name: Optional[str] = None
@@ -56,6 +58,7 @@ class PatientName(ASTMModel):
         }
         return cls(**name_dict)
 
+
 class PatientRecord(ASTMModel):
     set_id: int
     field2: Optional[str] = None
@@ -73,15 +76,18 @@ class PatientRecord(ASTMModel):
             return None
         return v
 
+
 class HeaderRecord(ASTMModel):
     delimiter: Optional[str] = None
     processing_id: Optional[str] = None
     version: Optional[str] = None
 
+
 class OrderRecord(ASTMModel):
     sample_id: str
     sample_barcode: Optional[str] = None
     test_id: Optional[str] = None
+
 
 class ResultRecord(ASTMModel):
     test_id: str
@@ -89,9 +95,11 @@ class ResultRecord(ASTMModel):
     units: Optional[str] = None
     abnormal_flag: Optional[str] = None
 
+
 class TerminatorRecord(ASTMModel):
     sequence_number: int
     termination_code: Optional[str] = None
+
 
 # A mapping of record type IDs to their Pydantic models
 RECORD_MODELS = {

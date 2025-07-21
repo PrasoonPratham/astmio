@@ -10,8 +10,7 @@ __pycache__/
 # Distribution / packaging
 /dist/
 /build/
-/astm.egg-info/
-/astm_2025.egg-info/
+*.egg-info/
 *.egg
 
 # PyInstaller
@@ -80,11 +79,10 @@ env.bak/
 venv.bak/
 
 # macOS
+# Databases
+*.db
+*.db-shm
+*.db-wal
+
 .DS_Store
-hipaa_audit.db
-hipaa_audit.db-shm
-hipaa_audit.db-wal
-medical_audit.db
-production_hipaa_audit.db
-custom_audit.db
-production_hipaa_audit.db
+

@@ -1,7 +1,6 @@
-
 import asyncio
 import time
-from typing import Optional, Set, Dict, Any
+from typing import Set, Dict, Any
 
 from .client import Client
 from .logging import get_logger
@@ -24,6 +23,7 @@ class ConnectionPool:
     :param client_options: Keyword arguments to be passed to the `Client`
                            constructor.
     """
+
     def __init__(self, host: str, port: int, pool_size: int = 10, **client_options):
         self.host = host
         self.port = port
@@ -121,8 +121,9 @@ class ConnectionPool:
                     try:
                         await self._create_connection()
                     except Exception as e:
-                        log.error("Failed to create replacement connection", error=str(e))
-
+                        log.error(
+                            "Failed to create replacement connection", error=str(e)
+                        )
 
     @staticmethod
     async def _is_healthy(conn: Client) -> bool:
@@ -146,4 +147,4 @@ class ConnectionPool:
         return self
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
-        await self.close() 
+        await self.close()

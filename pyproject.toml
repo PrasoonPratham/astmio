@@ -39,7 +39,7 @@ classifiers = [
 "Bug Tracker" = "https://github.com/PrasoonPratham/astmio/issues"
 
 [project.optional-dependencies]
-dev = ["ruff", "pytest", "pytest-asyncio", "hypothesis"]
+dev = ["ruff", "pytest", "pytest-asyncio", "hypothesis", "black"]
 hipaa = ["dataset>=1.6.2"]
 metrics = ["prometheus-client>=0.17.0"]
 prometheus = ["prometheus-client>=0.17.0"]
@@ -47,7 +47,7 @@ security = ["cryptography>=41.0.0"]
 full = ["dataset>=1.6.2", "prometheus-client>=0.17.0", "cryptography>=41.0.0"]
 
 [tool.ruff]
-line-length = 88
+line-length = 120
 indent-width = 4
 
 [tool.ruff.lint]

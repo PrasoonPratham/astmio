@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python3
 """
 Plugin Registry for ASTM Library
@@ -18,7 +17,7 @@ class PluginRegistry:
     """
     Central registry for all available plugins.
     """
-    
+
     def __init__(self):
         self._plugins: Dict[str, Type[BasePlugin]] = {}
         self._categories: Dict[str, List[str]] = {
@@ -27,16 +26,18 @@ class PluginRegistry:
             "security": [],
             "data_processing": [],
             "integration": [],
-            "custom": []
+            "custom": [],
         }
-        
+
         # Auto-register built-in plugins
         self._register_builtin_plugins()
-    
-    def register(self, name: str, plugin_class: Type[BasePlugin], category: str = "custom"):
+
+    def register(
+        self, name: str, plugin_class: Type[BasePlugin], category: str = "custom"
+    ):
         """
         Register a plugin in the registry.
-        
+
         Args:
             name: Plugin name
             plugin_class: Plugin class
@@ -47,59 +48,63 @@ class PluginRegistry:
             self._categories[category].append(name)
         else:
             self._categories["custom"].append(name)
-        
+
         log.info(f"Plugin registered: {name} ({category})")
-    
+
     def get(self, name: str) -> Optional[Type[BasePlugin]]:
         """Get a plugin class by name."""
         return self._plugins.get(name)
-    
+
     def list_all(self) -> List[str]:
         """List all available plugins."""
         return list(self._plugins.keys())
-    
+
     def list_by_category(self, category: str) -> List[str]:
         """List plugins by category."""
         return self._categories.get(category, [])
-    
+
     def get_categories(self) -> List[str]:
         """Get all available categories."""
         return list(self._categories.keys())
-    
+
     def get_plugin_info(self, name: str) -> Dict[str, str]:
         """Get detailed information about a plugin."""
         plugin_class = self._plugins.get(name)
         if not plugin_class:
             return {}
-        
+
         return {
             "name": getattr(plugin_class, "name", name),
             "version": getattr(plugin_class, "version", "unknown"),
-            "description": getattr(plugin_class, "description", "No description available"),
-            "category": self._get_plugin_category(name)
+            "description": getattr(
+                plugin_class, "description", "No description available"
+            ),
+            "category": self._get_plugin_category(name),
         }
-    
+
     def _get_plugin_category(self, name: str) -> str:
         """Get the category of a plugin."""
         for category, plugins in self._categories.items():
             if name in plugins:
                 return category
         return "unknown"
-    
+
     def _register_builtin_plugins(self):
         """Register all built-in plugins."""
         try:
             # HIPAA Compliance Plugin
             from .hipaa import HIPAAAuditPlugin
+
             self.register("hipaa", HIPAAAuditPlugin, "compliance")
-            
+
             # Metrics Plugins
             from .metrics import MetricsPlugin, PrometheusMetricsPlugin
+
             self.register("metrics", MetricsPlugin, "monitoring")
             self.register("prometheus", PrometheusMetricsPlugin, "monitoring")
-            
+
             log.info("Built-in plugins registered successfully")
-            
+
         except ImportError as e:
             log.warning(f"Some built-in plugins could not be registered: {e}")
 
@@ -108,10 +113,12 @@ class PluginRegistry:
 _registry = PluginRegistry()
 
 
-def register_plugin(name: str, plugin_class: Type[BasePlugin], category: str = "custom"):
+def register_plugin(
+    name: str, plugin_class: Type[BasePlugin], category: str = "custom"
+):
     """
     Register a plugin globally.
-    
+
     Args:
         name: Plugin name
         plugin_class: Plugin class
@@ -149,13 +156,13 @@ def print_plugin_catalog():
     """Print a formatted catalog of all available plugins."""
     print("🔌 ASTM Library Plugin Catalog")
     print("=" * 50)
-    
+
     for category in _registry.get_categories():
         plugins = _registry.list_by_category(category)
         if plugins:
             print(f"\n📂 {category.title()}")
             print("-" * 20)
-            
+
             for plugin_name in plugins:
                 info = _registry.get_plugin_info(plugin_name)
                 print(f"  • {plugin_name}")
@@ -169,32 +176,32 @@ class CustomLoggerPlugin(BasePlugin):
     """
     Example custom plugin that logs all events to a file.
     """
-    
+
     name = "custom_logger"
     version = "1.0.0"
     description = "Custom plugin that logs all events to a file"
-    
+
     def __init__(self, log_file: str = "astm_events.log", **kwargs):
         super().__init__(**kwargs)
         self.log_file = log_file
         self.event_count = 0
-    
+
     def install(self, manager):
         """Install the custom logger plugin."""
         super().install(manager)
-        
+
         # Register for all events
         manager.on("record_processed", self.on_any_event)
         manager.on("connection_established", self.on_any_event)
         manager.on("connection_failed", self.on_any_event)
-        
+
         log.info(f"Custom logger plugin installed, logging to: {self.log_file}")
-    
+
     def on_any_event(self, *args, **kwargs):
         """Log any event to file."""
         self.event_count += 1
-        
-        with open(self.log_file, 'a') as f:
+
+        with open(self.log_file, "a") as f:
             f.write(f"Event {self.event_count}: {args} {kwargs}\n")
 
 
@@ -206,30 +213,30 @@ register_plugin("custom_logger", CustomLoggerPlugin, "custom")
 def create_custom_plugin(name: str, description: str = "Custom plugin"):
     """
     Helper function to create a custom plugin class.
-    
+
     Args:
         name: Plugin name
         description: Plugin description
-        
+
     Returns:
         Plugin class that can be customized
     """
-    
+
     class CustomPlugin(BasePlugin):
         def __init__(self, **kwargs):
             super().__init__(**kwargs)
             self.name = name
             self.description = description
             self.version = "1.0.0"
-        
+
         def install(self, manager):
             super().install(manager)
             print(f"Custom plugin '{name}' installed")
-        
+
         def uninstall(self, manager):
             super().uninstall(manager)
             print(f"Custom plugin '{name}' uninstalled")
-    
+
     return CustomPlugin
 
 
@@ -243,5 +250,5 @@ __all__ = [
     "get_plugin_info",
     "print_plugin_catalog",
     "create_custom_plugin",
-    "CustomLoggerPlugin"
-] 
+    "CustomLoggerPlugin",
+]

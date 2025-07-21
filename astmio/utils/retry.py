@@ -1,4 +1,3 @@
-
 import asyncio
 import random
 from functools import wraps
@@ -50,4 +49,4 @@ def retry(
 
         return wrapper
 
-    return decorator 
+    return decorator
