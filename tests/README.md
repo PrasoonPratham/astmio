@@ -1,87 +1,148 @@
-# ASTMIO Test Suite
+# ASTM Parser Test Suite
 
-This directory contains comprehensive tests for the ASTMIO library, ensuring all ASTM data from different analyzers can be parsed correctly.
+This directory contains comprehensive test cases for the ASTM parser library, covering various scenarios from real-world analyzer communications.
 
-## Test Structure
+## Test Files Overview
 
-- **test_astm_parser.py** - Tests for parsing ASTM data from all example files
-  - Tests for Access 2 analyzer data
-  - Tests for BS-240 analyzer data  
-  - Tests for Erba analyzer data
-  - Tests for Snibe Maglumi analyzer data
-  - Tests for multi-test parsing and complete message sequences
+### 1. `test_astm_parser.py`
+**Main parser functionality tests**
+- Tests parsing of different analyzer data formats (Access 2, BS-240, Erba, Snibe Maglumi)
+- Validates record field mapping and component parsing
+- Tests multi-test parsing and complete message sequences
+- Covers various record types (Header, Patient, Order, Result, Terminator, Query, Comment)
+- Tests analyzer-specific formats and message type identification
 
-- **test_records.py** - Tests for individual ASTM record types
-  - Modern Pydantic-based record tests (Header, Patient, Order, Result, Comment, Terminator)
-  - Legacy mapping-based record tests
-  - Record encoding/decoding tests
-  - Field validation tests
+### 2. `test_astm_edge_cases.py`
+**Edge cases and error handling**
+- Malformed records and empty input handling
+- Control characters and special character processing
+- Very long fields and maximum field count scenarios
+- Unicode handling and encoding roundtrip tests
+- Boundary conditions and memory stress testing
+- Mixed line endings and incomplete record handling
 
-- **test_integration.py** - Integration tests for end-to-end ASTM processing
-  - Client-server communication tests
-  - Message framing tests (STX/ETX/EOT)
-  - Multi-frame message handling
-  - Real-world message parsing
-  - Error handling tests
-  - Bidirectional communication tests
+### 3. `test_astm_message_types.py`
+**Different ASTM message types and communication patterns**
+- Patient Result (PR) messages
+- Sample Acknowledgment (SA) messages
+- Query Request (RQ) and Query Acknowledgment (QA) messages
+- Quality Control Result (QR) messages
+- Calibration Result (CR) messages
+- Comment messages and multi-message parsing
+- Message sequence validation and termination codes
 
-- **test_profiles.py** - Tests for device profile functionality
-  - Profile loading and validation
-  - Field mapping using profiles
-  - Profile-based encoding
-  - Profile compatibility tests
-  - Dynamic profile loading
+### 4. `test_astm_field_parsing.py`
+**Detailed field parsing and component handling**
+- Component separator parsing (^)
+- Repeat separator parsing (\)
+- Escape sequence handling
+- Empty field and special character processing
+- Numeric, date/time, and reference range parsing
+- Patient name, address, and physician field parsing
+- Units, abnormal flags, and status field parsing
+- Field length limits and count validation
+
+### 5. `test_astm_production_scenarios.py`
+**Real-world production scenarios**
+- Access 2 B12 test scenario
+- Mindray creatinine and urea test workflow
+- Snibe Maglumi thyroid panel testing
+- Invalid patient ID handling workflow
+- Quality control and calibration workflows
+- Sample query and response patterns
+- Complete patient result workflows with comments
+- Multi-analyzer communication scenarios
+
+## Test Coverage
+
+The test suite covers:
+
+### Analyzer Types
+- **Access 2**: B12 testing, specific field formats
+- **Mindray BS-240**: Multi-parameter chemistry panels
+- **Snibe Maglumi**: Thyroid function tests (TT3, TT4, TSH)
+- **Erba**: HL7 format detection and handling
+
+### Record Types
+- **H (Header)**: Various analyzer identification formats
+- **P (Patient)**: Demographics, IDs, special characters
+- **O (Order)**: Single and multi-test orders, priorities
+- **R (Result)**: Numeric, qualitative, with flags and timestamps
+- **L (Terminator)**: Normal, query, information termination
+- **C (Comment)**: Result descriptions and recommendations
+- **Q (Query)**: Sample inquiries and responses
+
+### Communication Patterns
+- Host to Instrument orders
+- Instrument to Host results
+- Query/Response workflows
+- Error handling and recovery
+- Quality control procedures
+- Calibration workflows
+
+### Field Parsing
+- Component separators (^)
+- Repeat separators (\)
+- Field separators (|)
+- Record separators (CR)
+- Empty and null field handling
+- Special characters and Unicode
+- Long field values and limits
+
+### Error Scenarios
+- Malformed records
+- Invalid patient IDs
+- Missing required fields
+- Encoding issues
+- Memory stress conditions
+- Boundary conditions
 
 ## Running Tests
 
-To run all tests:
+To run all ASTM parser tests:
 ```bash
-python -m pytest tests/ -v
+python -m pytest tests/test_astm_*.py -v
 ```
 
-To run specific test files:
+To run specific test categories:
 ```bash
+# Main parser functionality
 python -m pytest tests/test_astm_parser.py -v
-python -m pytest tests/test_records.py -v
-python -m pytest tests/test_integration.py -v
-python -m pytest tests/test_profiles.py -v
+
+# Production scenarios
+python -m pytest tests/test_astm_production_scenarios.py -v
+
+# Edge cases
+python -m pytest tests/test_astm_edge_cases.py -v
+
+# Field parsing
+python -m pytest tests/test_astm_field_parsing.py -v
+
+# Message types
+python -m pytest tests/test_astm_message_types.py -v
 ```
 
-To run with coverage:
-```bash
-python -m pytest tests/ --cov=astmio --cov-report=html
-```
+## Test Data Sources
 
-## Test Data
+The tests are based on real production data from:
+- Access 2 AnalyzerLogs.txt
+- BS-240 ASTM communication logs
+- Snibe Maglumi analyzer outputs
+- Production example scenarios
+- YAML profile configurations (access2.yaml, erba.yaml, snibe_maglumi.yaml)
 
-The tests use real ASTM data from the `example_astm/` directory:
-- Access 2 analyzer logs
-- BS-240 analyzer data
-- Erba analyzer data
-- Snibe Maglumi analyzer data
+## Key Features Tested
 
-## Device Profiles
+1. **Multi-analyzer support**: Tests handle different analyzer formats and protocols
+2. **Robust parsing**: Handles malformed data, special characters, and edge cases
+3. **Production scenarios**: Real-world communication patterns and workflows
+4. **Field validation**: Comprehensive field parsing and component handling
+5. **Error recovery**: Graceful handling of various error conditions
+6. **Performance**: Memory stress testing and boundary condition handling
 
-YAML configuration profiles for each analyzer type are located in `etc/profiles/`:
-- `access2.yaml` - Access 2 analyzer profile
-- `mindray_bs240.yaml` - Mindray BS-240 analyzer profile
-- `erba.yaml` - Erba analyzer profile
-- `snibe_maglumi.yaml` - Snibe Maglumi analyzer profile
+## Notes
 
-Each profile defines:
-- Device information
-- Transport configuration (TCP/Serial)
-- Record structure and field mappings
-- Parser settings
-
-## Test Requirements
-
-- Python 3.8+
-- pytest
-- pytest-asyncio
-- PyYAML
-
-Install test dependencies:
-```bash
-pip install -e ".[dev]"
-``` 
+- Tests use a fallback decode function for compatibility when the full astmio library isn't available
+- Frame sequence numbers (e.g., "1H" instead of "H") are properly handled
+- Unicode and encoding issues are tested across different character sets
+- Production scenarios reflect actual analyzer communication patterns observed in healthcare environments

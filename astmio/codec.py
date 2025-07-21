@@ -25,7 +25,7 @@ from .constants import (
     REPEAT_SEP,
     STX,
 )
-from .exceptions import ProtocolError, ValidationError
+from .exceptions import ProtocolError, ValidationError, ProtocolError
 
 log = logging.getLogger(__name__)
 
@@ -86,6 +86,9 @@ def decode(data: bytes, encoding: str = ENCODING, strict: bool = False) -> ASTMD
     if not data:
         raise ValidationError("Empty data provided")
 
+    if FIELD_SEP not in data:
+        raise ProtocolError("Data is missing the required Field Separator.")
+    
     try:
         result = decode_with_metadata(data, encoding, strict)
         return result.data
@@ -98,9 +101,7 @@ def decode(data: bytes, encoding: str = ENCODING, strict: bool = False) -> ASTMD
         return _attempt_recovery_decode(data, encoding)
 
 
-def decode_with_metadata(
-    data: bytes, encoding: str = ENCODING, strict: bool = False
-) -> DecodingResult:
+def decode_with_metadata(data: bytes, encoding: str = ENCODING, strict: bool = True) -> DecodingResult:
     """
     Enhanced decoding with comprehensive metadata.
 
@@ -114,15 +115,19 @@ def decode_with_metadata(
 
     if not data:
         raise ValidationError("Empty data provided")
-
-    # Determine message type and decode accordingly
+    
+    # The message is normal(with STX and sequence number)
     if data.startswith(STX):
         if is_chunked_message(data):
             return _decode_chunked_message(data, encoding, strict)
         else:
             return _decode_complete_message(data, encoding, strict)
+    
+    # The message is without the STX(Only sequence number)
     elif data and data[:1].isdigit():
         return _decode_frame_only(data, encoding, strict)
+    
+    # The message contains only record(No sequence number and STX)
     else:
         return _decode_record_only(data, encoding, strict)
 
@@ -323,10 +328,15 @@ def decode_message(
 
     return seq, records, cs.decode("ascii", errors="replace") if cs else None
 
+<<<<<<< Updated upstream
 
 def decode_frame(
     frame: bytes, encoding: str, strict: bool = False
 ) -> Tuple[Optional[int], ASTMData]:
+=======
+# 1H|\\^&|||HOST^1.0||||||P||20240101120000"
+def decode_frame(frame: bytes, encoding: str, strict: bool = False) -> Tuple[Optional[int], ASTMData]:
+>>>>>>> Stashed changes
     """
     Enhanced ASTM frame decoder.
 
@@ -515,6 +525,8 @@ def decode_repeated_component(
         log.warning("Repeated component decode failed", error=str(e))
         # Fallback: treat as single component
         return [decode_component(component, encoding, False)]
+
+
 
 
 def encode(
@@ -900,6 +912,8 @@ def encode_repeated_component(
             raise ValidationError(f"Failed to encode repeated components: {e}")
         log.warning("Repeated component encoding failed", error=str(e))
         return b""
+
+
 
 
 def make_checksum(message: bytes) -> bytes:
