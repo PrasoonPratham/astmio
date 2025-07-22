@@ -1,9 +1,9 @@
- - - - [ACK] - - - - - 
+ - - - [ACK] - - - - -
 [EOT]
 [ENQ]
  - [ACK]
 [ACK]
- - - - [ACK] - - - - - 
+ - - - [ACK] - - - - -
 [STX]
 H|\^&||PSWD|Maglumi User|||||Lis||P|E1394-97|20250701[CR]
 P|1[CR]
@@ -16,7 +16,7 @@ L|1|N[CR][ETX][EOT]
 [ENQ]
  - [ACK]
 [ACK]
- - - - [ACK] - - - - - 
+ - - - [ACK] - - - - -
 [STX]
 H|\^&||PSWD|Maglumi User|||||Lis||P|E1394-97|20250701[CR]
 P|1[CR]
@@ -29,12 +29,12 @@ L|1|N[CR]
 [ETX]
  - [ACK]
 [ACK]
- - - - [ACK] - - - - - 
+ - - - [ACK] - - - - -
 [EOT]
 [ENQ]
  - [ACK]
 [ACK]
- - - - [ACK] - - - - - 
+ - - - [ACK] - - - - -
 [STX]
 H|\^&||PSWD|Maglumi User|||||Lis||P|E1394-97|20250701[CR]
 P|1[CR]
@@ -47,12 +47,12 @@ L|1|N[CR]
 [ETX]
  - [ACK]
 [ACK]
- - - - [ACK] - - - - - 
+ - - - [ACK] - - - - -
 [EOT]
 [ENQ]
  - [ACK]
 [ACK]
- - - - [ACK] - - - - - 
+ - - - [ACK] - - - - -
 [STX]
 H|\^&||PSWD|Maglumi User|||||Lis||P|E1394-97|20250701[CR]
 P|1[CR]
@@ -67,12 +67,12 @@ L|1|N[CR]
 [ETX]
  - [ACK]
 [ACK]
- - - - [ACK] - - - - - 
+ - - - [ACK] - - - - -
 [EOT]
 [ENQ]
  - [ACK]
 [ACK]
- - - - [ACK] - - - - - 
+ - - - [ACK] - - - - -
 [STX]
 H|\^&||PSWD|Maglumi User|||||Lis||P|E1394-97|20250701[CR]
 P|1[CR]
@@ -85,12 +85,12 @@ L|1|N[CR]
 [ETX]
  - [ACK]
 [ACK]
- - - - [ACK] - - - - - 
+ - - - [ACK] - - - - -
 [EOT]
 [ENQ]
  - [ACK]
 [ACK]
- - - - [ACK] - - - - - 
+ - - - [ACK] - - - - -
 [STX]
 H|\^&||PSWD|Maglumi User|||||Lis||P|E1394-97|20250701[CR]
 P|1[CR]
@@ -103,12 +103,12 @@ L|1|N[CR]
 [ETX]
  - [ACK]
 [ACK]
- - - - [ACK] - - - - - 
+ - - - [ACK] - - - - -
 [EOT]
 [ENQ]
  - [ACK]
 [ACK]
- - - - [ACK] - - - - - 
+ - - - [ACK] - - - - -
 [STX]
 H|\^&||PSWD|Maglumi User|||||Lis||P|E1394-97|20250701[CR]
 P|1[CR]
@@ -120,12 +120,12 @@ L|1|N[CR]
 [ETX]
  - [ACK]
 [ACK]
- - - - [ACK] - - - - - 
+ - - - [ACK] - - - - -
 [EOT]
 [ENQ]
  - [ACK]
 [ACK]
- - - - [ACK] - - - - - 
+ - - - [ACK] - - - - -
 [STX]
 H|\^&||PSWD|Maglumi User|||||Lis||P|E
 1394-97|20250701[CR]
@@ -139,12 +139,12 @@ L|1|N[CR]
 [ETX]
  - [ACK]
 [ACK]
- - - - [ACK] - - - - - 
+ - - - [ACK] - - - - -
 [EOT]
 [ENQ]
  - [ACK]
 [ACK]
- - - - [ACK] - - - - - 
+ - - - [ACK] - - - - -
 [STX]
 H|\^&||PSWD|Maglumi User|||||Lis||P|E1394-
 97|20250701[CR]
@@ -161,12 +161,12 @@ L|1|N[CR]
 [ETX]
  - [ACK]
 [ACK]
- - - - [ACK] - - - - - 
+ - - - [ACK] - - - - -
 [EOT]
 [ENQ]
  - [ACK]
 [ACK]
- - - - [ACK] - - - - - 
+ - - - [ACK] - - - - -
 [STX]
 H|\^&||PSWD|Maglumi User|||||Lis||P|E1
 394-97|20250701[CR]
@@ -178,12 +178,12 @@ L|1|N[CR]
 [ETX]
  - [ACK]
 [ACK]
- - - - [ACK] - - - - - 
+ - - - [ACK] - - - - -
 [EOT]
 [ENQ]
  - [ACK]
 [ACK]
- - - - [ACK] - - - - - 
+ - - - [ACK] - - - - -
 [STX]
 H|\^&||PSWD|Maglumi User|||||Lis||P|E1394-97|20250701[CR]
 P|1[CR]
@@ -194,13 +194,13 @@ L|1|N[CR]
 [ETX]
  - [ACK]
 [ACK]
- - - - [ACK] - - - - - 
- - - - [ACK] - - - - - 
+ - - - [ACK] - - - - -
+ - - - [ACK] - - - - -
 [EOT]
 [ENQ]
  - [ACK]
 [ACK]
- - - - [ACK] - - - - - 
+ - - - [ACK] - - - - -
 [STX]
 H|\^&||PSWD|Maglumi User|||||Lis||P|E1394-97|20250701[CR]
 P|1[CR]
@@ -210,12 +210,12 @@ L|1|N[CR]
 [ETX]
  - [ACK]
 [ACK]
- - - - [ACK] - - - - - 
+ - - - [ACK] - - - - -
 [EOT]
 [ENQ]
  - [ACK]
 [ACK]
- - - - [ACK] - - - - - 
+ - - - [ACK] - - - - -
 [STX]
 H|\^&||PSWD|Maglumi Use
 r|||||Lis||P|E1394-97|20250701[CR]
@@ -227,12 +227,12 @@ L|1|N[CR]
 [ETX]
  - [ACK]
 [ACK]
- - - - [ACK] - - - - - 
+ - - - [ACK] - - - - -
 [EOT]
 [ENQ]
  - [ACK]
 [ACK]
- - - - [ACK] - - - - - 
+ - - - [ACK] - - - - -
 [STX]
 H|\^&||PSWD|Maglumi User|||||Lis||P|E1394-97|20250701[CR]
 P|1[CR]
@@ -247,12 +247,12 @@ L|1|N[CR]
 [ETX]
  - [ACK]
 [ACK]
- - - - [ACK] - - - - - 
+ - - - [ACK] - - - - -
 [EOT]
 [ENQ]
  - [ACK]
 [ACK]
- - - - [ACK] - - - - - 
+ - - - [ACK] - - - - -
 [STX]
 H|\^&||PSWD|Maglumi User|||||Lis||P|E1394-97|20250701[CR]
 P|1[CR]
@@ -263,12 +263,12 @@ L|1|N[CR]
 [ETX]
  - [ACK]
 [ACK]
- - - - [ACK] - - - - - 
+ - - - [ACK] - - - - -
 [EOT]
 [ENQ]
  - [ACK]
 [ACK]
- - - - [ACK] - - - - - 
+ - - - [ACK] - - - - -
 [STX]
 H|\^&||PSWD|Maglumi User|||||Lis||P|E1394-97|20250701[CR]
 P|1[CR]
@@ -281,12 +281,12 @@ L|1|N[CR]
 [ETX]
  - [ACK]
 [ACK]
- - - - [ACK] - - - - - 
+ - - - [ACK] - - - - -
 [EOT]
 [ENQ]
  - [ACK]
 [ACK]
- - - - [ACK] - - - - - 
+ - - - [ACK] - - - - -
 [STX]
 H|\^&||PSWD|Maglumi User|||||Lis||P|E1394-97|20250701[CR]
 P|1[CR]
@@ -296,12 +296,12 @@ L|1|N[CR]
 [ETX]
  - [ACK]
 [ACK]
- - - - [ACK] - - - - - 
+ - - - [ACK] - - - - -
 [EOT]
 [ENQ]
  - [ACK]
 [ACK]
- - - - [ACK] - - - - - 
+ - - - [ACK] - - - - -
 [STX]
 H|\^&||PSWD|Maglumi User|||||Lis||P|E1394-97|202
 50701[CR]
@@ -316,12 +316,12 @@ L|1|N[CR]
 [ETX]
  - [ACK]
 [ACK]
- - - - [ACK] - - - - - 
+ - - - [ACK] - - - - -
 [EOT]
 [ENQ]
  - [ACK]
 [ACK]
- - - - [ACK] - - - - - 
+ - - - [ACK] - - - - -
 [STX]
 H|\^&||PSWD|Maglumi User|||||Lis||P|E1394-97|20250701[CR]
 P|1[CR]
@@ -334,12 +334,12 @@ L|1|N[CR]
 [ETX]
  - [ACK]
 [ACK]
- - - - [ACK] - - - - - 
+ - - - [ACK] - - - - -
 [EOT]
 [ENQ]
  - [ACK]
 [ACK]
- - - - [ACK] - - - - - 
+ - - - [ACK] - - - - -
 [STX]
 H|\^&||PSWD|Maglumi User|||||Li
 s||P|E1394-97|20250701[CR]
@@ -353,12 +353,12 @@ L|1|N[CR]
 [ETX]
  - [ACK]
 [ACK]
- - - - [ACK] - - - - - 
+ - - - [ACK] - - - - -
 [EOT]
 [ENQ]
  - [ACK]
 [ACK]
- - - - [ACK] - - - - - 
+ - - - [ACK] - - - - -
 [STX]
 H|\^&||PSWD|Maglumi User|||||Lis||P|E1394-97|20250701[CR]
 P|1[CR]
@@ -372,12 +372,12 @@ L|1|N[CR]
 [ETX]
  - [ACK]
 [ACK]
- - - - [ACK] - - - - - 
+ - - - [ACK] - - - - -
 [EOT]
 [ENQ]
  - [ACK]
 [ACK]
- - - - [ACK] - - - - - 
+ - - - [ACK] - - - - -
 [STX]
 H|\^&||PSWD|Maglumi User|||||Lis||P|E1394-97|20250701[CR]
 P|1[CR]
@@ -387,12 +387,12 @@ L|1|N[CR]
 [ETX]
  - [ACK]
 [ACK]
- - - - [ACK] - - - - - 
+ - - - [ACK] - - - - -
 [EOT]
 [ENQ]
  - [ACK]
 [ACK]
- - - - [ACK] - - - - - 
+ - - - [ACK] - - - - -
 [STX]
 H|\^&||PSWD|Maglumi User|||||Lis||P|E1394-97|20250701[CR]
 P|1[CR]
@@ -404,12 +404,12 @@ L|1|N[CR]
 [ETX]
  - [ACK]
 [ACK]
- - - - [ACK] - - - - - 
+ - - - [ACK] - - - - -
 [EOT]
 [ENQ]
  - [ACK]
 [ACK]
- - - - [ACK] - - - - - 
+ - - - [ACK] - - - - -
 [STX]
 H|\^&||PSWD|Maglumi User|||||Lis||P|E1394-97|20250701[CR]
 P|1[CR]
@@ -422,7 +422,7 @@ L|1|N[CR][ETX][EOT]
 [ENQ]
  - [ACK]
 [ACK]
- - - - [ACK] - - - - - 
+ - - - [ACK] - - - - -
 [STX]
 H|\^&||PSWD|Maglumi User|||||Lis||P|E1394-97|20250701[CR]
 P|1[CR]
@@ -435,12 +435,12 @@ L|1|N[CR]
 [ETX]
  - [ACK]
 [ACK]
- - - - [ACK] - - - - - 
+ - - - [ACK] - - - - -
 [EOT]
 [ENQ]
  - [ACK]
 [ACK]
- - - - [ACK] - - - - - 
+ - - - [ACK] - - - - -
 [STX]
 H|\^&||PSWD|Maglumi User|||||Lis||P|E1394-97|20250701[CR]
 P|1[CR]
@@ -453,9 +453,9 @@ L|1|N[CR]
 [ETX]
  - [ACK]
 [ACK]
- - - - [ACK] - - - - - 
+ - - - [ACK] - - - - -
 [EOT]
 [ENQ]
  - [ACK]
 [ACK]
- - - - [ACK] - - - - - 
+ - - - [ACK] - - - - -

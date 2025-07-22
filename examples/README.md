@@ -28,7 +28,7 @@ async def send_data():
 async def run_server():
     def handle_patient(record, server):
         print(f"Patient: {record}")
-    
+
     await astmio.run_astm_server(
         handlers={'P': handle_patient},
         plugins=["hipaa", "metrics"],
@@ -220,4 +220,4 @@ server = astmio.create_server(handlers, plugins=["hipaa"])
 - Check the examples in this directory
 - Read the main README.md
 - Look at the test files for more usage patterns
-- The API is designed to be intuitive - if it feels complicated, we can improve it! 
+- The API is designed to be intuitive - if it feels complicated, we can improve it!

@@ -27,7 +27,10 @@ def setup_production_logging():
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-        handlers=[logging.FileHandler("astm_production.log"), logging.StreamHandler()],
+        handlers=[
+            logging.FileHandler("astm_production.log"),
+            logging.StreamHandler(),
+        ],
     )
 
 
@@ -56,7 +59,9 @@ def create_production_handlers():
     def handle_patient(record, server):
         """Handle patient records with PHI protection."""
         try:
-            patient_id = record[1] if len(record) > 1 and record[1] else "Unknown"
+            patient_id = (
+                record[1] if len(record) > 1 and record[1] else "Unknown"
+            )
 
             # Parse patient name safely
             patient_name = "Unknown"
@@ -87,7 +92,9 @@ def create_production_handlers():
     def handle_order(record, server):
         """Handle order records with test validation."""
         try:
-            sample_id = record[1] if len(record) > 1 and record[1] else "Unknown"
+            sample_id = (
+                record[1] if len(record) > 1 and record[1] else "Unknown"
+            )
 
             # Parse test information
             test_info = "Unknown"
@@ -162,7 +169,9 @@ def create_production_handlers():
     def handle_terminator(record, server):
         """Handle terminator records with session summary."""
         try:
-            termination_code = record[1] if len(record) > 1 and record[1] else "Unknown"
+            termination_code = (
+                record[1] if len(record) > 1 and record[1] else "Unknown"
+            )
             print(f"🔚 Session terminated (Code: {termination_code})")
 
             # Generate session summary if HIPAA plugin is available
@@ -182,7 +191,9 @@ def create_production_handlers():
                     if report and report.get("summary"):
                         summary = report["summary"]
                         print("   📊 Session Summary:")
-                        print(f"      • Total Events: {summary.get('total_events', 0)}")
+                        print(
+                            f"      • Total Events: {summary.get('total_events', 0)}"
+                        )
                         print(
                             "      • Unique Patients: "
                             f"{summary.get('unique_patients', 0)}"
@@ -312,15 +323,23 @@ async def run_production_server():
                     .isoformat()
                 )
 
-                report = hipaa_plugin.generate_compliance_report(start_time, end_time)
+                report = hipaa_plugin.generate_compliance_report(
+                    start_time, end_time
+                )
                 if report and report.get("summary"):
                     summary = report["summary"]
-                    print(f"   📈 Total Events: {summary.get('total_events', 0)}")
-                    print(f"   👥 Unique Patients: {summary.get('unique_patients', 0)}")
+                    print(
+                        f"   📈 Total Events: {summary.get('total_events', 0)}"
+                    )
+                    print(
+                        f"   👥 Unique Patients: {summary.get('unique_patients', 0)}"
+                    )
                     print(
                         f"   🔴 High Risk Events: {summary.get('high_risk_events', 0)}"
                     )
-                    print(f"   ❌ Failed Attempts: {summary.get('failed_attempts', 0)}")
+                    print(
+                        f"   ❌ Failed Attempts: {summary.get('failed_attempts', 0)}"
+                    )
                     print(
                         "   🏛️ Compliance Status: "
                         f"{report.get('compliance_status', 'UNKNOWN')}"

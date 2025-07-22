@@ -73,4 +73,3 @@ if __name__ == "__main__":
 ## Documentation
 
 For more detailed information on the API, plugins, and configuration, please refer to the full documentation (link to be added).
-

@@ -1,4 +1,5 @@
 import asyncio
+
 from astmio.client import create_client
 
 
@@ -24,7 +25,14 @@ async def main():
             "1394-97",
             "20230507173105",
         ],
-        ["P", "1", "", "", "", "Doe^John"],  # Simplified to match profile fields
+        [
+            "P",
+            "1",
+            "",
+            "",
+            "",
+            "Doe^John",
+        ],  # Simplified to match profile fields
         [
             "O",
             "1",

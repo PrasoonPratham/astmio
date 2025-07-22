@@ -222,7 +222,7 @@ F[CR]
  - [ACK]
 [CR][LF]
 [STX]
-4R|1|^^^B12II^1|131|pg/mL|222 
+4R|1|^^^B12II^1|131|pg/mL|222
 to 1439^normal|
 L|N|F
 ||||20250
@@ -522,7 +522,7 @@ O|1|2508
 [STX]
 4R|1|^^^B12II^1|
 288|pg/
-mL|222 
+mL|222
 |F||||
 to 1439^normal
 [CR][LF]
