@@ -1,12 +1,13 @@
 from pathlib import Path
-from typing import List, Dict, Any
+from typing import Any, Dict, List
+
 import yaml
 
 
 def load_profile(profiles_dir: Path, profile_name: str) -> Dict[str, Any]:
     """Load a YAML profile configuration."""
     profile_path = profiles_dir / profile_name
-    with open(profile_path, "r") as f:
+    with open(profile_path) as f:
         return yaml.safe_load(f)
 
 
@@ -68,7 +69,9 @@ def extract_astm_messages(raw_data: str) -> List[str]:
 
             if in_message:
                 # Remove embedded control markers
-                clean_line = line.replace("[CR]", "").replace("[LF]", "").strip()
+                clean_line = (
+                    line.replace("[CR]", "").replace("[LF]", "").strip()
+                )
                 if not clean_line:
                     continue
 
@@ -77,9 +80,9 @@ def extract_astm_messages(raw_data: str) -> List[str]:
                     if rt in clean_line:
                         if current_record and record_type:
                             # Finish previous record
-                            clean_record = current_record.replace("[CR]", "").replace(
-                                "[LF]", ""
-                            )
+                            clean_record = current_record.replace(
+                                "[CR]", ""
+                            ).replace("[LF]", "")
                             clean_record = "|".join(
                                 [
                                     part.strip()
@@ -119,7 +122,9 @@ def extract_astm_messages(raw_data: str) -> List[str]:
                 message_content = part.split("[ETX]")[0]
                 # Split by [CR] to get individual records
                 records = [
-                    r.strip() for r in message_content.split("[CR]") if r.strip()
+                    r.strip()
+                    for r in message_content.split("[CR]")
+                    if r.strip()
                 ]
                 if records:
                     messages.append("\r".join(records))

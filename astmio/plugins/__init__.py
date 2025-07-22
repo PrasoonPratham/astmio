@@ -1,7 +1,7 @@
 import importlib
 import pkgutil
-from typing import Dict, Type, List, Any, Callable, Optional
 from collections import defaultdict
+from typing import Any, Callable, Dict, List, Optional, Type
 
 from ..logging import get_logger
 
@@ -20,7 +20,7 @@ class BasePlugin:
     def __init__(self, **kwargs):
         """Initialize plugin with configuration."""
         self.config = kwargs
-        self.manager: Optional["PluginManager"] = None
+        self.manager: Optional[PluginManager] = None
 
     def install(self, manager: "PluginManager"):
         """Install the plugin."""

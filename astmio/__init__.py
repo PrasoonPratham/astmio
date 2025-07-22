@@ -1,75 +1,66 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 ASTM Library - Modern, Clean API with Optional Plugin Support
 
 A Python library for handling ASTM communication.
 Install plugins with: pip install astmio[hipaa] or pip install astmio[metrics]
 """
-import logging
-from typing import Dict, List, Optional, Callable, Any
+
+import logging as stdlib_logging
+from typing import Any, Callable, Dict, List, Optional
 
 # Core functionality
-from .client import Client, ClientConfig, create_client as _create_client, astm_client
-from .server import Server, ServerConfig, create_server as _create_server, astm_server
+from .client import Client, ClientConfig, astm_client
+from .client import create_client as _create_client
 from .codec import (
-    encode,
     decode,
-    encode_message,
+    decode_component,
     decode_message,
     decode_record,
-    encode_record,
-    decode_component,
-    encode_component,
-    make_checksum,
     decode_with_metadata,
-    Decoder,
-    Encoder,
-    iter_decode,
-    STX,
-    ETX,
-    ETB,
-    ENQ,
+    encode,
+    encode_component,
+    encode_message,
+    encode_record,
+    iter_encode,
+    make_checksum,
+)
+from .constants import (
     ACK,
-    NAK,
-    EOT,
-    LF,
-    CR,
-    RECORD_SEP,
-    FIELD_SEP,
-    REPEAT_SEP,
     COMPONENT_SEP,
+    CR,
+    ENQ,
+    EOT,
     ESCAPE_SEP,
+    ETB,
+    ETX,
+    FIELD_SEP,
+    LF,
+    NAK,
+    RECORD_SEP,
+    REPEAT_SEP,
+    STX,
 )
-from .logging import setup_logging, get_logger
-from .exceptions import ASTMError, ProtocolError, ValidationError, ConfigurationError
-
-# Data structures and records
+from .dataclasses import ConnectionStatus, DeviceProfile, MessageMetrics
+from .enums import ErrorCode, RecordType
+from .exceptions import (
+    ConfigurationError,
+    ProtocolError,
+    ValidationError,
+)
+from .logging import get_logger, setup_logging
 from .records import (
-    Record,
-    HeaderRecord,
-    PatientRecord,
-    OrderRecord,
-    ResultRecord,
     CommentRecord,
-    TerminatorRecord,
+    HeaderRecord,
+    OrderRecord,
+    PatientRecord,
+    Record,
+    ResultRecord,
     ScientificRecord,
-    MessageHeaderRecord,
-    MessageTerminatorRecord,
+    TerminatorRecord,
 )
-from .dataclasses import (
-    DeviceProfile,
-    ConnectionStatus,
-    MessageMetrics,
-    AuditContext,
-    SecurityContext,
-    MiddlewareInput,
-    MiddlewareOutput,
-)
-from .enums import RecordType, MessageType, ErrorCode, EventType
-
-# Configuration
-from .config import CoreConfig
+from .server import Server, ServerConfig, astm_server
+from .server import create_server as _create_server
 
 try:
     from .config import load_profile, validate_profile
@@ -113,9 +104,7 @@ __all__ = [
     "encode_component",
     "make_checksum",
     "decode_with_metadata",
-    "Decoder",
-    "Encoder",
-    "iter_decode",
+    "iter_encode",
     # ASTM constants
     "STX",
     "ETX",
@@ -459,4 +448,5 @@ def print_plugin_status():
 
 
 # Set default logging handler to avoid "No handler found" warnings.
-logging.getLogger(__name__).addHandler(logging.NullHandler())
+# Only set up a null handler - let users configure logging themselves
+stdlib_logging.getLogger(__name__).addHandler(stdlib_logging.NullHandler())

@@ -1,15 +1,14 @@
-# -*- coding: utf-8 -*-
 #
 # Comprehensive metrics and monitoring system for ASTM library
 #
 import logging
+import threading
 import time
 from collections import defaultdict, deque
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Dict, List, Optional, Any, Callable, Union, Deque
 from enum import Enum
-import threading
+from typing import Any, Callable, Deque, Dict, List, Optional, Union
 
 from .exceptions import ValidationError
 
@@ -103,12 +102,16 @@ class Metric:
                 combined_labels.update(labels)
 
             point = MetricPoint(
-                timestamp=datetime.now(), value=float(value), labels=combined_labels
+                timestamp=datetime.now(),
+                value=float(value),
+                labels=combined_labels,
             )
             self._points.append(point)
 
     def get_points(
-        self, since: Optional[datetime] = None, labels: Optional[Dict[str, str]] = None
+        self,
+        since: Optional[datetime] = None,
+        labels: Optional[Dict[str, str]] = None,
     ) -> List[MetricPoint]:
         """Get metric points with optional filtering."""
         with self._lock:
@@ -131,7 +134,9 @@ class Metric:
         points = self.get_points(since=since)
 
         if not points:
-            return MetricSummary(name=self.name, metric_type=self.metric_type, count=0)
+            return MetricSummary(
+                name=self.name, metric_type=self.metric_type, count=0
+            )
 
         values = [p.value for p in points]
         return MetricSummary(
@@ -185,7 +190,9 @@ class Gauge(Metric):
         super().__init__(name, MetricType.GAUGE, description, **kwargs)
         self._value = 0.0
 
-    def set(self, value: float, labels: Optional[Dict[str, str]] = None) -> None:
+    def set(
+        self, value: float, labels: Optional[Dict[str, str]] = None
+    ) -> None:
         """Set the gauge value."""
         with self._lock:
             self._value = value
@@ -223,12 +230,24 @@ class Histogram(Metric):
         **kwargs,
     ):
         super().__init__(name, MetricType.HISTOGRAM, description, **kwargs)
-        self.buckets = buckets or [0.1, 0.5, 1.0, 2.5, 5.0, 10.0, 25.0, 50.0, 100.0]
+        self.buckets = buckets or [
+            0.1,
+            0.5,
+            1.0,
+            2.5,
+            5.0,
+            10.0,
+            25.0,
+            50.0,
+            100.0,
+        ]
         self._bucket_counts = defaultdict(int)
         self._sum = 0.0
         self._count = 0
 
-    def observe(self, value: float, labels: Optional[Dict[str, str]] = None) -> None:
+    def observe(
+        self, value: float, labels: Optional[Dict[str, str]] = None
+    ) -> None:
         """Observe a value."""
         with self._lock:
             self._sum += value
@@ -266,7 +285,9 @@ class Timer(Metric):
         """Context manager for timing operations."""
         return TimerContext(self, labels)
 
-    def record(self, duration: float, labels: Optional[Dict[str, str]] = None) -> None:
+    def record(
+        self, duration: float, labels: Optional[Dict[str, str]] = None
+    ) -> None:
         """Record a duration."""
         self.add_point(duration, labels)
 
@@ -322,7 +343,9 @@ class MetricsCollector:
     def _init_astm_metrics(self) -> None:
         """Initialize standard ASTM metrics."""
         # Message metrics
-        self.register_counter("astm_messages_sent_total", "Total ASTM messages sent")
+        self.register_counter(
+            "astm_messages_sent_total", "Total ASTM messages sent"
+        )
         self.register_counter(
             "astm_messages_received_total", "Total ASTM messages received"
         )
@@ -345,7 +368,9 @@ class MetricsCollector:
         self.register_timer(
             "astm_message_processing_duration", "Time to process ASTM messages"
         )
-        self.register_timer("astm_connection_duration", "Duration of ASTM connections")
+        self.register_timer(
+            "astm_connection_duration", "Duration of ASTM connections"
+        )
         self.register_histogram(
             "astm_message_size_bytes", "Size of ASTM messages in bytes"
         )
@@ -354,7 +379,9 @@ class MetricsCollector:
         self.register_counter(
             "astm_checksum_errors_total", "Total checksum validation errors"
         )
-        self.register_counter("astm_timeout_errors_total", "Total timeout errors")
+        self.register_counter(
+            "astm_timeout_errors_total", "Total timeout errors"
+        )
         self.register_counter("astm_parse_errors_total", "Total parsing errors")
 
         # Record type metrics
@@ -365,7 +392,10 @@ class MetricsCollector:
             )
 
     def register_counter(
-        self, name: str, description: str = "", labels: Optional[Dict[str, str]] = None
+        self,
+        name: str,
+        description: str = "",
+        labels: Optional[Dict[str, str]] = None,
     ) -> Counter:
         """Register a new counter metric."""
         with self._lock:
@@ -382,7 +412,10 @@ class MetricsCollector:
             return counter
 
     def register_gauge(
-        self, name: str, description: str = "", labels: Optional[Dict[str, str]] = None
+        self,
+        name: str,
+        description: str = "",
+        labels: Optional[Dict[str, str]] = None,
     ) -> Gauge:
         """Register a new gauge metric."""
         with self._lock:
@@ -415,12 +448,17 @@ class MetricsCollector:
                     )
                 return metric
 
-            histogram = Histogram(name, description, buckets=buckets, labels=labels)
+            histogram = Histogram(
+                name, description, buckets=buckets, labels=labels
+            )
             self._metrics[name] = histogram
             return histogram
 
     def register_timer(
-        self, name: str, description: str = "", labels: Optional[Dict[str, str]] = None
+        self,
+        name: str,
+        description: str = "",
+        labels: Optional[Dict[str, str]] = None,
     ) -> Timer:
         """Register a new timer metric."""
         with self._lock:
@@ -472,11 +510,15 @@ class MetricsCollector:
         """Check if metrics collection is enabled."""
         return self._enabled
 
-    def add_exporter(self, exporter: Callable[[Dict[str, Metric]], None]) -> None:
+    def add_exporter(
+        self, exporter: Callable[[Dict[str, Metric]], None]
+    ) -> None:
         """Add a metrics exporter."""
         self._exporters.append(exporter)
 
-    def remove_exporter(self, exporter: Callable[[Dict[str, Metric]], None]) -> None:
+    def remove_exporter(
+        self, exporter: Callable[[Dict[str, Metric]], None]
+    ) -> None:
         """Remove a metrics exporter."""
         if exporter in self._exporters:
             self._exporters.remove(exporter)
@@ -495,7 +537,10 @@ class MetricsCollector:
 
     # Convenience methods for common operations
     def increment_counter(
-        self, name: str, amount: float = 1.0, labels: Optional[Dict[str, str]] = None
+        self,
+        name: str,
+        amount: float = 1.0,
+        labels: Optional[Dict[str, str]] = None,
     ) -> None:
         """Increment a counter metric."""
         if not self._enabled:
@@ -527,7 +572,9 @@ class MetricsCollector:
         if isinstance(metric, Histogram):
             metric.observe(value, labels)
 
-    def time_operation(self, name: str, labels: Optional[Dict[str, str]] = None):
+    def time_operation(
+        self, name: str, labels: Optional[Dict[str, str]] = None
+    ):
         """Time an operation with a timer metric."""
         if not self._enabled:
             return NullTimerContext()
@@ -537,7 +584,9 @@ class MetricsCollector:
             return metric.time(labels)
         return NullTimerContext()
 
-    def async_time_operation(self, name: str, labels: Optional[Dict[str, str]] = None):
+    def async_time_operation(
+        self, name: str, labels: Optional[Dict[str, str]] = None
+    ):
         """Async time an operation with a timer metric."""
         if not self._enabled:
             return NullAsyncTimerContext()
@@ -660,7 +709,9 @@ def async_time_calls(metric_name: str, labels: Optional[Dict[str, str]] = None):
 
     def decorator(func):
         async def wrapper(*args, **kwargs):
-            async with default_metrics.async_time_operation(metric_name, labels=labels):
+            async with default_metrics.async_time_operation(
+                metric_name, labels=labels
+            ):
                 return await func(*args, **kwargs)
 
         return wrapper

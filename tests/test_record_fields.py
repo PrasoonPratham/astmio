@@ -41,7 +41,9 @@ def test_multi_test_parsing():
 
 def test_result_parsing():
     """Test parsing of result records."""
-    sample_message = b"R|1|^^^TT3 II|1.171|ng/mL|0.75 to 2.1|N||||||20250630151157"
+    sample_message = (
+        b"R|1|^^^TT3 II|1.171|ng/mL|0.75 to 2.1|N||||||20250630151157"
+    )
     records = decode(sample_message)
 
     assert len(records) == 1
@@ -77,7 +79,9 @@ def test_complete_message_sequence():
     records = decode(message)
 
     # The decode function should parse all records in the message
-    assert len(records) >= 1, f"Should have at least 1 record, got {len(records)}"
+    assert (
+        len(records) >= 1
+    ), f"Should have at least 1 record, got {len(records)}"
 
     # If decoded as single message, check if it contains all the data
     if len(records) == 1:

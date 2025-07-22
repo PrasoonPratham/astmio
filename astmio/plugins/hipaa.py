@@ -8,16 +8,16 @@ and security events to a SQLite database using BLOB format for efficient JSON st
 Install with: pip install astmio[hipaa]
 """
 
-import sqlite3
 import json
-from datetime import datetime, timezone, timedelta
-from typing import Dict, Any, Optional, List
-from dataclasses import dataclass, asdict
+import sqlite3
+from dataclasses import asdict, dataclass
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
+from typing import Any, Dict, List, Optional
 
-from . import BasePlugin, PluginManager
 from ..logging import get_logger
 from ..records import PatientRecord
+from . import BasePlugin, PluginManager
 
 log = get_logger(__name__)
 
@@ -291,7 +291,9 @@ class HIPAADatabase:
                 # Note: JSON filtering on BLOB requires converting back to JSON first
                 # This is less efficient than TEXT columns but follows the BLOB approach
 
-                where_clause = " AND ".join(where_clauses) if where_clauses else "1=1"
+                where_clause = (
+                    " AND ".join(where_clauses) if where_clauses else "1=1"
+                )
                 params.append(limit)
 
                 cursor.execute(
@@ -320,7 +322,9 @@ class HIPAADatabase:
 
                     if event_dict["compliance_flags"]:
                         # Convert binary data back to JSON string
-                        json_data = event_dict["compliance_flags"].decode("utf-8")
+                        json_data = event_dict["compliance_flags"].decode(
+                            "utf-8"
+                        )
                         # Convert JSON string back to Python object
                         event_dict["compliance_flags"] = json.loads(json_data)
 
@@ -461,10 +465,16 @@ class HIPAAAuditPlugin(BasePlugin):
                 details={
                     "record_type": "PatientRecord",
                     "patient_name": (
-                        str(record.patient_name) if record.patient_name else None
+                        str(record.patient_name)
+                        if record.patient_name
+                        else None
                     ),
                     "access_method": "ASTM_PROTOCOL",
-                    "data_elements": ["patient_id", "patient_name", "demographics"],
+                    "data_elements": [
+                        "patient_id",
+                        "patient_name",
+                        "demographics",
+                    ],
                 },
                 risk_level="MEDIUM",
                 data_classification="PHI",
@@ -475,7 +485,9 @@ class HIPAAAuditPlugin(BasePlugin):
             record_type = record[0] if record else "Unknown"
 
             if record_type == "P":  # Patient record
-                patient_id = record[1] if len(record) > 1 and record[1] else "Unknown"
+                patient_id = (
+                    record[1] if len(record) > 1 and record[1] else "Unknown"
+                )
                 event = AuditEvent(
                     timestamp=datetime.now(timezone.utc).isoformat(),
                     event_type="PATIENT_DATA_ACCESS",
@@ -496,7 +508,9 @@ class HIPAAAuditPlugin(BasePlugin):
                 )
 
             elif record_type == "O":  # Order record
-                sample_id = record[1] if len(record) > 1 and record[1] else "Unknown"
+                sample_id = (
+                    record[1] if len(record) > 1 and record[1] else "Unknown"
+                )
                 event = AuditEvent(
                     timestamp=datetime.now(timezone.utc).isoformat(),
                     event_type="ORDER_DATA_ACCESS",
@@ -509,7 +523,11 @@ class HIPAAAuditPlugin(BasePlugin):
                         "record_type": "Order",
                         "sample_id": sample_id,
                         "access_method": "ASTM_PROTOCOL",
-                        "data_elements": ["sample_id", "test_code", "order_info"],
+                        "data_elements": [
+                            "sample_id",
+                            "test_code",
+                            "order_info",
+                        ],
                     },
                     risk_level="LOW",
                     data_classification="PHI",
@@ -517,7 +535,9 @@ class HIPAAAuditPlugin(BasePlugin):
                 )
 
             elif record_type == "R":  # Result record
-                test_id = record[2] if len(record) > 2 and record[2] else "Unknown"
+                test_id = (
+                    record[2] if len(record) > 2 and record[2] else "Unknown"
+                )
                 event = AuditEvent(
                     timestamp=datetime.now(timezone.utc).isoformat(),
                     event_type="RESULT_DATA_ACCESS",
@@ -597,10 +617,10 @@ class HIPAAAuditPlugin(BasePlugin):
             )
             failed_attempts = len([e for e in events if not e["success"]])
             unique_patients = len(
-                set(e["patient_id"] for e in events if e["patient_id"])
+                {e["patient_id"] for e in events if e["patient_id"]}
             )
             unique_sessions = len(
-                set(e["session_id"] for e in events if e["session_id"])
+                {e["session_id"] for e in events if e["session_id"]}
             )
 
             # Event type breakdown
@@ -626,7 +646,10 @@ class HIPAAAuditPlugin(BasePlugin):
                     "unique_patients": unique_patients,
                     "unique_sessions": unique_sessions,
                 },
-                "breakdowns": {"event_types": event_types, "risk_levels": risk_levels},
+                "breakdowns": {
+                    "event_types": event_types,
+                    "risk_levels": risk_levels,
+                },
                 "generated_at": datetime.now(timezone.utc).isoformat(),
                 "compliance_status": (
                     "COMPLIANT" if high_risk_events == 0 else "REVIEW_REQUIRED"
@@ -774,7 +797,9 @@ class HIPAAAuditPlugin(BasePlugin):
         pass
 
     # Event handlers
-    def on_connection_established(self, client_ip: str, user_id: str = "Unknown"):
+    def on_connection_established(
+        self, client_ip: str, user_id: str = "Unknown"
+    ):
         """Handle successful connection events."""
         session_id = self._get_or_create_session(client_ip)
         event = AuditEvent(
@@ -808,7 +833,9 @@ class HIPAAAuditPlugin(BasePlugin):
         )
         self.log_event(event)
 
-    def on_authentication_failed(self, client_ip: str, user_id: str = "Unknown"):
+    def on_authentication_failed(
+        self, client_ip: str, user_id: str = "Unknown"
+    ):
         """Handle authentication failure events."""
         event = AuditEvent(
             timestamp=datetime.now(timezone.utc).isoformat(),
@@ -823,7 +850,9 @@ class HIPAAAuditPlugin(BasePlugin):
         )
         self.log_event(event)
 
-    def on_data_access(self, data_type: str, client_ip: str, user_id: str = "Unknown"):
+    def on_data_access(
+        self, data_type: str, client_ip: str, user_id: str = "Unknown"
+    ):
         """Handle general data access events."""
         session_id = self._get_or_create_session(client_ip)
         event = AuditEvent(

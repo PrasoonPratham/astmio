@@ -1,13 +1,13 @@
 import logging
 import logging.config
 import sys
-import dataset
-from sqlalchemy import TEXT, JSON
 from datetime import datetime
 
+import dataset
 import structlog
-from structlog.types import EventDict, WrappedLogger
+from sqlalchemy import JSON, TEXT
 from structlog.processors import JSONRenderer
+from structlog.types import EventDict, WrappedLogger
 
 # --- Structlog Configuration ---
 
@@ -153,7 +153,9 @@ class SQLiteHandler(logging.Handler):
         db = self._get_db()
         with db as tx:
             if "logs" not in tx.tables:
-                tx.create_table("logs", primary_id="id", primary_type=db.types.integer)
+                tx.create_table(
+                    "logs", primary_id="id", primary_type=db.types.integer
+                )
                 table = tx["logs"]
                 table.create_column("timestamp", TEXT)
                 table.create_column("name", TEXT)
@@ -208,19 +210,23 @@ class SQLiteHandler(logging.Handler):
                     "extra",
                 }
                 data = {
-                    k: v for k, v in record.__dict__.items() if k not in standard_attrs
+                    k: v
+                    for k, v in record.__dict__.items()
+                    if k not in standard_attrs
                 }
 
             with self._get_db() as tx:
                 table = tx["logs"]
                 table.insert(
-                    dict(
-                        timestamp=datetime.fromtimestamp(record.created).isoformat(),
-                        name=record.name,
-                        level=record.levelname,
-                        message=message,
-                        data=data,
-                    )
+                    {
+                        "timestamp": datetime.fromtimestamp(
+                            record.created
+                        ).isoformat(),
+                        "name": record.name,
+                        "level": record.levelname,
+                        "message": message,
+                        "data": data,
+                    }
                 )
         except Exception as e:
             # Fallback for when even the database logging fails

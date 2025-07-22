@@ -106,4 +106,4 @@ parser:
   patient_name_field: P.5
   sample_id_field: O.2
   test_separator: "\\"
-  component_separator: "^" 
+  component_separator: "^"

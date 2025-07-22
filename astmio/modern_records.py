@@ -1,34 +1,33 @@
-# -*- coding: utf-8 -*-
 #
 # Modern Pydantic-based ASTM record definitions
 #
-from datetime import datetime, date
-from decimal import Decimal, InvalidOperation
-from typing import Any, Dict, List, Literal, Optional, Union, ClassVar
-from xml.etree.ElementTree import Element, SubElement, tostring
 import csv
 import io
 import json
 import logging
+from datetime import date, datetime
+from decimal import Decimal, InvalidOperation
 from pathlib import Path
+from typing import Any, ClassVar, Dict, List, Literal, Optional, Union
+from xml.etree.ElementTree import Element, SubElement, tostring
 
 from pydantic import (
     BaseModel,
+    ConfigDict,
     Field,
+    PrivateAttr,
     field_validator,
     model_validator,
-    ConfigDict,
-    PrivateAttr,
 )
 
 from .enums import (
     AbnormalFlag,
     CommentType,
     Priority,
+    ProcessingId,
     ResultStatus,
     Sex,
     TerminationCode,
-    ProcessingId,
 )
 from .exceptions import ValidationError
 
@@ -98,7 +97,9 @@ class ASTMBaseRecord(BaseModel):
             )
             raise ValidationError(f"JSON serialization failed: {e}")
 
-    def to_xml(self, root_name: Optional[str] = None, pretty: bool = True) -> str:
+    def to_xml(
+        self, root_name: Optional[str] = None, pretty: bool = True
+    ) -> str:
         """
         Convert record to XML string with enhanced formatting.
 
@@ -144,7 +145,12 @@ class ASTMBaseRecord(BaseModel):
                     elem.text = str(value)
 
             data = self.model_dump(
-                exclude={"_created_at", "_updated_at", "_validation_errors", "_source"}
+                exclude={
+                    "_created_at",
+                    "_updated_at",
+                    "_validation_errors",
+                    "_source",
+                }
             )
             for key, value in data.items():
                 add_element(root, key, value)
@@ -200,7 +206,12 @@ class ASTMBaseRecord(BaseModel):
             exclude_fields = set()
             if not include_metadata:
                 exclude_fields.update(
-                    {"_created_at", "_updated_at", "_validation_errors", "_source"}
+                    {
+                        "_created_at",
+                        "_updated_at",
+                        "_validation_errors",
+                        "_source",
+                    }
                 )
 
             data = self.model_dump(exclude=exclude_fields)
@@ -229,7 +240,9 @@ class ASTMBaseRecord(BaseModel):
             return headers
         except Exception as e:
             log.error(
-                "Failed to get CSV headers", error=str(e), record_type=cls.__name__
+                "Failed to get CSV headers",
+                error=str(e),
+                record_type=cls.__name__,
             )
             raise ValidationError(f"CSV headers generation failed: {e}")
 
@@ -263,13 +276,17 @@ class ASTMBaseRecord(BaseModel):
                         type(record).__name__,
                     )
                     continue
-                writer.writerow(record.to_csv_row(include_metadata=include_metadata))
+                writer.writerow(
+                    record.to_csv_row(include_metadata=include_metadata)
+                )
 
             return output.getvalue()
 
         except Exception as e:
             log.error(
-                "Failed to convert to CSV", error=str(e), record_count=len(records)
+                "Failed to convert to CSV",
+                error=str(e),
+                record_count=len(records),
             )
             raise ValidationError(f"CSV conversion failed: {e}")
 
@@ -349,7 +366,9 @@ class ASTMBaseRecord(BaseModel):
 
             # Use reverse field mapping if available
             if hasattr(cls, "_astm_field_mapping") and cls._astm_field_mapping:
-                reverse_mapping = {v: k for k, v in cls._astm_field_mapping.items()}
+                reverse_mapping = {
+                    v: k for k, v in cls._astm_field_mapping.items()
+                }
 
                 for i, field_value in enumerate(fields):
                     if i in reverse_mapping and field_value is not None:
@@ -377,20 +396,34 @@ class ASTMBaseRecord(BaseModel):
 
                                 # Convert based on type
                                 if field_type == datetime:
-                                    if isinstance(field_value, str) and field_value:
+                                    if (
+                                        isinstance(field_value, str)
+                                        and field_value
+                                    ):
                                         kwargs[field_name] = datetime.strptime(
                                             field_value, "%Y%m%d%H%M%S"
                                         )
                                 elif field_type == date:
-                                    if isinstance(field_value, str) and field_value:
+                                    if (
+                                        isinstance(field_value, str)
+                                        and field_value
+                                    ):
                                         kwargs[field_name] = datetime.strptime(
                                             field_value, "%Y%m%d"
                                         ).date()
                                 elif field_type == Decimal:
-                                    if isinstance(field_value, str) and field_value:
-                                        kwargs[field_name] = Decimal(field_value)
+                                    if (
+                                        isinstance(field_value, str)
+                                        and field_value
+                                    ):
+                                        kwargs[field_name] = Decimal(
+                                            field_value
+                                        )
                                 elif field_type is int:
-                                    if isinstance(field_value, str) and field_value:
+                                    if (
+                                        isinstance(field_value, str)
+                                        and field_value
+                                    ):
                                         kwargs[field_name] = int(field_value)
                                 else:
                                     kwargs[field_name] = field_value
@@ -440,7 +473,9 @@ class ASTMBaseRecord(BaseModel):
             if hasattr(self.__class__, "_required_fields"):
                 for field_name in self._required_fields:
                     value = getattr(self, field_name, None)
-                    if value is None or (isinstance(value, str) and not value.strip()):
+                    if value is None or (
+                        isinstance(value, str) and not value.strip()
+                    ):
                         errors.append(
                             f"Required field '{field_name}' is missing or empty"
                         )
@@ -450,9 +485,7 @@ class ASTMBaseRecord(BaseModel):
                 for field_name, max_length in self._max_field_lengths.items():
                     value = getattr(self, field_name, None)
                     if isinstance(value, str) and len(value) > max_length:
-                        error_msg = (
-                            f"Field '{field_name}' exceeds max length of {max_length}"
-                        )
+                        error_msg = f"Field '{field_name}' exceeds max length of {max_length}"
                         if strict:
                             errors.append(error_msg)
                         else:
@@ -546,7 +579,9 @@ class ASTMBaseRecord(BaseModel):
             else:
                 raise ValidationError(f"Unsupported format: {format}")
 
-            log.info(f"Saved {len(records)} records to {filepath} in {format} format")
+            log.info(
+                f"Saved {len(records)} records to {filepath} in {format} format"
+            )
 
         except Exception as e:
             log.error(
@@ -576,7 +611,7 @@ class ASTMBaseRecord(BaseModel):
 
         try:
             if format.lower() == "json":
-                with open(filepath, "r", encoding="utf-8") as f:
+                with open(filepath, encoding="utf-8") as f:
                     data = json.load(f)
 
                 if isinstance(data, list):
@@ -586,7 +621,7 @@ class ASTMBaseRecord(BaseModel):
 
             elif format.lower() == "csv":
                 records = []
-                with open(filepath, "r", encoding="utf-8") as f:
+                with open(filepath, encoding="utf-8") as f:
                     reader = csv.DictReader(f)
                     for row in reader:
                         # Convert empty strings to None
@@ -612,8 +647,12 @@ class ASTMBaseRecord(BaseModel):
 class ModernHeaderRecord(ASTMBaseRecord):
     """Enhanced ASTM Header Record with comprehensive validation and field mapping."""
 
-    record_type: Literal["H"] = Field(default="H", description="Record type identifier")
-    delimiter: str = Field(default=r"\^&", description="Field delimiter definition")
+    record_type: Literal["H"] = Field(
+        default="H", description="Record type identifier"
+    )
+    delimiter: str = Field(
+        default=r"\^&", description="Field delimiter definition"
+    )
     message_id: Optional[str] = Field(
         default=None, max_length=20, description="Message control ID"
     )
@@ -630,7 +669,9 @@ class ModernHeaderRecord(ASTMBaseRecord):
     phone: Optional[str] = Field(
         default=None, max_length=20, description="Sender phone number"
     )
-    capabilities: Optional[str] = Field(default=None, description="Sender capabilities")
+    capabilities: Optional[str] = Field(
+        default=None, description="Sender capabilities"
+    )
     receiver: Optional[str] = Field(
         default=None, max_length=30, description="Receiver ID"
     )
@@ -679,7 +720,9 @@ class ModernHeaderRecord(ASTMBaseRecord):
 
     @field_validator("processing_id")
     @classmethod
-    def validate_processing_id(cls, v: Union[str, ProcessingId]) -> ProcessingId:
+    def validate_processing_id(
+        cls, v: Union[str, ProcessingId]
+    ) -> ProcessingId:
         if isinstance(v, str):
             try:
                 return ProcessingId(v)
@@ -721,13 +764,17 @@ HeaderRecord = ModernHeaderRecord
 class ModernPatientRecord(ASTMBaseRecord):
     """Enhanced ASTM Patient Record with comprehensive validation and field mapping."""
 
-    record_type: Literal["P"] = Field(default="P", description="Record type identifier")
+    record_type: Literal["P"] = Field(
+        default="P", description="Record type identifier"
+    )
     sequence: int = Field(ge=1, le=99, description="Sequence number")
     practice_id: Optional[str] = Field(
         default=None, max_length=20, description="Practice assigned patient ID"
     )
     laboratory_id: Optional[str] = Field(
-        default=None, max_length=20, description="Laboratory assigned patient ID"
+        default=None,
+        max_length=20,
+        description="Laboratory assigned patient ID",
     )
     patient_id: Optional[str] = Field(
         default=None, max_length=20, description="Patient ID"
@@ -738,7 +785,9 @@ class ModernPatientRecord(ASTMBaseRecord):
     maiden_name: Optional[str] = Field(
         default=None, max_length=200, description="Mother's maiden name"
     )
-    birthdate: Optional[date] = Field(default=None, description="Patient birthdate")
+    birthdate: Optional[date] = Field(
+        default=None, description="Patient birthdate"
+    )
     sex: Optional[Sex] = Field(default=None, description="Patient sex")
     race: Optional[str] = Field(
         default=None, max_length=50, description="Patient race/ethnicity"
@@ -841,7 +890,9 @@ class ModernPatientRecord(ASTMBaseRecord):
             try:
                 return Sex(v.upper())
             except ValueError:
-                raise ValueError("Sex must be M (Male), F (Female), or U (Unknown)")
+                raise ValueError(
+                    "Sex must be M (Male), F (Female), or U (Unknown)"
+                )
         return v
 
     @field_validator("height", "weight")
@@ -873,7 +924,9 @@ PatientRecord = ModernPatientRecord
 class ModernOrderRecord(ASTMBaseRecord):
     """Enhanced ASTM Order Record with comprehensive validation and field mapping."""
 
-    record_type: Literal["O"] = Field(default="O", description="Record type identifier")
+    record_type: Literal["O"] = Field(
+        default="O", description="Record type identifier"
+    )
     sequence: int = Field(ge=1, le=99, description="Sequence number")
     sample_id: Optional[str] = Field(
         default=None, max_length=20, description="Specimen ID"
@@ -909,7 +962,9 @@ class ModernOrderRecord(ASTMBaseRecord):
         default=None, max_length=10, description="Danger code"
     )
     clinical_info: Optional[str] = Field(
-        default=None, max_length=500, description="Relevant clinical information"
+        default=None,
+        max_length=500,
+        description="Relevant clinical information",
     )
     delivered_at: Optional[datetime] = Field(
         default=None, description="Date/time specimen received"
@@ -962,14 +1017,18 @@ class ModernOrderRecord(ASTMBaseRecord):
 
     @field_validator("priority")
     @classmethod
-    def validate_priority(cls, v: Union[str, Priority, None]) -> Optional[Priority]:
+    def validate_priority(
+        cls, v: Union[str, Priority, None]
+    ) -> Optional[Priority]:
         if v is None:
             return None
         if isinstance(v, str):
             try:
                 return Priority(v.upper())
             except ValueError:
-                raise ValueError("Priority must be S (STAT), A (ASAP), or R (Routine)")
+                raise ValueError(
+                    "Priority must be S (STAT), A (ASAP), or R (Routine)"
+                )
         return v
 
     @field_validator("volume")
@@ -983,7 +1042,11 @@ class ModernOrderRecord(ASTMBaseRecord):
 
     @model_validator(mode="after")
     def validate_dates(self) -> "ModernOrderRecord":
-        if self.created_at and self.sampled_at and self.created_at > self.sampled_at:
+        if (
+            self.created_at
+            and self.sampled_at
+            and self.created_at > self.sampled_at
+        ):
             raise ValueError(
                 "Order creation date cannot be after sample collection date"
             )
@@ -992,13 +1055,17 @@ class ModernOrderRecord(ASTMBaseRecord):
             and self.collected_at
             and self.sampled_at > self.collected_at
         ):
-            raise ValueError("Sample collection start cannot be after collection end")
+            raise ValueError(
+                "Sample collection start cannot be after collection end"
+            )
         if (
             self.delivered_at
             and self.sampled_at
             and self.delivered_at < self.sampled_at
         ):
-            raise ValueError("Delivery date cannot be before sample collection date")
+            raise ValueError(
+                "Delivery date cannot be before sample collection date"
+            )
         return self
 
 
@@ -1009,7 +1076,9 @@ OrderRecord = ModernOrderRecord
 class ModernResultRecord(ASTMBaseRecord):
     """Enhanced ASTM Result Record with comprehensive validation and field mapping."""
 
-    record_type: Literal["R"] = Field(default="R", description="Record type identifier")
+    record_type: Literal["R"] = Field(
+        default="R", description="Record type identifier"
+    )
     sequence: int = Field(ge=1, le=99, description="Sequence number")
     test: Optional[str] = Field(
         default=None, max_length=50, description="Universal test ID"
@@ -1029,7 +1098,9 @@ class ModernResultRecord(ASTMBaseRecord):
     abnormality_nature: Optional[str] = Field(
         default=None, max_length=50, description="Nature of abnormal testing"
     )
-    status: Optional[ResultStatus] = Field(default=None, description="Results status")
+    status: Optional[ResultStatus] = Field(
+        default=None, description="Results status"
+    )
     norms_changed_at: Optional[datetime] = Field(
         default=None, description="Date of normative values change"
     )
@@ -1085,7 +1156,12 @@ class ModernResultRecord(ASTMBaseRecord):
         if isinstance(v, str) and v:
             try:
                 # Check if it's a numeric value
-                if v.replace(".", "").replace("-", "").replace("+", "").isdigit():
+                if (
+                    v.replace(".", "")
+                    .replace("-", "")
+                    .replace("+", "")
+                    .isdigit()
+                ):
                     return Decimal(v)
             except (ValueError, InvalidOperation):
                 pass  # Keep as string if conversion fails
@@ -1148,7 +1224,9 @@ ResultRecord = ModernResultRecord
 class ModernCommentRecord(ASTMBaseRecord):
     """Enhanced ASTM Comment Record with comprehensive validation and field mapping."""
 
-    record_type: Literal["C"] = Field(default="C", description="Record type identifier")
+    record_type: Literal["C"] = Field(
+        default="C", description="Record type identifier"
+    )
     sequence: int = Field(ge=1, le=99, description="Sequence number")
     source: Optional[str] = Field(
         default=None, max_length=50, description="Comment source"
@@ -1197,7 +1275,9 @@ class ModernCommentRecord(ASTMBaseRecord):
 class ModernTerminatorRecord(ASTMBaseRecord):
     """Enhanced ASTM Terminator Record with validation and field mapping."""
 
-    record_type: Literal["L"] = Field(default="L", description="Record type identifier")
+    record_type: Literal["L"] = Field(
+        default="L", description="Record type identifier"
+    )
     sequence: int = Field(default=1, ge=1, le=99, description="Sequence number")
     termination_code: TerminationCode = Field(
         default=TerminationCode.NORMAL, description="Termination code"

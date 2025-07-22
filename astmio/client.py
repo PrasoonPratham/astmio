@@ -1,18 +1,18 @@
-# -*- coding: utf-8 -*-
 #
 # Enhanced ASTM Client with robust timeout and resource management
 #
 import asyncio
 import ssl
-from typing import Iterable, Optional
 from contextlib import asynccontextmanager
 from dataclasses import dataclass
+from typing import Iterable, Optional
 
 from .codec import ASTMRecord, iter_encode
 from .constants import ACK, ENQ, EOT
-from .logging import get_logger
-from .exceptions import ConnectionError, TimeoutError as ASTMTimeoutError
 from .dataclasses import ConnectionConfig
+from .exceptions import ConnectionError
+from .exceptions import TimeoutError as ASTMTimeoutError
+from .logging import get_logger
 
 log = get_logger(__name__)
 
@@ -37,7 +37,9 @@ class ClientConfig:
     @classmethod
     def from_dict(cls, data: dict) -> "ClientConfig":
         """Create config from dictionary, ignoring unknown fields."""
-        valid_fields = {field.name for field in cls.__dataclass_fields__.values()}
+        valid_fields = {
+            field.name for field in cls.__dataclass_fields__.values()
+        }
         filtered_data = {k: v for k, v in data.items() if k in valid_fields}
         return cls(**filtered_data)
 
@@ -89,7 +91,9 @@ class Client:
 
                 # Connect with timeout
                 connect_task = asyncio.open_connection(
-                    self.config.host, self.config.port, ssl=self.config.ssl_context
+                    self.config.host,
+                    self.config.port,
+                    ssl=self.config.ssl_context,
                 )
 
                 self._reader, self._writer = await asyncio.wait_for(
@@ -133,7 +137,9 @@ class Client:
         except asyncio.TimeoutError:
             self._log.error("Read timeout", timeout=self.config.read_timeout)
             self._connected = False
-            raise ASTMTimeoutError(f"Read timeout after {self.config.read_timeout}s")
+            raise ASTMTimeoutError(
+                f"Read timeout after {self.config.read_timeout}s"
+            )
 
     async def send_records(self, records: Iterable[ASTMRecord]) -> bool:
         """
@@ -150,7 +156,9 @@ class Client:
                 self._send_records_impl(records), timeout=self.config.timeout
             )
         except asyncio.TimeoutError:
-            self._log.error("Send operation timeout", timeout=self.config.timeout)
+            self._log.error(
+                "Send operation timeout", timeout=self.config.timeout
+            )
             self._connected = False
             return False
         except Exception as e:
@@ -160,7 +168,9 @@ class Client:
 
     async def _send_records_impl(self, records: Iterable[ASTMRecord]) -> bool:
         """Internal implementation of record sending."""
-        if not (self._reader and self._writer and not self._writer.is_closing()):
+        if not (
+            self._reader and self._writer and not self._writer.is_closing()
+        ):
             return False
 
         # ENQ handshake
@@ -180,13 +190,17 @@ class Client:
         messages = list(iter_encode(records, encoding=self.config.encoding))
 
         for i, message in enumerate(messages):
-            self._log.debug("Sending message", number=i + 1, total=len(messages))
+            self._log.debug(
+                "Sending message", number=i + 1, total=len(messages)
+            )
             self._writer.write(message)
             await self._writer.drain()
 
             response = await self._read_with_timeout()
             if response != ACK:
-                self._log.error("Message not acknowledged", message_number=i + 1)
+                self._log.error(
+                    "Message not acknowledged", message_number=i + 1
+                )
                 if self._writer and not self._writer.is_closing():
                     self._writer.write(EOT)
                     await self._writer.drain()

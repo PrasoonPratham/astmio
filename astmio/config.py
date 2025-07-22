@@ -1,18 +1,18 @@
-# -*- coding: utf-8 -*-
 #
 # Enhanced configuration system for ASTM library
 #
-from dataclasses import dataclass, field
-from typing import Dict, Any, Optional, List, Union, Set, Callable
-from pathlib import Path
-import yaml
 import json
 import logging
+from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
+from pathlib import Path
+from typing import Any, Callable, Dict, List, Optional, Set, Union
 
-from .exceptions import ValidationError
+import yaml
+
 from .enums import RecordType
+from .exceptions import ValidationError
 
 log = logging.getLogger(__name__)
 
@@ -64,7 +64,9 @@ class TransportConfig:
 
         if self.ssl_enabled:
             if not self.ssl_cert_path or not self.ssl_key_path:
-                raise ValidationError("SSL enabled but certificate or key path missing")
+                raise ValidationError(
+                    "SSL enabled but certificate or key path missing"
+                )
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "TransportConfig":
@@ -94,10 +96,14 @@ class FrameConfig:
     def __post_init__(self):
         """Validate configuration after initialization."""
         if self.max_length <= 0:
-            raise ValidationError(f"Max length must be positive: {self.max_length}")
+            raise ValidationError(
+                f"Max length must be positive: {self.max_length}"
+            )
 
         if self.chunking_enabled and self.chunk_size <= 0:
-            raise ValidationError(f"Chunk size must be positive: {self.chunk_size}")
+            raise ValidationError(
+                f"Chunk size must be positive: {self.chunk_size}"
+            )
 
         if self.chunk_size > self.max_length:
             log.warning(
@@ -134,7 +140,9 @@ class RecordFieldMapping:
             )
 
         if self.max_length is not None and self.max_length <= 0:
-            raise ValidationError(f"Max length must be positive: {self.max_length}")
+            raise ValidationError(
+                f"Max length must be positive: {self.max_length}"
+            )
 
 
 @dataclass
@@ -156,7 +164,9 @@ class RecordConfig:
             )
 
     @classmethod
-    def from_dict(cls, record_type: str, data: Dict[str, Any]) -> "RecordConfig":
+    def from_dict(
+        cls, record_type: str, data: Dict[str, Any]
+    ) -> "RecordConfig":
         """Create from dictionary with validation."""
         try:
             # Convert record type to enum
@@ -281,9 +291,11 @@ class DeviceProfile:
                 ".toml": ProfileFormat.TOML,
             }
 
-            profile_format = format_map.get(filepath.suffix.lower(), ProfileFormat.YAML)
+            profile_format = format_map.get(
+                filepath.suffix.lower(), ProfileFormat.YAML
+            )
 
-            with open(filepath, "r", encoding="utf-8") as f:
+            with open(filepath, encoding="utf-8") as f:
                 if profile_format == ProfileFormat.YAML:
                     config_data = yaml.safe_load(f)
                 elif profile_format == ProfileFormat.JSON:
@@ -294,14 +306,20 @@ class DeviceProfile:
 
                         config_data = toml.load(f)
                     except ImportError:
-                        raise ValidationError("TOML support requires 'toml' package")
+                        raise ValidationError(
+                            "TOML support requires 'toml' package"
+                        )
                 else:
-                    raise ValidationError(f"Unsupported format: {profile_format}")
+                    raise ValidationError(
+                        f"Unsupported format: {profile_format}"
+                    )
 
             return cls.from_dict(config_data, source_file=str(filepath))
 
-        except (IOError, yaml.YAMLError, json.JSONDecodeError) as e:
-            log.error("Failed to load profile from %s: %s", str(filepath), str(e))
+        except (OSError, yaml.YAMLError, json.JSONDecodeError) as e:
+            log.error(
+                "Failed to load profile from %s: %s", str(filepath), str(e)
+            )
             raise ValidationError(f"Error loading profile from {filepath}: {e}")
 
     @classmethod
@@ -441,7 +459,9 @@ class DeviceProfile:
             raise ValidationError(f"Profile serialization failed: {e}")
 
     def save_to_file(
-        self, filepath: Union[str, Path], format: ProfileFormat = ProfileFormat.YAML
+        self,
+        filepath: Union[str, Path],
+        format: ProfileFormat = ProfileFormat.YAML,
     ) -> None:
         """Save profile to file in specified format."""
         filepath = Path(filepath)
@@ -460,7 +480,9 @@ class DeviceProfile:
 
                         toml.dump(data, f)
                     except ImportError:
-                        raise ValidationError("TOML support requires 'toml' package")
+                        raise ValidationError(
+                            "TOML support requires 'toml' package"
+                        )
                 else:
                     raise ValidationError(f"Unsupported format: {format}")
 
@@ -490,7 +512,9 @@ class DeviceProfile:
             # Validate frame configuration
             try:
                 if self.frame.max_length <= 0:
-                    errors.append(f"Invalid max frame length: {self.frame.max_length}")
+                    errors.append(
+                        f"Invalid max frame length: {self.frame.max_length}"
+                    )
             except Exception as e:
                 errors.append(f"Frame validation failed: {e}")
 
@@ -512,7 +536,9 @@ class DeviceProfile:
                         )
 
                 except Exception as e:
-                    errors.append(f"Record {record_type.value} validation failed: {e}")
+                    errors.append(
+                        f"Record {record_type.value} validation failed: {e}"
+                    )
 
             # Validate parser configuration
             try:
@@ -586,7 +612,9 @@ class DeviceProfile:
 class ConfigManager:
     """Enhanced configuration manager with advanced features."""
 
-    def __init__(self, profile_directories: Optional[List[Union[str, Path]]] = None):
+    def __init__(
+        self, profile_directories: Optional[List[Union[str, Path]]] = None
+    ):
         """Initialize with optional profile directories."""
         self._profiles: Dict[str, DeviceProfile] = {}
         self._profile_directories: List[Path] = []
@@ -621,7 +649,9 @@ class ConfigManager:
                             discovered.append(profile)
                             log.info(f"Discovered profile: {profile.device}")
                         except Exception as e:
-                            log.warning(f"Failed to load profile from {filepath}: {e}")
+                            log.warning(
+                                f"Failed to load profile from {filepath}: {e}"
+                            )
             except Exception as e:
                 log.error(f"Failed to scan directory {directory}: {e}")
 
@@ -640,7 +670,9 @@ class ConfigManager:
     def add_profile(self, profile: DeviceProfile) -> None:
         """Add a profile to the manager."""
         if not isinstance(profile, DeviceProfile):
-            raise ValidationError(f"Expected DeviceProfile, got {type(profile)}")
+            raise ValidationError(
+                f"Expected DeviceProfile, got {type(profile)}"
+            )
 
         if not profile.is_valid():
             errors = profile.validate()
@@ -680,7 +712,11 @@ class ConfigManager:
 
     def find_profiles_by_tag(self, tag: str) -> List[DeviceProfile]:
         """Find profiles with a specific tag."""
-        return [profile for profile in self._profiles.values() if tag in profile.tags]
+        return [
+            profile
+            for profile in self._profiles.values()
+            if tag in profile.tags
+        ]
 
     def find_profiles_by_vendor(self, vendor: str) -> List[DeviceProfile]:
         """Find profiles by vendor."""
@@ -690,7 +726,9 @@ class ConfigManager:
             if profile.vendor and profile.vendor.lower() == vendor.lower()
         ]
 
-    def validate_all_profiles(self, strict: bool = False) -> Dict[str, List[str]]:
+    def validate_all_profiles(
+        self, strict: bool = False
+    ) -> Dict[str, List[str]]:
         """Validate all loaded profiles."""
         results = {}
         for device, profile in self._profiles.items():
@@ -699,17 +737,23 @@ class ConfigManager:
                 results[device] = errors
         return results
 
-    def add_watcher(self, callback: Callable[[str, DeviceProfile], None]) -> None:
+    def add_watcher(
+        self, callback: Callable[[str, DeviceProfile], None]
+    ) -> None:
         """Add a callback to be notified when profiles change."""
         self._watchers.append(callback)
 
-    def remove_watcher(self, callback: Callable[[str, DeviceProfile], None]) -> None:
+    def remove_watcher(
+        self, callback: Callable[[str, DeviceProfile], None]
+    ) -> None:
         """Remove a profile change watcher."""
         if callback in self._watchers:
             self._watchers.remove(callback)
 
     def export_profiles(
-        self, directory: Union[str, Path], format: ProfileFormat = ProfileFormat.YAML
+        self,
+        directory: Union[str, Path],
+        format: ProfileFormat = ProfileFormat.YAML,
     ) -> None:
         """Export all profiles to a directory."""
         directory = Path(directory)

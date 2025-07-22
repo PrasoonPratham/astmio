@@ -1,5 +1,6 @@
-import pytest
 from asyncio import get_event_loop
+
+import pytest
 
 
 @pytest.fixture(scope="session")

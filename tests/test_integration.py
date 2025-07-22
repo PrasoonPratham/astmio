@@ -4,18 +4,19 @@ Tests complete workflows including client-server communication and message handl
 """
 
 import asyncio
+
 import pytest
 
 from astmio import (
-    create_server,
     astm_client,
     astm_server,
+    create_server,
     decode,
     decode_record,
     encode_message,
     send_astm_data,
 )
-from astmio.constants import STX, ETX, ETB, EOT, RECORD_SEP
+from astmio.constants import EOT, ETB, ETX, RECORD_SEP, STX
 
 
 class TestIntegration:
@@ -202,7 +203,15 @@ class TestIntegration:
             # Add many result records
             for i in range(20):
                 records.append(
-                    ["R", str(i + 1), f"^^^TEST{i + 1}", "100", "units", "50-150", "N"]
+                    [
+                        "R",
+                        str(i + 1),
+                        f"^^^TEST{i + 1}",
+                        "100",
+                        "units",
+                        "50-150",
+                        "N",
+                    ]
                 )
 
             records.append(["L", "1", "N"])
@@ -266,7 +275,9 @@ class TestIntegration:
         assert order_record[1] == "1"
         assert order_record[2] == "25059232"
 
-        result_data = b"R|1|^^^TT3 II|1.171|ng/mL|0.75 to 2.1|N||||||20250630151157"
+        result_data = (
+            b"R|1|^^^TT3 II|1.171|ng/mL|0.75 to 2.1|N||||||20250630151157"
+        )
         result_record = decode_record(result_data, "latin-1")
         assert result_record[0] == "R"
         assert result_record[1] == "1"
@@ -322,14 +333,19 @@ class TestIntegration:
         # Test handling of encoding errors
         try:
             # This should work fine
-            valid_message = [["H", ["", "^&"], None, None, "Test"], ["L", "1", "N"]]
+            valid_message = [
+                ["H", ["", "^&"], None, None, "Test"],
+                ["L", "1", "N"],
+            ]
             data = encode_message(1, valid_message, "latin-1")
             decoded = decode(data)
             assert len(decoded) == 2
             assert decoded[0][0] == "H"
             assert decoded[1][0] == "L"
         except Exception as e:
-            pytest.fail(f"Valid message encoding/decoding should not fail: {str(e)}")
+            pytest.fail(
+                f"Valid message encoding/decoding should not fail: {str(e)}"
+            )
 
     @pytest.mark.asyncio
     async def test_server_duration_limit(self, simple_handlers):
@@ -358,7 +374,9 @@ class TestIntegration:
         profile_data = {
             "device": "Test Device",
             "records": {
-                "H": {"fields": ["type", "delimiter", "message_id", "password"]},
+                "H": {
+                    "fields": ["type", "delimiter", "message_id", "password"]
+                },
                 "R": {"fields": ["type", "seq", "test_id", "value", "units"]},
             },
         }
@@ -386,4 +404,6 @@ class TestIntegration:
         # return one record (the whole message as one record). We need
         # to manually split by RECORD_SEP
         record_parts = bs240_message.split(RECORD_SEP)
+        # Filter out empty parts (caused by trailing separator)
+        record_parts = [part for part in record_parts if part]
         assert len(record_parts) == 4  # H, P, O, L

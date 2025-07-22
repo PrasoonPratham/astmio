@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2013 Alexander Shorin
 # All rights reserved.
@@ -16,14 +15,8 @@ import warnings
 from itertools import zip_longest
 from typing import (
     Any,
-    Dict,
     Iterable,
     List,
-    Optional,
-    Set,
-    Tuple,
-    Type,
-    Union,
 )
 
 log = logging.getLogger(__name__)
@@ -34,17 +27,17 @@ class Field:
 
     def __init__(
         self,
-        name: Optional[str] = None,
+        name: str | None = None,
         default: Any = None,
         required: bool = False,
-        length: Optional[int] = None,
+        length: int | None = None,
     ):
         self.name = name
         self.default = default
         self.required = required
         self.length = length
 
-    def __get__(self, instance: Optional[Mapping], owner: Type[Mapping]) -> Any:
+    def __get__(self, instance: Mapping | None, owner: type[Mapping]) -> Any:
         if instance is None:
             return self
         value = instance._data.get(self.name)
@@ -77,12 +70,12 @@ class Field:
 
 class MetaMapping(type):
     def __new__(
-        mcs, name: str, bases: Tuple[Type, ...], d: Dict[str, Any]
+        mcs, name: str, bases: tuple[type, ...], d: dict[str, Any]
     ) -> MetaMapping:
-        fields: List[Tuple[str, Field]] = []
-        names: List[str] = []
+        fields: list[tuple[str, Field]] = []
+        names: list[str] = []
 
-        def merge_fields(items: List[Tuple[str, Field]]) -> None:
+        def merge_fields(items: list[tuple[str, Field]]) -> None:
             for n, field in items:
                 if field.name is None:
                     field.name = n
@@ -101,27 +94,29 @@ class MetaMapping(type):
 
 
 class Mapping(metaclass=MetaMapping):
-    _fields: List[Tuple[str, Field]]
-    _data: Dict[str, Any]
+    _fields: list[tuple[str, Field]]
+    _data: dict[str, Any]
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         fieldnames = [name for name, _ in self._fields]
         values = dict(zip_longest(fieldnames, args))
         values.update(kwargs)
         self._data = {}
-        for attrname, field in self._fields:
+        for attrname, _field in self._fields:
             attrval = values.pop(attrname, None)
             if attrval is not None:
                 setattr(self, attrname, attrval)
             else:
                 setattr(self, attrname, getattr(self, attrname))
         if values:
-            raise ValueError(f"Unexpected kwargs found: {list(values.keys())!r}")
+            raise ValueError(
+                f"Unexpected kwargs found: {list(values.keys())!r}"
+            )
 
     @classmethod
-    def build(cls, *a: Field) -> Type[Mapping]:
+    def build(cls, *a: Field) -> type[Mapping]:
         newcls = type(f"Generic{cls.__name__}", (cls,), {})
-        fields: List[Tuple[str, Field]] = []
+        fields: list[tuple[str, Field]] = []
         for field in a:
             if field.name is None:
                 raise ValueError("Name is required for ordered fields.")
@@ -160,19 +155,21 @@ class Mapping(metaclass=MetaMapping):
         return not self == other
 
     def __repr__(self) -> str:
-        items_repr = ", ".join(f"{key}={value!r}" for key, value in self.items())
+        items_repr = ", ".join(
+            f"{key}={value!r}" for key, value in self.items()
+        )
         return f"{self.__class__.__name__}({items_repr})"
 
-    def keys(self) -> List[str]:
+    def keys(self) -> list[str]:
         return [key for key, _ in self._fields]
 
-    def values(self) -> List[Any]:
+    def values(self) -> list[Any]:
         return [getattr(self, key) for key in self.keys()]
 
-    def items(self) -> List[Tuple[str, Any]]:
+    def items(self) -> list[tuple[str, Any]]:
         return [(key, getattr(self, key)) for key, _ in self._fields]
 
-    def to_astm(self) -> List[Any]:
+    def to_astm(self) -> list[Any]:
         def _values(obj: Mapping) -> Iterable[Any]:
             for key, field in obj._fields:
                 value = obj._data.get(key)
@@ -180,7 +177,11 @@ class Mapping(metaclass=MetaMapping):
                     yield list(_values(value))
                 elif isinstance(value, list):
                     yield [
-                        list(_values(item)) if isinstance(item, Mapping) else item
+                        (
+                            list(_values(item))
+                            if isinstance(item, Mapping)
+                            else item
+                        )
                         for item in value
                     ]
                 elif value is None and field.required:
@@ -204,16 +205,18 @@ class TextField(Field):
 
     def _set_value(self, value: Any) -> str:
         if not isinstance(value, str):
-            raise TypeError(f"String value expected, got {type(value).__name__}")
+            raise TypeError(
+                f"String value expected, got {type(value).__name__}"
+            )
         return super()._set_value(value)
 
 
 class ConstantField(Field):
     def __init__(
         self,
-        name: Optional[str] = None,
+        name: str | None = None,
         default: Any = None,
-        field: Optional[Field] = None,
+        field: Field | None = None,
     ):
         if default is None:
             raise ValueError("Constant value should be defined")
@@ -243,7 +246,9 @@ class IntegerField(Field):
             try:
                 value = self._get_value(value)
             except (ValueError, TypeError):
-                raise TypeError(f"Integer value expected, got {type(value).__name__}")
+                raise TypeError(
+                    f"Integer value expected, got {type(value).__name__}"
+                )
         return super()._set_value(value)
 
 
@@ -255,7 +260,9 @@ class DecimalField(Field):
 
     def _set_value(self, value: Any) -> decimal.Decimal:
         if not isinstance(value, (int, float, decimal.Decimal)):
-            raise TypeError(f"Decimal value expected, got {type(value).__name__}")
+            raise TypeError(
+                f"Decimal value expected, got {type(value).__name__}"
+            )
         return super()._set_value(value)
 
 
@@ -267,13 +274,15 @@ class DateField(Field):
     def _get_value(self, value: str) -> datetime.date:
         return datetime.datetime.strptime(value, self.format).date()
 
-    def _set_value(self, value: Union[str, datetime.date, datetime.datetime]) -> str:
+    def _set_value(self, value: str | datetime.date | datetime.datetime) -> str:
         if isinstance(value, str):
             dt_value = self._get_value(value)
         elif isinstance(value, (datetime.datetime, datetime.date)):
             dt_value = value
         else:
-            raise TypeError(f"Date(time) value expected, got {type(value).__name__}")
+            raise TypeError(
+                f"Date(time) value expected, got {type(value).__name__}"
+            )
         return dt_value.strftime(self.format)
 
 
@@ -287,9 +296,11 @@ class TimeField(Field):
             time_str = value.split(".", 1)[0]
             return datetime.time(*time.strptime(time_str, self.format)[3:6])
         except (ValueError, IndexError):
-            raise ValueError(f"Value {value!r} does not match format {self.format}")
+            raise ValueError(
+                f"Value {value!r} does not match format {self.format}"
+            )
 
-    def _set_value(self, value: Union[str, datetime.time, datetime.datetime]) -> str:
+    def _set_value(self, value: str | datetime.time | datetime.datetime) -> str:
         if isinstance(value, str):
             time_value = self._get_value(value)
         elif isinstance(value, datetime.datetime):
@@ -309,13 +320,15 @@ class DateTimeField(Field):
     def _get_value(self, value: str) -> datetime.datetime:
         return datetime.datetime.strptime(value, self.format)
 
-    def _set_value(self, value: Union[str, datetime.date, datetime.datetime]) -> str:
+    def _set_value(self, value: str | datetime.date | datetime.datetime) -> str:
         if isinstance(value, str):
             dt_value = self._get_value(value)
         elif isinstance(value, (datetime.datetime, datetime.date)):
             dt_value = value
         else:
-            raise TypeError(f"Datetime value expected, got {type(value).__name__}")
+            raise TypeError(
+                f"Datetime value expected, got {type(value).__name__}"
+            )
         return dt_value.strftime(self.format)
 
 
@@ -324,15 +337,15 @@ class SetField(Field):
 
     def __init__(
         self,
-        name: Optional[str] = None,
+        name: str | None = None,
         default: Any = None,
         required: bool = False,
-        length: Optional[int] = None,
-        values: Optional[Iterable[Any]] = None,
-        field: Optional[Field] = None,
+        length: int | None = None,
+        values: Iterable[Any] | None = None,
+        field: Field | None = None,
     ):
         self.field = field or Field()
-        self.values: Set[Any] = set(values) if values else set()
+        self.values: set[Any] = set(values) if values else set()
         super().__init__(name, default, required, length)
 
     def _get_value(self, value: Any) -> Any:
@@ -349,7 +362,10 @@ class ComponentField(Field):
     """Mapping field for storing a record component."""
 
     def __init__(
-        self, mapping: Type[Mapping], name: Optional[str] = None, default: Any = None
+        self,
+        mapping: type[Mapping],
+        name: str | None = None,
+        default: Any = None,
     ):
         self.mapping = mapping
         default = default if default is not None else mapping()
@@ -376,9 +392,11 @@ class RepeatedComponentField(Field):
             self.field = field
             super().__init__(self.field._get_value(i) for i in seq)
 
-        def __setitem__(self, index: Union[int, slice], value: Any) -> None:
+        def __setitem__(self, index: int | slice, value: Any) -> None:
             if isinstance(index, slice):
-                super().__setitem__(index, [self.field._set_value(v) for v in value])
+                super().__setitem__(
+                    index, [self.field._set_value(v) for v in value]
+                )
             else:
                 super().__setitem__(index, self.field._set_value(value))
 
@@ -390,8 +408,8 @@ class RepeatedComponentField(Field):
 
     def __init__(
         self,
-        field: Union[ComponentField, Type[Mapping]],
-        name: Optional[str] = None,
+        field: ComponentField | type[Mapping],
+        name: str | None = None,
         default: Any = None,
     ):
         if isinstance(field, ComponentField):
@@ -399,19 +417,21 @@ class RepeatedComponentField(Field):
         elif isinstance(field, type) and issubclass(field, Mapping):
             self.field = ComponentField(field)
         else:
-            raise TypeError("A Mapping class or ComponentField instance is required.")
+            raise TypeError(
+                "A Mapping class or ComponentField instance is required."
+            )
         default = default if default is not None else []
         super().__init__(name, default)
 
     def _get_value(self, value: Any) -> Proxy:
         return self.Proxy(value, self.field)
 
-    def _set_value(self, value: Iterable[Any]) -> List[Mapping]:
+    def _set_value(self, value: Iterable[Any]) -> list[Mapping]:
         return [self.field._set_value(item) for item in value]
 
 
 class NotUsedField(Field):
-    def __init__(self, name: Optional[str] = None):
+    def __init__(self, name: str | None = None):
         super().__init__(name=name)
 
     def _get_value(self, value: Any) -> None:
@@ -421,5 +441,6 @@ class NotUsedField(Field):
         warnings.warn(
             f"Field {self.name!r} is not used, any assignments are omitted",
             UserWarning,
+            stacklevel=2,
         )
         return None

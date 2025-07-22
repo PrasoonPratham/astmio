@@ -7,18 +7,13 @@ transport:
   encoding: ascii
 records:
   H:
-    number: 1
     delimiter: "|\\^&"
     processing_id: PR
     version: "1394-97"
-    ['H','\\^&','',......] // default
-    ['H', '\\^&', None, None, ['HOST', '1.0'], None, None, None, None, None, 'P', None, '20250721160000'],
-    index:
-
     fields:
       - type             # Field 0: Record type 'H'
       - delimiter        # Field 1: Delimiter definition
-      - message_id       # Field 2: Message control ID  
+      - message_id       # Field 2: Message control ID
       - password         # Field 3: Access password
       - sender           # Field 4: Sender name/ID
       - address          # Field 5: Sender address
@@ -123,4 +118,4 @@ records:
       - termination_code               # Field 2: Termination code
 parser:
   patient_name_field: P.5
-  sample_id_field: O.3 
+  sample_id_field: O.3

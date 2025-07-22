@@ -1,6 +1,6 @@
 import asyncio
 import time
-from typing import Set, Dict, Any
+from typing import Any, Dict, Set
 
 from .client import Client
 from .logging import get_logger
@@ -24,7 +24,9 @@ class ConnectionPool:
                            constructor.
     """
 
-    def __init__(self, host: str, port: int, pool_size: int = 10, **client_options):
+    def __init__(
+        self, host: str, port: int, pool_size: int = 10, **client_options
+    ):
         self.host = host
         self.port = port
         self.pool_size = pool_size
@@ -76,7 +78,9 @@ class ConnectionPool:
         """
         log.info("Creating new connection", host=self.host, port=self.port)
         try:
-            client = Client(host=self.host, port=self.port, **self.client_options)
+            client = Client(
+                host=self.host, port=self.port, **self.client_options
+            )
             await client.connect()
             self._connections.add(client)
             await self._pool.put(client)
@@ -122,7 +126,8 @@ class ConnectionPool:
                         await self._create_connection()
                     except Exception as e:
                         log.error(
-                            "Failed to create replacement connection", error=str(e)
+                            "Failed to create replacement connection",
+                            error=str(e),
                         )
 
     @staticmethod

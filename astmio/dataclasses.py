@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
 #
 # Modern dataclasses for ASTM protocol
 #
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
-from typing import Any, Dict, List, Optional
 from pathlib import Path
+from typing import Any, Dict, List, Optional
 
 from .enums import ConnectionState
 
@@ -192,7 +191,13 @@ class SecurityConfig:
     # Data protection
     mask_sensitive_data: bool = True
     sensitive_fields: List[str] = field(
-        default_factory=lambda: ["patient_id", "name", "address", "phone", "ssn"]
+        default_factory=lambda: [
+            "patient_id",
+            "name",
+            "address",
+            "phone",
+            "ssn",
+        ]
     )
 
     # Audit logging
@@ -265,8 +270,12 @@ class PerformanceMetrics:
     def record_processing_time(self, processing_time: float) -> None:
         """Record a processing time measurement."""
         self.total_processing_time += processing_time
-        self.min_processing_time = min(self.min_processing_time, processing_time)
-        self.max_processing_time = max(self.max_processing_time, processing_time)
+        self.min_processing_time = min(
+            self.min_processing_time, processing_time
+        )
+        self.max_processing_time = max(
+            self.max_processing_time, processing_time
+        )
 
     def __str__(self) -> str:
         return (

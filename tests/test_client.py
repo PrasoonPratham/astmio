@@ -1,5 +1,7 @@
 import pytest
-from astmio import create_client, astm_client
+
+from astmio import astm_client, create_client
+
 from .mocks import MockASTMServer
 
 
@@ -63,7 +65,9 @@ async def test_client_timeout_handling():
     )
 
     try:
-        with pytest.raises(Exception):  # Should raise ConnectionError or similar
+        with pytest.raises(
+            Exception
+        ):  # Should raise ConnectionError or similar
             await client.connect()
     finally:
         await client.close()
