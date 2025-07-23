@@ -2,19 +2,20 @@
 Tests for individual ASTM record types and their validation.
 """
 
-import pytest
 from datetime import datetime
 from decimal import Decimal
 
+import pytest
+
+from astmio import decode_record, encode_record
 from astmio.modern_records import (
-    HeaderRecord,
-    PatientRecord,
-    OrderRecord,
-    ResultRecord,
     CommentRecord,
+    HeaderRecord,
+    OrderRecord,
+    PatientRecord,
+    ResultRecord,
     TerminatorRecord,
 )
-from astmio import decode_record, encode_record
 
 
 class TestModernRecords:
@@ -109,7 +110,9 @@ class TestModernRecords:
             sample_id="25059232",
             test="^^^TT3 II\\^^^TT4 II\\^^^TSH II",
             priority="R",
-            created_at=datetime(2025, 6, 30, 9, 0, 0),  # Before sample collection
+            created_at=datetime(
+                2025, 6, 30, 9, 0, 0
+            ),  # Before sample collection
             sampled_at=datetime(2025, 6, 30, 9, 30, 0),
             volume=Decimal("5.0"),
             biomaterial="Serum",

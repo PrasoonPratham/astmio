@@ -12,6 +12,7 @@ This example demonstrates a production-ready ASTM server with:
 
 import asyncio
 import os
+
 import astmio
 
 # Load plugins with new API
@@ -22,11 +23,15 @@ plugins = []
 try:
     from astmio.plugins.hipaa import HIPAAAuditPlugin
 
-    hipaa_plugin = HIPAAAuditPlugin(db_path="production_audit.db", retention_days=2555)
+    hipaa_plugin = HIPAAAuditPlugin(
+        db_path="production_audit.db", retention_days=2555
+    )
     plugins.append(hipaa_plugin)
     print("✅ HIPAA plugin loaded")
 except ImportError:
-    print("❌ HIPAA plugin not available. Install with: pip install astmio[hipaa]")
+    print(
+        "❌ HIPAA plugin not available. Install with: pip install astmio[hipaa]"
+    )
 
 # Try to load metrics plugin
 try:
@@ -36,7 +41,9 @@ try:
     plugins.append(metrics_plugin)
     print("✅ Metrics plugin loaded")
 except ImportError:
-    print("❌ Metrics plugin not available. Install with: pip install astmio[metrics]")
+    print(
+        "❌ Metrics plugin not available. Install with: pip install astmio[metrics]"
+    )
 
 print(f"✅ Available plugins: {[p.name for p in plugins]}")
 
@@ -75,7 +82,9 @@ def handle_order(record, server):
 
         # Parse test code for better display
         if "^^^" in test_code:
-            test_name = test_code.split("^^^")[1] if "^^^" in test_code else test_code
+            test_name = (
+                test_code.split("^^^")[1] if "^^^" in test_code else test_code
+            )
         else:
             test_name = test_code
 
@@ -202,7 +211,9 @@ async def main():
                     .isoformat()
                 )
 
-                report = hipaa_plugin.generate_compliance_report(start_time, end_time)
+                report = hipaa_plugin.generate_compliance_report(
+                    start_time, end_time
+                )
                 if report and report.get("summary"):
                     print("\n📊 Final HIPAA Report for today:")
                     summary = report["summary"]

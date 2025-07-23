@@ -12,17 +12,18 @@ Key improvements:
 """
 
 import asyncio
+
 from astmio import (
-    # High-level functions (recommended)
-    send_astm_data,
-    run_astm_server,
+    ClientConfig,
     astm_client,
     astm_server,
     # Core classes for advanced use
     create_client,
-    ClientConfig,
     decode,
     encode_message,
+    run_astm_server,
+    # High-level functions (recommended)
+    send_astm_data,
 )
 
 
@@ -60,7 +61,9 @@ async def context_manager_client_example():
 
     # Using context manager ensures proper cleanup
     try:
-        async with astm_client(host="localhost", port=15200, timeout=2.0) as client:
+        async with astm_client(
+            host="localhost", port=15200, timeout=2.0
+        ) as client:
             success = await client.send_records(records)
             print(f"Send successful: {success}")
     except Exception as e:
@@ -108,7 +111,9 @@ async def simple_server_example():
         print(f"Received Header: {record[4] if len(record) > 4 else 'Unknown'}")
 
     def handle_patient(record):
-        print(f"Received Patient: {record[1] if len(record) > 1 else 'Unknown'}")
+        print(
+            f"Received Patient: {record[1] if len(record) > 1 else 'Unknown'}"
+        )
 
     def handle_order(record):
         print(f"Received Order: {record[2] if len(record) > 2 else 'Unknown'}")
@@ -120,7 +125,9 @@ async def simple_server_example():
         print(f"Received Result: {test_id} = {value} {units}")
 
     def handle_terminator(record):
-        print(f"Received Terminator: {record[1] if len(record) > 1 else 'Unknown'}")
+        print(
+            f"Received Terminator: {record[1] if len(record) > 1 else 'Unknown'}"
+        )
 
     handlers = {
         "H": handle_header,

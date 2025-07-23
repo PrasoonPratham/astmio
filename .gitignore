@@ -83,6 +83,9 @@ venv.bak/
 *.db
 *.db-shm
 *.db-wal
+production_hipaa_audit.db
 
 .DS_Store
 
+# ruff cache
+.ruff_cache

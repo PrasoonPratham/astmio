@@ -39,20 +39,53 @@ classifiers = [
 "Bug Tracker" = "https://github.com/PrasoonPratham/astmio/issues"
 
 [project.optional-dependencies]
-dev = ["ruff", "pytest", "pytest-asyncio", "hypothesis", "black"]
+dev = ["ruff", "pytest", "pytest-asyncio", "hypothesis", "black", "pre-commit"]
 hipaa = ["dataset>=1.6.2"]
 metrics = ["prometheus-client>=0.17.0"]
 prometheus = ["prometheus-client>=0.17.0"]
 security = ["cryptography>=41.0.0"]
 full = ["dataset>=1.6.2", "prometheus-client>=0.17.0", "cryptography>=41.0.0"]
 
+[tool.black]
+line-length = 80
+target-version = ['py38']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+)/
+'''
+
 [tool.ruff]
-line-length = 120
+line-length = 80
 indent-width = 4
+target-version = "py38"
 
 [tool.ruff.lint]
-select = ["E", "F", "W"]
-ignore = []
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # pyflakes
+    "I",  # isort
+    "B",  # flake8-bugbear
+    "C4", # flake8-comprehensions
+    "UP", # pyupgrade
+]
+ignore = [
+    "E501",  # line too long, handled by black
+    "B008",  # do not perform function calls in argument defaults
+    "B904",  # exception chaining (can fix later)
+    "B017",  # blind exception catching in tests
+    "C901",  # too complex
+]
 
 [tool.ruff.format]
 quote-style = "double"

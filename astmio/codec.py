@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2013 Alexander Shorin
 # All rights reserved.
@@ -8,10 +7,10 @@
 #
 import logging
 from collections.abc import Iterable
-from itertools import zip_longest
-from typing import Any, Iterator, List, Optional, Tuple, Union
 from dataclasses import dataclass
 from enum import Enum
+from itertools import zip_longest
+from typing import Any, Iterator, List, Optional, Tuple, Union
 
 from .constants import (
     COMPONENT_SEP,
@@ -70,7 +69,9 @@ class EncodingOptions:
     include_metadata: bool = False
 
 
-def decode(data: bytes, encoding: str = ENCODING, strict: bool = False) -> ASTMData:
+def decode(
+    data: bytes, encoding: str = ENCODING, strict: bool = False
+) -> ASTMData:
     """
     Enhanced ASTM decoding function with better error handling.
 
@@ -86,11 +87,16 @@ def decode(data: bytes, encoding: str = ENCODING, strict: bool = False) -> ASTMD
     if not data:
         raise ValidationError("Empty data provided")
 
+    if FIELD_SEP not in data:
+        raise ProtocolError("Data is missing the required Field Separator.")
+
     try:
         result = decode_with_metadata(data, encoding, strict)
         return result.data
     except Exception as e:
-        log.error("Failed to decode ASTM data", error=str(e), data_length=len(data))
+        log.error(
+            "Failed to decode ASTM data", error=str(e), data_length=len(data)
+        )
         if strict:
             raise
         # In non-strict mode, try to recover
@@ -99,7 +105,7 @@ def decode(data: bytes, encoding: str = ENCODING, strict: bool = False) -> ASTMD
 
 
 def decode_with_metadata(
-    data: bytes, encoding: str = ENCODING, strict: bool = False
+    data: bytes, encoding: str = ENCODING, strict: bool = True
 ) -> DecodingResult:
     """
     Enhanced decoding with comprehensive metadata.
@@ -115,14 +121,18 @@ def decode_with_metadata(
     if not data:
         raise ValidationError("Empty data provided")
 
-    # Determine message type and decode accordingly
+    # The message is normal(with STX and sequence number)
     if data.startswith(STX):
         if is_chunked_message(data):
             return _decode_chunked_message(data, encoding, strict)
         else:
             return _decode_complete_message(data, encoding, strict)
+
+    # The message is without the STX(Only sequence number)
     elif data and data[:1].isdigit():
         return _decode_frame_only(data, encoding, strict)
+
+    # The message contains only record(No sequence number and STX)
     else:
         return _decode_record_only(data, encoding, strict)
 
@@ -143,16 +153,22 @@ def _decode_complete_message(
     except Exception as e:
         if strict:
             raise ProtocolError(f"Failed to decode complete message: {e}")
-        log.warning("Complete message decode failed, attempting recovery", error=str(e))
+        log.warning(
+            "Complete message decode failed, attempting recovery", error=str(e)
+        )
         return _attempt_recovery_decode_with_metadata(data, encoding)
 
 
-def _decode_frame_only(data: bytes, encoding: str, strict: bool) -> DecodingResult:
+def _decode_frame_only(
+    data: bytes, encoding: str, strict: bool
+) -> DecodingResult:
     """Decode a frame without STX/ETX framing."""
     try:
         seq, records = decode_frame(data, encoding, strict)
         return DecodingResult(
-            data=records, message_type=MessageType.FRAME_ONLY, sequence_number=seq
+            data=records,
+            message_type=MessageType.FRAME_ONLY,
+            sequence_number=seq,
         )
     except Exception as e:
         if strict:
@@ -161,11 +177,15 @@ def _decode_frame_only(data: bytes, encoding: str, strict: bool) -> DecodingResu
         return _attempt_recovery_decode_with_metadata(data, encoding)
 
 
-def _decode_record_only(data: bytes, encoding: str, strict: bool) -> DecodingResult:
+def _decode_record_only(
+    data: bytes, encoding: str, strict: bool
+) -> DecodingResult:
     """Decode a single record."""
     try:
         record = decode_record(data, encoding, strict)
-        return DecodingResult(data=[record], message_type=MessageType.RECORD_ONLY)
+        return DecodingResult(
+            data=[record], message_type=MessageType.RECORD_ONLY
+        )
     except Exception as e:
         if strict:
             raise ProtocolError(f"Failed to decode record: {e}")
@@ -173,7 +193,9 @@ def _decode_record_only(data: bytes, encoding: str, strict: bool) -> DecodingRes
         return _attempt_recovery_decode_with_metadata(data, encoding)
 
 
-def _decode_chunked_message(data: bytes, encoding: str, strict: bool) -> DecodingResult:
+def _decode_chunked_message(
+    data: bytes, encoding: str, strict: bool
+) -> DecodingResult:
     """Decode a chunked message."""
     warnings = []
     warnings.append("Chunked message detected - may need additional chunks")
@@ -280,7 +302,9 @@ def decode_message(
         if strict:
             raise ProtocolError("Malformed ASTM message: No ETX or ETB found")
         log.warning("No ETX or ETB found, using end of message")
-        frame_end_pos = len(message) - 3  # Assume checksum is last 2 chars + CRLF
+        frame_end_pos = (
+            len(message) - 3
+        )  # Assume checksum is last 2 chars + CRLF
 
     if frame_end_pos <= 1:
         raise ProtocolError("Malformed ASTM message: Frame too short")
@@ -306,7 +330,9 @@ def decode_message(
     except Exception as e:
         if strict:
             raise ProtocolError(f"Failed to decode frame content: {e}")
-        log.warning("Frame decode failed, attempting simple split", error=str(e))
+        log.warning(
+            "Frame decode failed, attempting simple split", error=str(e)
+        )
         # Simple fallback: just split by record separator
         records = []
         for record_data in frame_content.split(RECORD_SEP):
@@ -315,9 +341,9 @@ def decode_message(
                     records.append(decode_record(record_data, encoding, False))
                 except Exception:
                     # Last resort: just decode as string fields
-                    fields = record_data.decode(encoding, errors="replace").split(
-                        FIELD_SEP.decode(encoding)
-                    )
+                    fields = record_data.decode(
+                        encoding, errors="replace"
+                    ).split(FIELD_SEP.decode(encoding))
                     records.append(fields)
         seq = None
 
@@ -376,7 +402,9 @@ def decode_frame(
             except Exception as e:
                 if strict:
                     raise ValidationError(f"Failed to decode record: {e}")
-                log.warning("Record decode failed, using fallback", error=str(e))
+                log.warning(
+                    "Record decode failed, using fallback", error=str(e)
+                )
                 # Fallback: split by field separator and decode as strings
                 try:
                     fields = record.decode(encoding, errors="replace").split(
@@ -389,7 +417,9 @@ def decode_frame(
     return seq, records
 
 
-def decode_record(record: bytes, encoding: str, strict: bool = False) -> ASTMRecord:
+def decode_record(
+    record: bytes, encoding: str, strict: bool = False
+) -> ASTMRecord:
     """
     Enhanced ASTM record decoder.
 
@@ -414,7 +444,9 @@ def decode_record(record: bytes, encoding: str, strict: bool = False) -> ASTMRec
     except Exception as e:
         if strict:
             raise ValidationError(f"Failed to split record into fields: {e}")
-        log.warning("Field splitting failed, treating as single field", error=str(e))
+        log.warning(
+            "Field splitting failed, treating as single field", error=str(e)
+        )
         field_parts = [record]
 
     for i, item_bytes in enumerate(field_parts):
@@ -436,7 +468,9 @@ def decode_record(record: bytes, encoding: str, strict: bool = False) -> ASTMRec
         except Exception as e:
             if strict:
                 raise ValidationError(f"Failed to decode field {i}: {e}")
-            log.warning(f"Field {i} decode failed, using fallback", error=str(e))
+            log.warning(
+                f"Field {i} decode failed, using fallback", error=str(e)
+            )
             # Fallback: decode as string with error replacement
             try:
                 fallback_value = item_bytes.decode(encoding, errors="replace")
@@ -470,9 +504,12 @@ def decode_component(
                     components.append(item.decode(encoding))
                 except UnicodeDecodeError as e:
                     if strict:
-                        raise ValidationError(f"Failed to decode component: {e}")
+                        raise ValidationError(
+                            f"Failed to decode component: {e}"
+                        )
                     log.warning(
-                        "Component decode failed, using error replacement", error=str(e)
+                        "Component decode failed, using error replacement",
+                        error=str(e),
                     )
                     components.append(item.decode(encoding, errors="replace"))
             else:
@@ -539,7 +576,9 @@ def encode(
         options = EncodingOptions(encoding=encoding, size=size)
 
     if not isinstance(records, Iterable):
-        raise ValidationError(f"Iterable expected, got {type(records).__name__}")
+        raise ValidationError(
+            f"Iterable expected, got {type(records).__name__}"
+        )
 
     records_list = list(records)
     if not records_list:
@@ -559,7 +598,9 @@ def encode(
                 decode_message(msg, options.encoding, options.strict_validation)
             except Exception as e:
                 if options.strict_validation:
-                    raise ValidationError(f"Generated message failed validation: {e}")
+                    raise ValidationError(
+                        f"Generated message failed validation: {e}"
+                    )
                 log.warning("Generated message validation failed", error=str(e))
 
         if options.size is not None and len(msg) > options.size:
@@ -567,7 +608,9 @@ def encode(
                 return list(split(msg, options.size))
             except ValueError as split_error:
                 if options.strict_validation:
-                    raise ValidationError(f"Cannot split message: {split_error}")
+                    raise ValidationError(
+                        f"Cannot split message: {split_error}"
+                    )
                 log.warning(
                     "Message splitting failed, returning single message: %s",
                     str(split_error),
@@ -577,7 +620,9 @@ def encode(
 
     except Exception as e:
         log.error(
-            "Failed to encode records: %s (record_count=%d)", str(e), len(records_list)
+            "Failed to encode records: %s (record_count=%d)",
+            str(e),
+            len(records_list),
         )
         if options and options.strict_validation:
             raise
@@ -606,7 +651,9 @@ def iter_encode(
         options = EncodingOptions(encoding=encoding, size=size)
 
     if not isinstance(records, Iterable):
-        raise ValidationError(f"Iterable expected, got {type(records).__name__}")
+        raise ValidationError(
+            f"Iterable expected, got {type(records).__name__}"
+        )
 
     record_count = 0
     for record in records:
@@ -624,25 +671,31 @@ def iter_encode(
             if options.validate_checksum:
                 # Validate the generated message
                 try:
-                    decode_message(msg, options.encoding, options.strict_validation)
+                    decode_message(
+                        msg, options.encoding, options.strict_validation
+                    )
                 except Exception as e:
                     if options.strict_validation:
                         raise ValidationError(
                             f"Generated message failed validation: {e}"
                         )
-                    log.warning("Generated message validation failed", error=str(e))
+                    log.warning(
+                        "Generated message validation failed", error=str(e)
+                    )
 
             if options.size is not None and len(msg) > options.size:
-                for chunk in split(msg, options.size):
-                    yield chunk
+                yield from split(msg, options.size)
             else:
                 yield msg
 
         except Exception as e:
             if options.strict_validation:
-                raise ValidationError(f"Failed to encode record {record_count}: {e}")
+                raise ValidationError(
+                    f"Failed to encode record {record_count}: {e}"
+                )
             log.warning(
-                f"Failed to encode record {record_count}, skipping", error=str(e)
+                f"Failed to encode record {record_count}, skipping",
+                error=str(e),
             )
 
         seq = (seq + 1) % 8
@@ -672,7 +725,9 @@ def encode_message(
 
     if seq < 0:
         if strict:
-            raise ValidationError(f"Invalid sequence number: {seq} (must be >= 0)")
+            raise ValidationError(
+                f"Invalid sequence number: {seq} (must be >= 0)"
+            )
         log.warning(f"Negative sequence number {seq}, using absolute value")
         seq = abs(seq)
 
@@ -703,7 +758,9 @@ def encode_message(
             except Exception as e:
                 if strict:
                     raise ValidationError(f"Failed to encode record {i}: {e}")
-                log.warning(f"Failed to encode record {i}, skipping", error=str(e))
+                log.warning(
+                    f"Failed to encode record {i}, skipping", error=str(e)
+                )
 
         if not encoded_records and strict:
             raise ValidationError("No valid records could be encoded")
@@ -715,7 +772,9 @@ def encode_message(
         # Validate message length
         if len(message) > 64000:  # Reasonable maximum
             if strict:
-                raise ValidationError(f"Message too large: {len(message)} bytes")
+                raise ValidationError(
+                    f"Message too large: {len(message)} bytes"
+                )
             log.warning(f"Large message generated: {len(message)} bytes")
 
         return message
@@ -732,7 +791,9 @@ def encode_message(
         raise ValidationError(f"Failed to encode message: {e}")
 
 
-def encode_record(record: ASTMRecord, encoding: str, strict: bool = False) -> bytes:
+def encode_record(
+    record: ASTMRecord, encoding: str, strict: bool = False
+) -> bytes:
     """
     Enhanced ASTM record encoder with validation.
 
@@ -769,7 +830,9 @@ def encode_record(record: ASTMRecord, encoding: str, strict: bool = False) -> by
             except Exception as e:
                 if strict:
                     raise ValidationError(f"Failed to encode field {i}: {e}")
-                log.warning(f"Failed to encode field {i}, using fallback", error=str(e))
+                log.warning(
+                    f"Failed to encode field {i}, using fallback", error=str(e)
+                )
                 # Fallback: convert to string and encode
                 try:
                     yield str(field).encode(encoding, errors="replace")
@@ -779,7 +842,9 @@ def encode_record(record: ASTMRecord, encoding: str, strict: bool = False) -> by
     try:
         return FIELD_SEP.join(_iter_fields(record))
     except Exception as e:
-        log.error("Failed to encode record", error=str(e), record_length=len(record))
+        log.error(
+            "Failed to encode record", error=str(e), record_length=len(record)
+        )
         if strict:
             raise ValidationError(f"Failed to encode record: {e}")
         # Last resort fallback
@@ -812,16 +877,21 @@ def encode_component(
                     yield item
                 elif isinstance(item, str):
                     yield item.encode(encoding)
-                elif isinstance(item, Iterable) and not isinstance(item, (str, bytes)):
+                elif isinstance(item, Iterable) and not isinstance(
+                    item, (str, bytes)
+                ):
                     # This indicates a repeated component
                     yield encode_repeated_component([item], encoding, strict)
                 else:
                     yield str(item).encode(encoding)
             except Exception as e:
                 if strict:
-                    raise ValidationError(f"Failed to encode component item {i}: {e}")
+                    raise ValidationError(
+                        f"Failed to encode component item {i}: {e}"
+                    )
                 log.warning(
-                    f"Failed to encode component item {i}, using fallback", error=str(e)
+                    f"Failed to encode component item {i}, using fallback",
+                    error=str(e),
                 )
                 try:
                     yield str(item).encode(encoding, errors="replace")
@@ -850,7 +920,8 @@ def encode_component(
         try:
             # Fallback: join as strings
             return COMPONENT_SEP.join(
-                str(item).encode(encoding, errors="replace") for item in component
+                str(item).encode(encoding, errors="replace")
+                for item in component
             )
         except Exception:
             return b""
@@ -877,8 +948,12 @@ def encode_repeated_component(
         encoded_components = []
         for i, item in enumerate(components):
             try:
-                if isinstance(item, Iterable) and not isinstance(item, (str, bytes)):
-                    encoded_components.append(encode_component(item, encoding, strict))
+                if isinstance(item, Iterable) and not isinstance(
+                    item, (str, bytes)
+                ):
+                    encoded_components.append(
+                        encode_component(item, encoding, strict)
+                    )
                 else:
                     # Single item, encode as component
                     encoded_components.append(
@@ -890,7 +965,8 @@ def encode_repeated_component(
                         f"Failed to encode repeated component {i}: {e}"
                     )
                 log.warning(
-                    f"Failed to encode repeated component {i}, skipping", error=str(e)
+                    f"Failed to encode repeated component {i}, skipping",
+                    error=str(e),
                 )
 
         return REPEAT_SEP.join(encoded_components)
@@ -915,7 +991,9 @@ def make_checksum(message: bytes) -> bytes:
 def make_chunks(s: bytes, n: int) -> List[bytes]:
     """Splits a bytestring into chunks of size n."""
     iter_bytes = (s[i : i + 1] for i in range(len(s)))
-    return [b"".join(item) for item in zip_longest(*[iter_bytes] * n, fillvalue=b"")]
+    return [
+        b"".join(item) for item in zip_longest(*[iter_bytes] * n, fillvalue=b"")
+    ]
 
 
 def split(msg: bytes, size: int) -> Iterator[bytes]:
@@ -957,7 +1035,9 @@ def join(chunks: Iterable[bytes], strict: bool = False) -> bytes:
     :raises: ValidationError for validation issues.
     """
     if not isinstance(chunks, Iterable):
-        raise ValidationError(f"Iterable chunks expected, got {type(chunks).__name__}")
+        raise ValidationError(
+            f"Iterable chunks expected, got {type(chunks).__name__}"
+        )
 
     chunks_list = list(chunks)
     if not chunks_list:
@@ -979,18 +1059,24 @@ def join(chunks: Iterable[bytes], strict: bool = False) -> bytes:
                     chunks_list[i] = bytes(chunk)
                 except Exception:
                     if strict:
-                        raise ValidationError(f"Failed to convert chunk {i} to bytes")
+                        raise ValidationError(
+                            f"Failed to convert chunk {i} to bytes"
+                        )
                     log.warning(f"Failed to convert chunk {i}, skipping")
                     continue
 
             if len(chunk) < 5:
                 if strict:
-                    raise ValidationError(f"Chunk {i} too short: {len(chunk)} bytes")
+                    raise ValidationError(
+                        f"Chunk {i} too short: {len(chunk)} bytes"
+                    )
                 log.warning(f"Chunk {i} too short, skipping")
                 continue
 
         # Filter out invalid chunks
-        valid_chunks = [c for c in chunks_list if isinstance(c, bytes) and len(c) >= 5]
+        valid_chunks = [
+            c for c in chunks_list if isinstance(c, bytes) and len(c) >= 5
+        ]
         if not valid_chunks:
             if strict:
                 raise ValidationError("No valid chunks found")
@@ -1002,7 +1088,9 @@ def join(chunks: Iterable[bytes], strict: bool = False) -> bytes:
             first_frame_num = int(valid_chunks[0][1:2])
         except (ValueError, IndexError) as e:
             if strict:
-                raise ValidationError(f"Invalid frame number in first chunk: {e}")
+                raise ValidationError(
+                    f"Invalid frame number in first chunk: {e}"
+                )
             log.warning("Invalid frame number, using 1")
             first_frame_num = 1
 
@@ -1015,9 +1103,12 @@ def join(chunks: Iterable[bytes], strict: bool = False) -> bytes:
                 body_parts.append(body_part)
             except Exception as e:
                 if strict:
-                    raise ValidationError(f"Failed to extract body from chunk {i}: {e}")
+                    raise ValidationError(
+                        f"Failed to extract body from chunk {i}: {e}"
+                    )
                 log.warning(
-                    f"Failed to extract body from chunk {i}, skipping", error=str(e)
+                    f"Failed to extract body from chunk {i}, skipping",
+                    error=str(e),
                 )
 
         body = b"".join(body_parts)
@@ -1034,7 +1125,9 @@ def join(chunks: Iterable[bytes], strict: bool = False) -> bytes:
         return message
 
     except Exception as e:
-        log.error("Failed to join chunks", error=str(e), chunk_count=len(chunks_list))
+        log.error(
+            "Failed to join chunks", error=str(e), chunk_count=len(chunks_list)
+        )
         if strict:
             raise ValidationError(f"Failed to join chunks: {e}")
         # Return empty message as fallback

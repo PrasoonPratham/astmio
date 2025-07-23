@@ -2,17 +2,18 @@
 Tests for device profile loading, validation, and usage.
 """
 
-import pytest
-from pathlib import Path
-import yaml
-import tempfile
 import os
+import tempfile
+from pathlib import Path
 
+import pytest
+import yaml
+
+from astmio import decode, decode_message, encode_message
 from astmio.config import (
     DeviceProfile,
     validate_profile,
 )
-from astmio import decode, encode_message, decode_message
 
 
 class TestProfiles:
@@ -21,7 +22,7 @@ class TestProfiles:
     @pytest.fixture
     def profiles_dir(self):
         """Get the profiles directory."""
-        return Path(__file__).parent.parent / "etc" / "profiles"
+        return Path(__file__).parent.parent / "profiles"
 
     @pytest.fixture
     def sample_profile(self):
@@ -59,7 +60,13 @@ class TestProfiles:
                 },
                 "P": {"fields": ["type", "sequence", "patient_id", "name"]},
                 "O": {
-                    "fields": ["type", "sequence", "sample_id", "instrument", "test"]
+                    "fields": [
+                        "type",
+                        "sequence",
+                        "sample_id",
+                        "instrument",
+                        "test",
+                    ]
                 },
                 "R": {
                     "fields": [
@@ -96,7 +103,7 @@ class TestProfiles:
             assert profile_path.exists(), f"Profile {profile_file} should exist"
 
             # Load and validate profile
-            with open(profile_path, "r") as f:
+            with open(profile_path) as f:
                 profile_data = yaml.safe_load(f)
 
             # Check required fields
@@ -132,7 +139,9 @@ class TestProfiles:
         invalid_profile = sample_profile.copy()
         invalid_profile["transport"] = invalid_profile["transport"].copy()
         invalid_profile["transport"]["mode"] = "invalid"
-        with pytest.raises(ValueError, match="TransportMode|transport.*configuration"):
+        with pytest.raises(
+            ValueError, match="TransportMode|transport.*configuration"
+        ):
             validate_profile(invalid_profile)
 
         # Test invalid record type - create fresh copy
@@ -147,7 +156,7 @@ class TestProfiles:
     def test_profile_field_mapping(self, profiles_dir):
         """Test field mapping using profiles."""
         # Load Snibe profile
-        with open(profiles_dir / "snibe_maglumi.yaml", "r") as f:
+        with open(profiles_dir / "snibe_maglumi.yaml") as f:
             profile = yaml.safe_load(f)
 
         # Parse a Snibe message
@@ -215,7 +224,9 @@ class TestProfiles:
         data = encode_message(1, records, "latin-1")
 
         # Decode and verify
-        decoded_seq, decoded_records, decoded_checksum = decode_message(data, "latin-1")
+        decoded_seq, decoded_records, decoded_checksum = decode_message(
+            data, "latin-1"
+        )
         assert len(decoded_records) == 5
         assert decoded_records[0][0] == "H"
         assert decoded_records[1][0] == "P"
@@ -258,13 +269,15 @@ class TestProfiles:
         }
 
         # Save to temporary file
-        with tempfile.NamedTemporaryFile(mode="w", suffix=".yaml", delete=False) as f:
+        with tempfile.NamedTemporaryFile(
+            mode="w", suffix=".yaml", delete=False
+        ) as f:
             yaml.dump(new_profile, f)
             temp_path = f.name
 
         try:
             # Load and validate
-            with open(temp_path, "r") as f:
+            with open(temp_path) as f:
                 loaded_profile = yaml.safe_load(f)
 
             assert loaded_profile["device"] == "Custom Analyzer"
@@ -282,7 +295,7 @@ class TestProfiles:
         # Load all profiles
         profiles = {}
         for profile_path in profile_files:
-            with open(profile_path, "r") as f:
+            with open(profile_path) as f:
                 profiles[profile_path.stem] = yaml.safe_load(f)
 
         # Check common structure
@@ -306,7 +319,7 @@ class TestProfiles:
     def test_profile_specific_features(self, profiles_dir):
         """Test profile-specific features and configurations."""
         # Test BS-240 specific features
-        with open(profiles_dir / "mindray_bs240.yaml", "r") as f:
+        with open(profiles_dir / "mindray_bs240.yaml") as f:
             bs240_profile = yaml.safe_load(f)
 
         # BS-240 should have specific parser settings
@@ -315,7 +328,7 @@ class TestProfiles:
         assert bs240_profile["parser"]["sample_id_field"] == "O.3"
 
         # Test Snibe Maglumi specific features
-        with open(profiles_dir / "snibe_maglumi.yaml", "r") as f:
+        with open(profiles_dir / "snibe_maglumi.yaml") as f:
             snibe_profile = yaml.safe_load(f)
 
         # Snibe should handle multiple tests with backslash separator

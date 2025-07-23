@@ -1,17 +1,16 @@
-# -*- coding: utf-8 -*-
 #
 # Enhanced ASTM Server with robust resource management
 #
 import asyncio
 import ssl
-from typing import Callable, Dict, List, Optional
 from contextlib import asynccontextmanager
 from dataclasses import dataclass
+from typing import Callable, Dict, List, Optional
 
 from .codec import decode_message
-from .constants import ACK, EOT, NAK, ENQ, STX, ETX, ETB
+from .constants import ACK, ENQ, EOT, ETB, ETX, NAK, STX
 from .logging import get_logger, setup_logging
-from .plugins import PluginManager, BasePlugin
+from .plugins import BasePlugin, PluginManager
 
 log = get_logger(__name__)
 
@@ -33,7 +32,9 @@ class ServerConfig:
     @classmethod
     def from_dict(cls, data: dict) -> "ServerConfig":
         """Create config from dictionary, ignoring unknown fields."""
-        valid_fields = {field.name for field in cls.__dataclass_fields__.values()}
+        valid_fields = {
+            field.name for field in cls.__dataclass_fields__.values()
+        }
         filtered_data = {k: v for k, v in data.items() if k in valid_fields}
         return cls(**filtered_data)
 
@@ -63,7 +64,9 @@ async def handle_connection(
         while True:
             try:
                 # Read with timeout to prevent hanging
-                data = await asyncio.wait_for(reader.read(1024), timeout=config.timeout)
+                data = await asyncio.wait_for(
+                    reader.read(1024), timeout=config.timeout
+                )
 
                 if not data:
                     conn_log.debug("Connection closed by client")
@@ -110,7 +113,12 @@ async def handle_connection(
                             # Extract complete message (including checksum)
                             message = buffer[stx_index : frame_end_pos + 5]
                             await process_message(
-                                message, handlers, config, writer, conn_log, server
+                                message,
+                                handlers,
+                                config,
+                                writer,
+                                conn_log,
+                                server,
                             )
                             buffer = buffer[frame_end_pos + 5 :]
                         else:
@@ -147,7 +155,9 @@ async def process_message(
         if not message.startswith(STX):
             return
 
-        seq, records, checksum = decode_message(message, encoding=config.encoding)
+        seq, records, checksum = decode_message(
+            message, encoding=config.encoding
+        )
 
         for record_list in records:
             if not record_list:
@@ -172,15 +182,21 @@ async def process_message(
                         # Run sync handler in executor to avoid blocking
                         loop = asyncio.get_event_loop()
                         await asyncio.wait_for(
-                            loop.run_in_executor(None, handler, record_list, server),
+                            loop.run_in_executor(
+                                None, handler, record_list, server
+                            ),
                             timeout=5.0,
                         )
                 except asyncio.TimeoutError:
                     logger.warning("Handler timeout", record_type=record_type)
                 except Exception as e:
-                    logger.error("Handler error", record_type=record_type, error=str(e))
+                    logger.error(
+                        "Handler error", record_type=record_type, error=str(e)
+                    )
             else:
-                logger.debug("No handler for record type", record_type=record_type)
+                logger.debug(
+                    "No handler for record type", record_type=record_type
+                )
 
         # Send ACK
         if not writer.is_closing():
@@ -249,7 +265,9 @@ class Server:
                 ssl=self.config.ssl_context,
             )
 
-            addrs = ", ".join(str(s.getsockname()) for s in self._server.sockets)
+            addrs = ", ".join(
+                str(s.getsockname()) for s in self._server.sockets
+            )
             self._log.info("Server started", addresses=addrs)
 
         except Exception as e:
@@ -290,7 +308,9 @@ class Server:
         await self.start()
         async with self._server:
             try:
-                await asyncio.wait_for(self._server.serve_forever(), timeout=duration)
+                await asyncio.wait_for(
+                    self._server.serve_forever(), timeout=duration
+                )
             except asyncio.TimeoutError:
                 pass  # Expected timeout
 

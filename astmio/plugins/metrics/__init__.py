@@ -1,7 +1,9 @@
-from collections import defaultdict
 import time
-from .. import BasePlugin
+from collections import defaultdict
+
 from prometheus_client import Counter, Gauge, Histogram
+
+from .. import BasePlugin
 
 
 class MetricsPlugin(BasePlugin):
@@ -67,9 +69,9 @@ class MetricsPlugin(BasePlugin):
         processing_time = time.monotonic() - self._processing_start_time
         self.metrics["processing_time"]["last"] = processing_time
         self._processing_times.append(processing_time)
-        self.metrics["processing_time"]["average"] = sum(self._processing_times) / len(
+        self.metrics["processing_time"]["average"] = sum(
             self._processing_times
-        )
+        ) / len(self._processing_times)
 
     def get_metrics(self):
         return self.metrics
@@ -123,4 +125,6 @@ class PrometheusMetricsPlugin(MetricsPlugin):
 
     def on_processing_end(self):
         super().on_processing_end()
-        self.processing_time_seconds.observe(self.metrics["processing_time"]["last"])
+        self.processing_time_seconds.observe(
+            self.metrics["processing_time"]["last"]
+        )

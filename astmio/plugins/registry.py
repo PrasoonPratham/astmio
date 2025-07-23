@@ -6,9 +6,10 @@ This module provides a centralized registry for all available plugins,
 making it easy to discover, install, and manage plugins.
 """
 
-from typing import Dict, List, Type, Optional
-from . import BasePlugin
+from typing import Dict, List, Optional, Type
+
 from ..logging import get_logger
+from . import BasePlugin
 
 log = get_logger(__name__)
 
@@ -33,7 +34,10 @@ class PluginRegistry:
         self._register_builtin_plugins()
 
     def register(
-        self, name: str, plugin_class: Type[BasePlugin], category: str = "custom"
+        self,
+        name: str,
+        plugin_class: Type[BasePlugin],
+        category: str = "custom",
     ):
         """
         Register a plugin in the registry.
@@ -167,7 +171,9 @@ def print_plugin_catalog():
                 info = _registry.get_plugin_info(plugin_name)
                 print(f"  • {plugin_name}")
                 print(f"    Version: {info.get('version', 'unknown')}")
-                print(f"    Description: {info.get('description', 'No description')}")
+                print(
+                    f"    Description: {info.get('description', 'No description')}"
+                )
                 print()
 
 

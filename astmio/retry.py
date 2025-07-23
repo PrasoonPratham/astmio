@@ -3,8 +3,8 @@ import random
 from functools import wraps
 from typing import Any, Callable, Type
 
-from ..exceptions import ConnectionError
-from ..logging import get_logger
+from .exceptions import ConnectionError
+from .logging import get_logger
 
 log = get_logger(__name__)
 

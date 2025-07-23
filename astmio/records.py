@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2013 Alexander Shorin
 # All rights reserved.
@@ -17,19 +16,20 @@ ASTM realisation.
 """
 
 from datetime import datetime
+from typing import Any, Optional, Union
+
+from pydantic import BaseModel, ConfigDict, field_validator
+
 from .mapping import (
-    Record,
+    Component,
     ConstantField,
     DateTimeField,
     IntegerField,
     NotUsedField,
-    TextField,
+    Record,
     RepeatedComponentField,
-    Component,
+    TextField,
 )
-
-from typing import Optional, Any, Union
-from pydantic import BaseModel, field_validator, ConfigDict
 
 # Because the ASTM standard uses list indices for fields, we will use
 # aliased fields to map the list index to a descriptive attribute name.
@@ -154,7 +154,9 @@ __all__ = [
 HeaderRecord = Record.build(
     ConstantField(name="type", default="H"),
     RepeatedComponentField(
-        Component.build(ConstantField(name="_", default=""), TextField(name="__")),
+        Component.build(
+            ConstantField(name="_", default=""), TextField(name="__")
+        ),
         name="delimeter",
         default=[[], ["", "&"]],
     ),

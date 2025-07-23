@@ -7,6 +7,7 @@ Install plugins with: pip install astmio[hipaa]
 """
 
 import asyncio
+
 import astmio
 
 # Import plugins directly (install with: pip install astmio[hipaa])
@@ -17,7 +18,9 @@ try:
     hipaa_plugin = HIPAAAuditPlugin(db_path="medical_audit.db")
     print("✅ HIPAA plugin loaded")
 except ImportError:
-    print("❌ HIPAA plugin not available. Install with: pip install astmio[hipaa]")
+    print(
+        "❌ HIPAA plugin not available. Install with: pip install astmio[hipaa]"
+    )
     hipaa_plugin = None
 
 try:
@@ -26,7 +29,9 @@ try:
     metrics_plugin = MetricsPlugin()
     print("✅ Metrics plugin loaded")
 except ImportError:
-    print("❌ Metrics plugin not available. Install with: pip install astmio[metrics]")
+    print(
+        "❌ Metrics plugin not available. Install with: pip install astmio[metrics]"
+    )
     metrics_plugin = None
 
 # Collect available plugins
@@ -197,11 +202,14 @@ async def demo_plugin_management():
         custom_hipaa = HIPAAAuditPlugin(
             db_path="custom_audit.db", retention_days=365, auto_backup=True
         )
-        print(f"   HIPAA plugin created: {custom_hipaa.name} v{custom_hipaa.version}")
+        print(
+            f"   HIPAA plugin created: {custom_hipaa.name} v{custom_hipaa.version}"
+        )
 
         # Create server with the custom plugin
         server = astmio.create_server(
-            handlers={"H": lambda r, s: print(f"Header: {r}")}, plugins=[custom_hipaa]
+            handlers={"H": lambda r, s: print(f"Header: {r}")},
+            plugins=[custom_hipaa],
         )
 
         # Access plugin directly
@@ -214,7 +222,9 @@ async def demo_plugin_management():
             print(f"   HIPAA plugin version: {hipaa_plugin.version}")
             print(f"   HIPAA plugin config: {hipaa_plugin.config}")
     else:
-        print("   HIPAA plugin not available. Install with: pip install astmio[hipaa]")
+        print(
+            "   HIPAA plugin not available. Install with: pip install astmio[hipaa]"
+        )
 
 
 async def main():
@@ -235,9 +245,13 @@ async def main():
 
     print("\n💡 Key Features:")
     print("   • pip install astmio[hipaa] - Install plugins with pip")
-    print("   • from astmio.plugins.hipaa import HIPAAAuditPlugin - Import plugins")
+    print(
+        "   • from astmio.plugins.hipaa import HIPAAAuditPlugin - Import plugins"
+    )
     print("   • astmio.send_astm_data(records) - One-liner to send data")
-    print("   • astmio.create_server(handlers, plugins=[...]) - Clean server creation")
+    print(
+        "   • astmio.create_server(handlers, plugins=[...]) - Clean server creation"
+    )
     print("   • async with astmio.astm_client(...) - Context manager client")
     print("   • Automatic timeouts and resource cleanup")
     print("   • Full HIPAA compliance with audit plugin")

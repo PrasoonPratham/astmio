@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
 #
 # Enhanced exception system for ASTM library
 #
 import logging
-from typing import Any, Dict, List, Optional
-from datetime import datetime
 from dataclasses import dataclass, field
+from datetime import datetime
+from typing import Any, Dict, List, Optional
 
 log = logging.getLogger(__name__)
 
@@ -94,7 +93,10 @@ class InvalidState(BaseASTMError):
     ):
         context = ErrorContext(
             operation="state_validation",
-            data={"current_state": current_state, "expected_state": expected_state},
+            data={
+                "current_state": current_state,
+                "expected_state": expected_state,
+            },
             suggestions=[
                 "Check connection state before operation",
                 "Ensure proper initialization sequence",
@@ -117,7 +119,10 @@ class NotAccepted(BaseASTMError):
     ):
         context = ErrorContext(
             operation="data_validation",
-            data={"rejected_data": str(data) if data else None, "reason": reason},
+            data={
+                "rejected_data": str(data) if data else None,
+                "reason": reason,
+            },
             suggestions=[
                 "Verify data format compliance",
                 "Check field validation rules",
@@ -142,7 +147,9 @@ class ProtocolError(BaseASTMError):
             operation="protocol_processing",
             data={
                 "error_code": code,
-                "protocol_data_length": len(protocol_data) if protocol_data else None,
+                "protocol_data_length": (
+                    len(protocol_data) if protocol_data else None
+                ),
                 "protocol_data_preview": (
                     protocol_data[:100].hex() if protocol_data else None
                 ),
@@ -305,7 +312,9 @@ class ConfigurationError(BaseASTMError):
             operation="configuration_validation",
             data={
                 "config_key": config_key,
-                "config_value": str(config_value) if config_value is not None else None,
+                "config_value": (
+                    str(config_value) if config_value is not None else None
+                ),
             },
             suggestions=[
                 "Check configuration file format",
@@ -347,7 +356,9 @@ class ResourceError(BaseASTMError):
 class SecurityError(BaseASTMError):
     """Raised for security-related errors."""
 
-    def __init__(self, message: str, security_context: Optional[str] = None, **kwargs):
+    def __init__(
+        self, message: str, security_context: Optional[str] = None, **kwargs
+    ):
         context = ErrorContext(
             operation="security_validation",
             data={"security_context": security_context},
@@ -406,7 +417,9 @@ class ErrorRecovery:
         return min(delay, max_delay)
 
     @staticmethod
-    def should_retry(error: BaseASTMError, attempt: int, max_attempts: int = 3) -> bool:
+    def should_retry(
+        error: BaseASTMError, attempt: int, max_attempts: int = 3
+    ) -> bool:
         """Determine if operation should be retried."""
         if attempt >= max_attempts:
             return False
