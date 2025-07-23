@@ -1,20 +1,15 @@
 
-==========================
-ASTM implemetation modules
-==========================
+astm
+====
 
-``astm.omnilab`` :: Omnilab LabOnline
-=====================================
+.. toctree::
 
-Based on:
-
-:file: LABONLINE -  HOST connection specifications
-:author: Giuseppe Iannucci
-:revision: 2
-:date: 2011-05-31
-
-.. automodule:: astm.omnilab.client
-   :members:
-
-.. automodule:: astm.omnilab.server
-   :members:
+   astm.client
+   astm.codec
+   astm.constants
+   astm.exceptions
+   astm.mapping
+   astm.records
+   astm.server
+   astm.tests
+   astm.version

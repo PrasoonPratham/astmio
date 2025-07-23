@@ -1,0 +1,109 @@
+device: Erba
+protocol: ASTM_E1394-97
+transport:
+  mode: tcp
+  port: 5001
+  host: 0.0.0.0
+  encoding: ascii
+records:
+  H:
+    delimiter: "|\\^&"
+    processing_id: P
+    version: "E1394-97"
+    fields:
+      - type             # Field 0: Record type 'H'
+      - delimiter        # Field 1: Delimiter definition
+      - message_id       # Field 2: Message control ID
+      - password         # Field 3: Access password
+      - sender           # Field 4: Sender name/ID
+      - address          # Field 5: Sender address
+      - reserved         # Field 6: Reserved field
+      - phone            # Field 7: Sender phone
+      - capabilities     # Field 8: Sender capabilities
+      - receiver         # Field 9: Receiver ID
+      - comments         # Field 10: Comments
+      - processing_id    # Field 11: Processing ID
+      - version          # Field 12: Version number
+      - timestamp        # Field 13: Date/Time of message
+  P:
+    fields:
+      - type             # Field 0: Record type 'P'
+      - sequence         # Field 1: Sequence number
+      - practice_id      # Field 2: Practice assigned patient ID
+      - laboratory_id    # Field 3: Laboratory assigned patient ID
+      - patient_id       # Field 4: Patient ID
+      - name             # Field 5: Patient name
+      - maiden_name      # Field 6: Mother's maiden name
+      - birthdate        # Field 7: Birthdate
+      - sex              # Field 8: Patient sex
+      - race             # Field 9: Patient race
+      - address          # Field 10: Patient address
+      - reserved         # Field 11: Reserved field
+      - phone            # Field 12: Patient phone
+      - physician_id     # Field 13: Attending physician ID
+      - special_1        # Field 14: Special field 1
+      - special_2        # Field 15: Special field 2
+      - height           # Field 16: Patient height
+      - weight           # Field 17: Patient weight
+      - diagnosis        # Field 18: Patient diagnosis
+      - medication       # Field 19: Patient medication
+      - diet             # Field 20: Patient diet
+      - practice_field_1 # Field 21: Practice field 1
+      - practice_field_2 # Field 22: Practice field 2
+      - admission_date   # Field 23: Admission/discharge dates
+      - admission_status # Field 24: Admission status
+      - location         # Field 25: Location
+  O:
+    fields:
+      - type             # Field 0: Record type 'O'
+      - sequence         # Field 1: Sequence number
+      - sample_id        # Field 2: Specimen ID
+      - instrument       # Field 3: Instrument specimen ID
+      - test             # Field 4: Universal test ID
+      - priority         # Field 5: Priority
+      - created_at       # Field 6: Requested/ordered date/time
+      - sampled_at       # Field 7: Specimen collection date/time
+      - collected_at     # Field 8: Collection end time
+      - volume           # Field 9: Collection volume
+      - collector        # Field 10: Collector ID
+      - action_code      # Field 11: Action code
+      - danger_code      # Field 12: Danger code
+      - clinical_info    # Field 13: Relevant clinical information
+      - delivered_at     # Field 14: Date/time specimen received
+      - biomaterial      # Field 15: Specimen descriptor
+      - physician        # Field 16: Ordering physician
+      - physician_phone  # Field 17: Physician phone
+      - user_field_1     # Field 18: User field 1
+      - user_field_2     # Field 19: User field 2
+      - laboratory_field_1 # Field 20: Laboratory field 1
+      - laboratory_field_2 # Field 21: Laboratory field 2
+      - modified_at      # Field 22: Date/time reported
+      - instrument_charge # Field 23: Instrument charge
+      - instrument_section # Field 24: Instrument section ID
+      - report_type      # Field 25: Report type
+  R:
+    fields:
+      - type             # Field 0: Record type 'R'
+      - sequence         # Field 1: Sequence number
+      - test             # Field 2: Universal test ID
+      - value            # Field 3: Data or measurement value
+      - units            # Field 4: Units of measure
+      - references       # Field 5: Reference ranges
+      - abnormal_flag    # Field 6: Result abnormal flags
+      - abnormality_nature # Field 7: Nature of abnormal testing
+      - status           # Field 8: Results status
+      - norms_changed_at # Field 9: Date of normative values change
+      - operator         # Field 10: Operator identification
+      - started_at       # Field 11: Date/time test started
+      - completed_at     # Field 12: Date/time test completed
+      - instrument       # Field 13: Instrument identification
+  L:
+    fields:
+      - type             # Field 0: Record type 'L'
+      - sequence         # Field 1: Sequence number
+      - termination_code # Field 2: Termination code
+parser:
+  patient_name_field: P.5
+  sample_id_field: O.2
+  test_separator: "\\"
+  component_separator: "^"
