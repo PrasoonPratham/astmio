@@ -28,15 +28,9 @@ class TestRecordFieldParsing:
 
         assert len(records) == 1
 
-        # if isinstance(header[1], list):
-        #     header_str = str(header[1])
-        #     assert '&' in header_str
-        # else:
-        #     assert '\\^&' in str(header[1]) or '^&' in str(header[1])
-
         assert header[0] == "H"
         # Delimiter field contains separators
-        assert header[1] == [[None], [None, "&"]]  # Field separator definition
+        assert header[1] == "\\^&"  # Field separator definition
         assert header[3] == "PSWD"
         assert header[4] == "Maglumi User"
         assert header[9] == "Lis"

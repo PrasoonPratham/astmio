@@ -30,6 +30,11 @@
 device: BS-240
 protocol: ASTM_E1394-97
 encoding: latin-1
+transport:
+  mode: tcp
+  port: 5001
+  host: 0.0.0.0
+  encoding: ascii
 records:
   H:
     description: "Header Record: Defines the start of a transmission."
@@ -598,3 +603,6 @@ records:
         values: ["N", "I", "Q"]
         max_length: 1
         required: false
+parser:
+  patient_name_field: P.5
+  sample_id_field: O.3

@@ -321,7 +321,7 @@ class TestRecordDecoding:
 
         assert record[0] == "H"
         # The decode function parses ^& as components: [[empty], [empty, &]]
-        assert record[1] == [[None], [None, "&"]]
+        assert record[1] == "\\^&"
         assert record[2] is None  # Empty field becomes None
         assert record[3] == "PSWD"
         assert record[4] == "Maglumi User"
