@@ -41,7 +41,7 @@ from .constants import (
     REPEAT_SEP,
     STX,
 )
-from .dataclasses import ConnectionStatus, DeviceProfile, MessageMetrics
+from .dataclasses import ConnectionStatus, MessageMetrics
 from .enums import ErrorCode, RecordType
 from .exceptions import (
     ConfigurationError,
@@ -49,6 +49,7 @@ from .exceptions import (
     ValidationError,
 )
 from .logging import get_logger, setup_logging
+from .profile import DeviceProfile
 from .records import (
     CommentRecord,
     HeaderRecord,
