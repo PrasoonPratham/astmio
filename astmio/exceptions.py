@@ -482,6 +482,7 @@ class AggregateError(BaseASTMError):
 
 # Export all exception classes
 __all__ = [
+    "ErrorContext",
     "BaseASTMError",
     "InvalidState",
     "NotAccepted",
@@ -495,7 +496,6 @@ __all__ = [
     "ResourceError",
     "SecurityError",
     "Rejected",
-    "AggregateError",
-    "ErrorContext",
     "ErrorRecovery",
+    "AggregateError",
 ]
