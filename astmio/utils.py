@@ -5,6 +5,7 @@
 # This software is licensed as described in the file COPYING, which
 # you should have received as part of this distribution.
 #
+from datetime import datetime
 from itertools import zip_longest
 from typing import Iterable, Iterator, List
 
@@ -182,3 +183,15 @@ def is_chunked_message(message: bytes) -> bool:
         return False
     # Check for ETB at the expected position for a chunked message
     return message.rfind(ETB) == len(message) - 5
+
+
+def parse_astm_datetime(value: str, format_str: str) -> datetime:
+    """Parses a string into a datetime object using a specific format."""
+    if not isinstance(value, str):
+        return value  # If it's already a datetime, pass it through
+    try:
+        return datetime.strptime(value, format_str)
+    except (ValueError, TypeError) as e:
+        raise ValueError(
+            f"Could not parse datetime '{value}' with format '{format_str}'"
+        ) from e
