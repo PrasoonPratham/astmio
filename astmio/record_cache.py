@@ -32,21 +32,26 @@ class RecordClassCache:
 
     @classmethod
     def get_cache_key(cls, record_config: RecordConfig) -> str:
-        """Generate a unique cache key for the record configuration."""
+        """
+        Generate a unique cache key for the record configuration.
+        The key is formed by concatenating the `record_type` with the
+        `name`, `type` and `ASTM position` of each field.
+        """
         import hashlib
 
-        config_str = f"{record_config.record_type.value}:"
+        record_type = f"{record_config.record_type.value}:"
         for field in record_config.fields:
-            config_str += (
+            record_type += (
                 f"{field.field_name}:{field.field_type}:{field.astm_position}:"
             )
-        return hashlib.md5(config_str.encode()).hexdigest()
+        return hashlib.md5(record_type.encode()).hexdigest()
 
     @classmethod
     def clear_cache(cls):
         """Clear the cache."""
         cls._cache.clear()
         cls._cache_stats = {"hits": 0, "misses": 0}
+        log.info(f"Cache cleared successfully. Cache stats:{cls._cache_stats}")
 
     @classmethod
     def get_cache_stats(cls) -> Dict[str, int]:

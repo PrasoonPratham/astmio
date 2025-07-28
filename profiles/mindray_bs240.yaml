@@ -46,6 +46,7 @@ records:
       - name: record_type
         type: constant
         default: H
+        max_length: 1
         required: true
 
       - name: delimiter_definition
@@ -427,6 +428,7 @@ records:
 
       - name: user_field_2_component
         type: component
+        required: true
         fields:
           - name: user_field_2
             type: ignored
