@@ -8,7 +8,7 @@ import logging
 from datetime import date, datetime
 from decimal import Decimal, InvalidOperation
 from pathlib import Path
-from typing import Any, ClassVar, Dict, List, Literal, Optional, Union
+from typing import Any, ClassVar, Dict, List, Optional, Union
 from xml.etree.ElementTree import Element, SubElement, tostring
 
 from pydantic import (
@@ -16,20 +16,21 @@ from pydantic import (
     ConfigDict,
     Field,
     PrivateAttr,
-    field_validator,
-    model_validator,
+    create_model,
 )
 
-from .enums import (
-    AbnormalFlag,
-    CommentType,
-    Priority,
-    ProcessingId,
-    ResultStatus,
-    Sex,
-    TerminationCode,
+from astmio.dataclasses import RecordConfig
+from astmio.field_mapper import (
+    ComponentField,
+    ConstantField,
+    DateTimeField,
+    EnumField,
+    RecordFieldMapping,
 )
+from astmio.mapping import DecimalField, IntegerField
+
 from .exceptions import ValidationError
+from .record_cache import RecordClassCache
 
 log = logging.getLogger(__name__)
 
@@ -65,6 +66,9 @@ class ASTMBaseRecord(BaseModel):
     _astm_field_mapping: ClassVar[Dict[str, int]] = {}
     _required_fields: ClassVar[List[str]] = []
     _max_field_lengths: ClassVar[Dict[str, int]] = {}
+    _datetime_formats: ClassVar[Dict[str, str]] = {}
+    _enum_validations: ClassVar[Dict[str, List[str]]] = []
+    _record_config: ClassVar[RecordConfig] = {}
 
     def __setattr__(self, name: str, value: Any) -> None:
         """Track updates for audit trail."""
@@ -644,691 +648,254 @@ class ASTMBaseRecord(BaseModel):
             raise ValidationError(f"Failed to load records: {e}")
 
 
-class ModernHeaderRecord(ASTMBaseRecord):
-    """Enhanced ASTM Header Record with comprehensive validation and field mapping."""
+class RecordFactory:
+    """
+    Enhanced and refactored factory for creating dynamic record classes.
+    This version works with the new specialized field mapping classes.
+    """
 
-    record_type: Literal["H"] = Field(
-        default="H", description="Record type identifier"
-    )
-    delimiter: str = Field(
-        default=r"\^&", description="Field delimiter definition"
-    )
-    message_id: Optional[str] = Field(
-        default=None, max_length=20, description="Message control ID"
-    )
-    password: Optional[str] = Field(
-        default=None, max_length=20, description="Access password"
-    )
-    sender: Optional[str] = Field(
-        default=None, max_length=30, description="Sender name or ID"
-    )
-    address: Optional[str] = Field(
-        default=None, max_length=100, description="Sender address"
-    )
-    reserved: Optional[str] = Field(default=None, description="Reserved field")
-    phone: Optional[str] = Field(
-        default=None, max_length=20, description="Sender phone number"
-    )
-    capabilities: Optional[str] = Field(
-        default=None, description="Sender capabilities"
-    )
-    receiver: Optional[str] = Field(
-        default=None, max_length=30, description="Receiver ID"
-    )
-    comments: Optional[str] = Field(
-        default=None, max_length=200, description="Comments"
-    )
-    processing_id: ProcessingId = Field(
-        default=ProcessingId.PRODUCTION, description="Processing ID"
-    )
-    version: Optional[str] = Field(
-        default=None, max_length=20, description="Version number"
-    )
-    timestamp: datetime = Field(
-        default_factory=datetime.now, description="Message timestamp"
-    )
+    @staticmethod
+    def create_record_class(record_fields_config: RecordConfig) -> type:
+        """Create dynamic Pydantic class from RecordConfig with caching."""
+        return RecordClassCache.get_or_create(
+            record_fields_config, RecordFactory._create_record_class_impl
+        )
 
-    # ASTM field mapping (field_name -> ASTM position)
-    _astm_field_mapping: ClassVar[Dict[str, int]] = {
-        "record_type": 0,
-        "delimiter": 1,
-        "message_id": 2,
-        "password": 3,
-        "sender": 4,
-        "address": 5,
-        "reserved": 6,
-        "phone": 7,
-        "capabilities": 8,
-        "receiver": 9,
-        "comments": 10,
-        "processing_id": 11,
-        "version": 12,
-        "timestamp": 13,
-    }
+    @staticmethod
+    def _create_record_class_impl(record_config: RecordConfig) -> type:
+        """
+        Internal implementation of record class creation using specialized field objects.
+        """
+        try:
+            config_errors: list[str] = record_config.validate_record_config()
+            if config_errors:
+                log.warning(
+                    f"Record config validation warnings for {record_config.record_type}: {config_errors}"
+                )
 
-    _required_fields: ClassVar[List[str]] = ["record_type", "processing_id"]
-    _max_field_lengths: ClassVar[Dict[str, int]] = {
-        "message_id": 20,
-        "password": 20,
-        "sender": 30,
-        "address": 100,
-        "phone": 20,
-        "receiver": 30,
-        "comments": 200,
-        "version": 20,
-    }
+            fields = {}
+            validators = {}
+            astm_field_mapping = {}
+            required_fields = []
+            max_field_lengths = {}
+            datetime_formats = {}
+            enum_validations = {}
 
-    @field_validator("processing_id")
-    @classmethod
-    def validate_processing_id(
-        cls, v: Union[str, ProcessingId]
-    ) -> ProcessingId:
-        if isinstance(v, str):
+            for record_field in record_config.fields:
+                try:
+                    field_name = record_field.field_name
+                    astm_field_mapping[field_name] = record_field.astm_position
+
+                    # Common attributes from the base class can be accessed directly and safely
+                    if record_field.required:
+                        required_fields.append(field_name)
+
+                    if record_field.max_length:
+                        max_field_lengths[field_name] = record_field.max_length
+
+                    # Use isinstance for type-specific attributes
+                    if isinstance(record_field, DateTimeField):
+                        datetime_formats[field_name] = record_field.format
+
+                    if isinstance(record_field, EnumField):
+                        enum_validations[field_name] = record_field.enum_values
+
+                    log.info("Filled the type specific objects")
+                    field_type = RecordFactory._get_pydantic_type(record_field)
+                    field_info = Field(
+                        default=record_field.default_value,
+                        max_length=record_field.max_length,
+                        description=f"ASTM position {record_field.astm_position} - {record_field.field_type}",
+                    )
+
+                    fields[field_name] = (field_type, field_info)
+                    RecordFactory._attach_runtime_validators(
+                        record_field, validators
+                    )
+
+                except Exception as e:
+                    log.error(
+                        f"Failed to process field '{getattr(record_field, 'field_name', 'UNKNOWN')}': {e}"
+                    )
+                    continue
+
+            class_name = f"{record_config.record_type.value}Record"
+            dynamic_class: ASTMBaseRecord = create_model(
+                class_name,
+                __base__=ASTMBaseRecord,
+                **fields,
+            )
+
+            dynamic_class._astm_field_mapping = astm_field_mapping
+            dynamic_class._required_fields = required_fields
+            dynamic_class._max_field_lengths = max_field_lengths
+            dynamic_class._datetime_formats = datetime_formats
+            dynamic_class._enum_validations = enum_validations
+            dynamic_class._record_config = record_config
+
+            for validator_name, validator_func in validators.items():
+                setattr(dynamic_class, validator_name, validator_func)
+
+            log.info(
+                f"Successfully created {class_name} with {len(fields)} fields"
+            )
+            return dynamic_class
+
+        except Exception as e:
+            log.error(
+                f"Failed to create record class for {record_config.record_type}: {e}"
+            )
+            raise ValidationError(f"Record class creation failed: {e}")
+
+    @staticmethod
+    def _get_pydantic_type(field_mapping: RecordFieldMapping):
+        """
+        Determines the correct Pydantic type for a field mapping.
+
+        This method correctly handles:
+        - Basic types (string, datetime, etc.)
+        - Nested component models.
+        - Repeated fields (by wrapping the type in `List[...]`).
+        - Optional fields for non-repeated, non-required fields.
+        """
+        from datetime import datetime
+        from typing import List, Optional
+
+        from pydantic import BaseModel, ConfigDict
+
+        base_type = str
+
+        if isinstance(field_mapping, DateTimeField):
+            base_type = datetime
+        elif isinstance(field_mapping, IntegerField):
+            base_type = int
+        elif isinstance(field_mapping, DecimalField):
+            base_type = Decimal
+        elif isinstance(field_mapping, ComponentField):
+            if field_mapping.component_fields:
+                component_fields_dict = {}
+                component_annotations = {}
+                for component_field in field_mapping.component_fields:
+                    component_type = RecordFactory._get_pydantic_type(
+                        component_field
+                    )
+                    component_annotations[
+                        component_field.field_name
+                    ] = component_type
+                    if component_field.default_value is not None:
+                        component_fields_dict[
+                            component_field.field_name
+                        ] = component_field.default_value
+                    elif not component_field.required:
+                        component_fields_dict[component_field.field_name] = None
+
+                component_model_name = (
+                    f"{field_mapping.field_name.title()}Component"
+                )
+                base_type = type(
+                    component_model_name,
+                    (BaseModel,),
+                    {
+                        "__annotations__": component_annotations,
+                        **component_fields_dict,
+                        "model_config": ConfigDict(
+                            extra="forbid",
+                            str_strip_whitespace=True,
+                            validate_assignment=True,
+                        ),
+                    },
+                )
+            else:
+                log.warning(
+                    f"Component field '{field_mapping.field_name}' has no sub-fields, treating as string"
+                )
+                base_type = str
+
+        if field_mapping.repeated:
+            return List[base_type]
+
+        if not field_mapping.required:
+            return Optional[base_type]
+
+        return base_type
+
+    @staticmethod
+    def _attach_runtime_validators(
+        field: RecordFieldMapping, pydantic_validators
+    ):
+        """Attaches validators based on the object's class."""
+
+        # Handle Enums
+        if isinstance(field, EnumField) and field.enum_values:
+            pydantic_validators[
+                f"validate_{field.field_name}"
+            ] = RecordFactory._create_enum_validator(
+                field.field_name, field.enum_values
+            )
+
+        # Handle DateTimes
+        if isinstance(field, DateTimeField) and field.format:
+            pydantic_validators[
+                f"validate_{field.field_name}"
+            ] = RecordFactory._create_datetime_validator(
+                field.field_name, field.format
+            )
+
+        # handle Constants
+        if isinstance(field, ConstantField) and field.default_value:
+            pydantic_validators[
+                f"validate_{field.field_name}"
+            ] = RecordFactory._create_constant_validator(
+                field.field_name, field.default_value
+            )
+            pass
+
+    @staticmethod
+    def _create_enum_validator(field_name: str, enum_values: List[str]):
+        """Create a validator function for enum fields."""
+        from pydantic import field_validator
+
+        def _validator(cls, v):
+            if v is not None and str(v) not in enum_values:
+                raise ValueError(
+                    f"Value must be one of: {enum_values}, got: {v}"
+                )
+            return v
+
+        return field_validator(field_name, mode="before")(_validator)
+
+    @staticmethod
+    def _create_datetime_validator(field_name: str, format_str: str):
+        """A factory that creates a Pydantic validator function for a specific format."""
+        from pydantic import field_validator
+
+        def _validator(value: Any) -> datetime:
+            if isinstance(value, datetime):
+                return value
+            if not isinstance(value, str):
+                raise ValueError("datetime field must be a string to parse")
+
             try:
-                return ProcessingId(v)
+                return datetime.strptime(value, format_str)
             except ValueError:
                 raise ValueError(
-                    "Processing ID must be P (Production), T (Test), or D (Debug)"
+                    f"must be a valid datetime string in the format '{format_str}'"
                 )
-        return v
 
-    @field_validator("phone")
-    @classmethod
-    def validate_phone(cls, v: Optional[str]) -> Optional[str]:
-        if (
-            v
-            and not v.replace("-", "")
-            .replace("(", "")
-            .replace(")", "")
-            .replace(" ", "")
-            .replace("+", "")
-            .isdigit()
-        ):
-            raise ValueError(
-                "Phone number must contain only digits and formatting characters"
-            )
-        return v
+        return field_validator(field_name, mode="before")(_validator)
 
-    @field_validator("timestamp")
-    @classmethod
-    def validate_timestamp(cls, v: datetime) -> datetime:
-        if v > datetime.now():
-            raise ValueError("Timestamp cannot be in the future")
-        return v
+    @staticmethod
+    def _create_constant_validator(field_name: str, constant_value: Any):
+        from pydantic import field_validator
 
-
-# Backward compatibility alias
-HeaderRecord = ModernHeaderRecord
-
-
-class ModernPatientRecord(ASTMBaseRecord):
-    """Enhanced ASTM Patient Record with comprehensive validation and field mapping."""
-
-    record_type: Literal["P"] = Field(
-        default="P", description="Record type identifier"
-    )
-    sequence: int = Field(ge=1, le=99, description="Sequence number")
-    practice_id: Optional[str] = Field(
-        default=None, max_length=20, description="Practice assigned patient ID"
-    )
-    laboratory_id: Optional[str] = Field(
-        default=None,
-        max_length=20,
-        description="Laboratory assigned patient ID",
-    )
-    patient_id: Optional[str] = Field(
-        default=None, max_length=20, description="Patient ID"
-    )
-    name: Optional[str] = Field(
-        default=None, max_length=200, description="Patient name"
-    )
-    maiden_name: Optional[str] = Field(
-        default=None, max_length=200, description="Mother's maiden name"
-    )
-    birthdate: Optional[date] = Field(
-        default=None, description="Patient birthdate"
-    )
-    sex: Optional[Sex] = Field(default=None, description="Patient sex")
-    race: Optional[str] = Field(
-        default=None, max_length=50, description="Patient race/ethnicity"
-    )
-    address: Optional[str] = Field(
-        default=None, max_length=200, description="Patient address"
-    )
-    reserved: Optional[str] = Field(default=None, description="Reserved field")
-    phone: Optional[str] = Field(
-        default=None, max_length=20, description="Patient phone number"
-    )
-    physician_id: Optional[str] = Field(
-        default=None, max_length=20, description="Attending physician ID"
-    )
-    special_1: Optional[str] = Field(
-        default=None, max_length=50, description="Special field 1"
-    )
-    special_2: Optional[str] = Field(
-        default=None, max_length=50, description="Special field 2"
-    )
-    height: Optional[Decimal] = Field(
-        default=None, ge=0, description="Patient height in cm"
-    )
-    weight: Optional[Decimal] = Field(
-        default=None, ge=0, description="Patient weight in kg"
-    )
-    diagnosis: Optional[str] = Field(
-        default=None, max_length=200, description="Patient diagnosis"
-    )
-    medication: Optional[str] = Field(
-        default=None, max_length=200, description="Active medications"
-    )
-    diet: Optional[str] = Field(
-        default=None, max_length=100, description="Patient diet"
-    )
-
-    # ASTM field mapping
-    _astm_field_mapping: ClassVar[Dict[str, int]] = {
-        "record_type": 0,
-        "sequence": 1,
-        "practice_id": 2,
-        "laboratory_id": 3,
-        "patient_id": 4,
-        "name": 5,
-        "maiden_name": 6,
-        "birthdate": 7,
-        "sex": 8,
-        "race": 9,
-        "address": 10,
-        "reserved": 11,
-        "phone": 12,
-        "physician_id": 13,
-        "special_1": 14,
-        "special_2": 15,
-        "height": 16,
-        "weight": 17,
-        "diagnosis": 18,
-        "medication": 19,
-        "diet": 20,
-    }
-
-    _required_fields: ClassVar[List[str]] = ["record_type", "sequence"]
-    _max_field_lengths: ClassVar[Dict[str, int]] = {
-        "practice_id": 20,
-        "laboratory_id": 20,
-        "patient_id": 20,
-        "name": 200,
-        "maiden_name": 200,
-        "race": 50,
-        "address": 200,
-        "phone": 20,
-        "physician_id": 20,
-        "special_1": 50,
-        "special_2": 50,
-        "diagnosis": 200,
-        "medication": 200,
-        "diet": 100,
-    }
-
-    @field_validator("patient_id", "practice_id", "laboratory_id")
-    @classmethod
-    def validate_ids(cls, v: Optional[str]) -> Optional[str]:
-        if v and not v.strip():
-            raise ValueError("ID fields cannot be empty strings")
-        return v
-
-    @field_validator("birthdate")
-    @classmethod
-    def validate_birthdate(cls, v: Optional[date]) -> Optional[date]:
-        if v and v > date.today():
-            raise ValueError("Birthdate cannot be in the future")
-        return v
-
-    @field_validator("sex")
-    @classmethod
-    def validate_sex(cls, v: Union[str, Sex, None]) -> Optional[Sex]:
-        if v is None:
-            return None
-        if isinstance(v, str):
-            try:
-                return Sex(v.upper())
-            except ValueError:
+        def _validator(cls, v):
+            if v is not None and v != constant_value:
                 raise ValueError(
-                    "Sex must be M (Male), F (Female), or U (Unknown)"
+                    f"Value must be '{constant_value}', but got '{v}'"
                 )
-        return v
+            return v
 
-    @field_validator("height", "weight")
-    @classmethod
-    def validate_measurements(cls, v: Optional[Decimal]) -> Optional[Decimal]:
-        if v is not None and v < 0:
-            raise ValueError("Height and weight must be non-negative")
-        return v
-
-    @model_validator(mode="after")
-    def validate_patient_data(self) -> "ModernPatientRecord":
-        # Check that at least one identifier is present
-        if not any([self.practice_id, self.laboratory_id, self.patient_id]):
-            log.warning("Patient record has no identifiers")
-
-        # Validate age if birthdate is provided
-        if self.birthdate:
-            age = (date.today() - self.birthdate).days // 365
-            if age > 150:
-                log.warning(f"Patient age appears unusually high: {age} years")
-
-        return self
+        return field_validator(field_name, mode="before")(_validator)
 
 
-# Backward compatibility alias
-PatientRecord = ModernPatientRecord
-
-
-class ModernOrderRecord(ASTMBaseRecord):
-    """Enhanced ASTM Order Record with comprehensive validation and field mapping."""
-
-    record_type: Literal["O"] = Field(
-        default="O", description="Record type identifier"
-    )
-    sequence: int = Field(ge=1, le=99, description="Sequence number")
-    sample_id: Optional[str] = Field(
-        default=None, max_length=20, description="Specimen ID"
-    )
-    instrument: Optional[str] = Field(
-        default=None, max_length=20, description="Instrument specimen ID"
-    )
-    test: Optional[str] = Field(
-        default=None, max_length=50, description="Universal test ID"
-    )
-    priority: Optional[Priority] = Field(
-        default=None, description="Priority (S=STAT, A=ASAP, R=Routine)"
-    )
-    created_at: Optional[datetime] = Field(
-        default=None, description="Requested/ordered date/time"
-    )
-    sampled_at: Optional[datetime] = Field(
-        default=None, description="Specimen collection date/time"
-    )
-    collected_at: Optional[datetime] = Field(
-        default=None, description="Collection end time"
-    )
-    volume: Optional[Decimal] = Field(
-        default=None, ge=0, description="Collection volume in mL"
-    )
-    collector: Optional[str] = Field(
-        default=None, max_length=50, description="Collector ID"
-    )
-    action_code: Optional[str] = Field(
-        default=None, max_length=10, description="Action code"
-    )
-    danger_code: Optional[str] = Field(
-        default=None, max_length=10, description="Danger code"
-    )
-    clinical_info: Optional[str] = Field(
-        default=None,
-        max_length=500,
-        description="Relevant clinical information",
-    )
-    delivered_at: Optional[datetime] = Field(
-        default=None, description="Date/time specimen received"
-    )
-    biomaterial: Optional[str] = Field(
-        default=None, max_length=100, description="Specimen descriptor"
-    )
-    physician: Optional[str] = Field(
-        default=None, max_length=100, description="Ordering physician"
-    )
-    physician_phone: Optional[str] = Field(
-        default=None, max_length=20, description="Physician phone number"
-    )
-
-    # ASTM field mapping
-    _astm_field_mapping: ClassVar[Dict[str, int]] = {
-        "record_type": 0,
-        "sequence": 1,
-        "sample_id": 2,
-        "instrument": 3,
-        "test": 4,
-        "priority": 5,
-        "created_at": 6,
-        "sampled_at": 7,
-        "collected_at": 8,
-        "volume": 9,
-        "collector": 10,
-        "action_code": 11,
-        "danger_code": 12,
-        "clinical_info": 13,
-        "delivered_at": 14,
-        "biomaterial": 15,
-        "physician": 16,
-        "physician_phone": 17,
-    }
-
-    _required_fields: ClassVar[List[str]] = ["record_type", "sequence"]
-    _max_field_lengths: ClassVar[Dict[str, int]] = {
-        "sample_id": 20,
-        "instrument": 20,
-        "test": 50,
-        "collector": 50,
-        "action_code": 10,
-        "danger_code": 10,
-        "clinical_info": 500,
-        "biomaterial": 100,
-        "physician": 100,
-        "physician_phone": 20,
-    }
-
-    @field_validator("priority")
-    @classmethod
-    def validate_priority(
-        cls, v: Union[str, Priority, None]
-    ) -> Optional[Priority]:
-        if v is None:
-            return None
-        if isinstance(v, str):
-            try:
-                return Priority(v.upper())
-            except ValueError:
-                raise ValueError(
-                    "Priority must be S (STAT), A (ASAP), or R (Routine)"
-                )
-        return v
-
-    @field_validator("volume")
-    @classmethod
-    def validate_volume(cls, v: Optional[Decimal]) -> Optional[Decimal]:
-        if v is not None and v < 0:
-            raise ValueError("Volume must be non-negative")
-        if v is not None and v > 1000:  # Reasonable maximum
-            log.warning(f"Volume appears unusually high: {v} mL")
-        return v
-
-    @model_validator(mode="after")
-    def validate_dates(self) -> "ModernOrderRecord":
-        if (
-            self.created_at
-            and self.sampled_at
-            and self.created_at > self.sampled_at
-        ):
-            raise ValueError(
-                "Order creation date cannot be after sample collection date"
-            )
-        if (
-            self.sampled_at
-            and self.collected_at
-            and self.sampled_at > self.collected_at
-        ):
-            raise ValueError(
-                "Sample collection start cannot be after collection end"
-            )
-        if (
-            self.delivered_at
-            and self.sampled_at
-            and self.delivered_at < self.sampled_at
-        ):
-            raise ValueError(
-                "Delivery date cannot be before sample collection date"
-            )
-        return self
-
-
-# Backward compatibility alias
-OrderRecord = ModernOrderRecord
-
-
-class ModernResultRecord(ASTMBaseRecord):
-    """Enhanced ASTM Result Record with comprehensive validation and field mapping."""
-
-    record_type: Literal["R"] = Field(
-        default="R", description="Record type identifier"
-    )
-    sequence: int = Field(ge=1, le=99, description="Sequence number")
-    test: Optional[str] = Field(
-        default=None, max_length=50, description="Universal test ID"
-    )
-    value: Optional[Union[str, Decimal]] = Field(
-        default=None, description="Data or measurement value"
-    )
-    units: Optional[str] = Field(
-        default=None, max_length=20, description="Units of measure"
-    )
-    references: Optional[str] = Field(
-        default=None, max_length=100, description="Reference ranges"
-    )
-    abnormal_flag: Optional[AbnormalFlag] = Field(
-        default=None, description="Result abnormal flags"
-    )
-    abnormality_nature: Optional[str] = Field(
-        default=None, max_length=50, description="Nature of abnormal testing"
-    )
-    status: Optional[ResultStatus] = Field(
-        default=None, description="Results status"
-    )
-    norms_changed_at: Optional[datetime] = Field(
-        default=None, description="Date of normative values change"
-    )
-    operator: Optional[str] = Field(
-        default=None, max_length=50, description="Operator identification"
-    )
-    started_at: Optional[datetime] = Field(
-        default=None, description="Date/time test started"
-    )
-    completed_at: Optional[datetime] = Field(
-        default=None, description="Date/time test completed"
-    )
-    instrument: Optional[str] = Field(
-        default=None, max_length=50, description="Instrument identification"
-    )
-
-    # ASTM field mapping
-    _astm_field_mapping: ClassVar[Dict[str, int]] = {
-        "record_type": 0,
-        "sequence": 1,
-        "test": 2,
-        "value": 3,
-        "units": 4,
-        "references": 5,
-        "abnormal_flag": 6,
-        "abnormality_nature": 7,
-        "status": 8,
-        "norms_changed_at": 9,
-        "operator": 10,
-        "started_at": 11,
-        "completed_at": 12,
-        "instrument": 13,
-    }
-
-    _required_fields: ClassVar[List[str]] = ["record_type", "sequence"]
-    _max_field_lengths: ClassVar[Dict[str, int]] = {
-        "test": 50,
-        "units": 20,
-        "references": 100,
-        "abnormality_nature": 50,
-        "operator": 50,
-        "instrument": 50,
-    }
-
-    @field_validator("value")
-    @classmethod
-    def validate_value(
-        cls, v: Optional[Union[str, Decimal]]
-    ) -> Optional[Union[str, Decimal]]:
-        if isinstance(v, str) and v.strip() == "":
-            return None
-        # Try to convert numeric strings to Decimal for better precision
-        if isinstance(v, str) and v:
-            try:
-                # Check if it's a numeric value
-                if (
-                    v.replace(".", "")
-                    .replace("-", "")
-                    .replace("+", "")
-                    .isdigit()
-                ):
-                    return Decimal(v)
-            except (ValueError, InvalidOperation):
-                pass  # Keep as string if conversion fails
-        return v
-
-    @field_validator("abnormal_flag")
-    @classmethod
-    def validate_abnormal_flag(
-        cls, v: Union[str, AbnormalFlag, None]
-    ) -> Optional[AbnormalFlag]:
-        if v is None:
-            return None
-        if isinstance(v, str):
-            try:
-                return AbnormalFlag(v.upper())
-            except ValueError:
-                raise ValueError(f"Invalid abnormal flag: {v}")
-        return v
-
-    @field_validator("status")
-    @classmethod
-    def validate_status(
-        cls, v: Union[str, ResultStatus, None]
-    ) -> Optional[ResultStatus]:
-        if v is None:
-            return None
-        if isinstance(v, str):
-            try:
-                return ResultStatus(v.upper())
-            except ValueError:
-                raise ValueError(f"Invalid result status: {v}")
-        return v
-
-    @model_validator(mode="after")
-    def validate_test_dates(self) -> "ModernResultRecord":
-        if (
-            self.started_at
-            and self.completed_at
-            and self.started_at > self.completed_at
-        ):
-            raise ValueError("Test start time cannot be after completion time")
-
-        # Validate that completed results have values
-        if self.status == ResultStatus.FINAL and not self.value:
-            log.warning("Final result has no value")
-
-        # Check for reasonable test duration
-        if self.started_at and self.completed_at:
-            duration = self.completed_at - self.started_at
-            if duration.total_seconds() > 86400:  # More than 24 hours
-                log.warning(f"Test duration appears unusually long: {duration}")
-
-        return self
-
-
-# Backward compatibility alias
-ResultRecord = ModernResultRecord
-
-
-class ModernCommentRecord(ASTMBaseRecord):
-    """Enhanced ASTM Comment Record with comprehensive validation and field mapping."""
-
-    record_type: Literal["C"] = Field(
-        default="C", description="Record type identifier"
-    )
-    sequence: int = Field(ge=1, le=99, description="Sequence number")
-    source: Optional[str] = Field(
-        default=None, max_length=50, description="Comment source"
-    )
-    data: Optional[str] = Field(
-        default=None, max_length=1000, description="Comment text"
-    )
-    comment_type: Optional[CommentType] = Field(
-        default=None, description="Comment type"
-    )
-
-    # ASTM field mapping
-    _astm_field_mapping: ClassVar[Dict[str, int]] = {
-        "record_type": 0,
-        "sequence": 1,
-        "source": 2,
-        "data": 3,
-        "comment_type": 4,
-    }
-
-    _required_fields: ClassVar[List[str]] = ["record_type", "sequence"]
-    _max_field_lengths: ClassVar[Dict[str, int]] = {"source": 50, "data": 1000}
-
-    @field_validator("data")
-    @classmethod
-    def validate_data(cls, v: Optional[str]) -> Optional[str]:
-        if v and len(v.strip()) == 0:
-            return None
-        return v
-
-    @field_validator("comment_type")
-    @classmethod
-    def validate_comment_type(
-        cls, v: Union[str, CommentType, None]
-    ) -> Optional[CommentType]:
-        if v is None:
-            return None
-        if isinstance(v, str):
-            try:
-                return CommentType(v.upper())
-            except ValueError:
-                raise ValueError(f"Invalid comment type: {v}")
-        return v
-
-
-class ModernTerminatorRecord(ASTMBaseRecord):
-    """Enhanced ASTM Terminator Record with validation and field mapping."""
-
-    record_type: Literal["L"] = Field(
-        default="L", description="Record type identifier"
-    )
-    sequence: int = Field(default=1, ge=1, le=99, description="Sequence number")
-    termination_code: TerminationCode = Field(
-        default=TerminationCode.NORMAL, description="Termination code"
-    )
-
-    # ASTM field mapping
-    _astm_field_mapping: ClassVar[Dict[str, int]] = {
-        "record_type": 0,
-        "sequence": 1,
-        "termination_code": 2,
-    }
-
-    _required_fields: ClassVar[List[str]] = [
-        "record_type",
-        "sequence",
-        "termination_code",
-    ]
-
-    @field_validator("termination_code")
-    @classmethod
-    def validate_termination_code(
-        cls, v: Union[str, TerminationCode]
-    ) -> TerminationCode:
-        if isinstance(v, str):
-            try:
-                return TerminationCode(v.upper())
-            except ValueError:
-                raise ValueError(f"Invalid termination code: {v}")
-        return v
-
-
-# Backward compatibility aliases
-CommentRecord = ModernCommentRecord
-TerminatorRecord = ModernTerminatorRecord
-
-
-# Export all record types
-__all__ = [
-    "ASTMBaseRecord",
-    # Modern record types (preferred)
-    "ModernHeaderRecord",
-    "ModernPatientRecord",
-    "ModernOrderRecord",
-    "ModernResultRecord",
-    "ModernCommentRecord",
-    "ModernTerminatorRecord",
-    # Backward compatibility aliases
-    "HeaderRecord",
-    "PatientRecord",
-    "OrderRecord",
-    "ResultRecord",
-    "CommentRecord",
-    "TerminatorRecord",
-]
+__all__ = ["ASTMBaseRecord", "RecordClassCache", "RecordFactory"]
