@@ -407,6 +407,21 @@ class FrameConfig:
             raise ValidationError(f"Invalid frame configuration: {e}")
 
 
+@dataclass(slots=True)
+class RecordMetadata:
+    """
+    A container for all the parsed metadata and validation rules
+    for a dynamically created record class.
+    """
+
+    astm_field_mapping: Dict[str, int] = field(default_factory=dict)
+    required_fields: List[str] = field(default_factory=list)
+    max_field_lengths: Dict[str, int] = field(default_factory=dict)
+    datetime_formats: Dict[str, str] = field(default_factory=dict)
+    enum_validations: Dict[str, List[str]] = field(default_factory=dict)
+    record_config: "RecordConfig" = None
+
+
 @dataclass
 class RecordConfig:
     """Configuration for a specific record type."""

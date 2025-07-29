@@ -99,7 +99,7 @@ class DeviceProfile:
             for record_type_str, record_data in records_data.items():
                 try:
                     record_type = RecordType(record_type_str.upper())
-                    record_config = RecordConfig.from_dict(
+                    record_config: RecordConfig = RecordConfig.from_dict(
                         record_type_str, record_data
                     )
 
@@ -115,6 +115,7 @@ class DeviceProfile:
                         log.error(parsing_errors)
 
                     records[record_type] = record_config
+
                     log.debug(
                         f"Successfully parsed {record_type_str} record with {len(record_config.fields)} fields"
                     )
@@ -271,7 +272,7 @@ class DeviceProfile:
                 f"Cant create models, records are empty: {self.records}"
             )
         else:
-            from astmio.modern_records import RecordFactory
+            from astmio.record_factory import RecordFactory
 
             for record_type, record_fields_config in self.records.items():
                 try:
@@ -292,7 +293,7 @@ class DeviceProfile:
         if record_type not in self.records:
             return None
 
-        from astmio.modern_records import RecordFactory
+        from astmio.record_factory import RecordFactory
 
         try:
             return RecordFactory.create_record_class(self.records[record_type])

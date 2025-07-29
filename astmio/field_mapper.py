@@ -1,5 +1,6 @@
 from dataclasses import dataclass
-from typing import Any, Dict, List, Literal, Optional, Union
+from dataclasses import fields as dataclass_fields
+from typing import Any, Dict, List, Literal, Optional, Type, Union
 
 from .exceptions import ValidationError
 
@@ -79,6 +80,20 @@ class ConstantField(RecordFieldMapping):
 
 
 @dataclass
+class IntegerField(RecordFieldMapping):
+    """A field with an integer value"""
+
+    field_type: Literal["integer"] = "integer"
+
+
+@dataclass
+class DecimalField(RecordFieldMapping):
+    """A field with an decimal value"""
+
+    field_type: Literal["decimal"] = "decimal"
+
+
+@dataclass
 class StringField(RecordFieldMapping):
     """A standard string field with optional parsing rules."""
 
@@ -123,55 +138,79 @@ class ComponentField(RecordFieldMapping):
 
 
 FieldMappingUnion = Union[
-    ConstantField, StringField, EnumField, DateTimeField, ComponentField
+    ConstantField,
+    StringField,
+    EnumField,
+    DateTimeField,
+    ComponentField,
+    IntegerField,
 ]
+
+FIELD_TYPE_MAP: Dict[str, Type[RecordFieldMapping]] = {
+    "constant": ConstantField,
+    "string": StringField,
+    "enum": EnumField,
+    "datetime": DateTimeField,
+    "component": ComponentField,
+    "integer": IntegerField,
+    "decimal": DecimalField,
+    "ignored": StringField,
+}
 
 
 def create_field_mapping(
     field_data: Dict[str, Any], position: int
-) -> FieldMappingUnion:
-    """Factory to create the correct FieldMapping object based on its type."""
+) -> Optional[FieldMappingUnion]:
+    """
+    Factory to create the correct FieldMapping dataclass object based on its type.
+    This version is robust against unexpected keyword arguments.
+    """
     field_type = field_data.get("type", "string")
 
-    # This lines will remove the ignored field from the final model
-    # if field_type == "ignored":
-    #     return None
+    target_class = FIELD_TYPE_MAP.get(field_type)
+    if not target_class:
+        raise ValidationError(
+            f"Unknown field type specified in YAML: '{field_type}'"
+        )
 
-    field_data["field_name"] = field_data.pop("name", "").rstrip(",")
-    field_data["astm_position"] = position
+    # 1. Prepare a dictionary of ALL potential parameters.
+    all_params = {
+        "field_name": field_data.get("name", "").rstrip(","),
+        "astm_position": position,
+        "field_type": field_type,
+        "required": field_data.get("required", False),
+        "repeated": field_data.get("repeated", False),
+        "max_length": field_data.get("max_length"),
+        "default_value": field_data.get("default"),
+        "enum_values": field_data.get("values"),
+        "format": field_data.get("format"),
+        "parsing": field_data.get("parsing"),
+    }
 
-    if "type" in field_data:
-        field_data["field_type"] = field_data.pop("type")
-    else:
-        field_data["field_type"] = "string"
+    # 2. Handle recursive ComponentField creation.
+    if target_class is ComponentField:
+        sub_fields_data = field_data.get("fields", [])
+        all_params["component_fields"] = [
+            create_field_mapping(sf, i + 1)
+            for i, sf in enumerate(sub_fields_data)
+        ]
 
-    if "default" in field_data:
-        field_data["default_value"] = field_data.pop("default")
-    if "values" in field_data:
-        field_data["enum_values"] = field_data.pop("values")
-    if "format" in field_data:
-        field_data["format"] = field_data.pop("format")
+    # --- THIS IS THE CRITICAL FIX ---
+    # 3. Get expected fields using the correct function from the 'dataclasses' module.
+    expected_fields = {f.name for f in dataclass_fields(target_class)}
+
+    # 4. Create the final, filtered dictionary of arguments.
+    final_constructor_args = {
+        key: value
+        for key, value in all_params.items()
+        if key in expected_fields
+    }
 
     try:
-        if field_type == "constant":
-            return ConstantField(**field_data)
-        if field_type == "enum":
-            return EnumField(**field_data)
-        if field_type == "datetime":
-            return DateTimeField(**field_data)
-        if field_type == "component":
-            sub_fields_data = field_data.pop("fields", [])
-            component_fields = [
-                field_map
-                for i, sf in enumerate(sub_fields_data)
-                if (field_map := create_field_mapping(sf, i)) is not None
-            ]
-            return ComponentField(
-                component_fields=component_fields, **field_data
-            )
-
-        return StringField(**field_data)
+        # 5. Use the safe, filtered arguments to create the instance.
+        return target_class(**final_constructor_args)
     except TypeError as e:
         raise ValidationError(
-            f"Mismatched or missing key for field '{field_data['field_name']}' of type '{field_type}'. Details: {e}"
+            f"Mismatched configuration for field '{all_params['field_name']}' of type '{field_type}'. "
+            f"Details: {e}"
         ) from e

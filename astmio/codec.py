@@ -10,6 +10,24 @@ from enum import Enum
 from typing import Any, List, Optional, Union
 
 from .constants import ENCODING
+from .decoder import (
+    decode,
+    decode_component,
+    decode_frame,
+    decode_message,
+    decode_record,
+    decode_repeated_component,
+    decode_with_metadata,
+)
+from .encoder import (
+    encode,
+    encode_component,
+    encode_message,
+    encode_record,
+    encode_repeated_component,
+    iter_encode,
+    make_checksum,
+)
 
 # Type aliases
 ASTMRecord = List[Union[str, List[Any], None]]
@@ -50,6 +68,3 @@ class EncodingOptions:
     validate_checksum: bool = True
     strict_validation: bool = False
     include_metadata: bool = False
-
-
-# Import functions from the new modules for backward compatibility

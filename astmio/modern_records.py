@@ -8,29 +8,18 @@ import logging
 from datetime import date, datetime
 from decimal import Decimal, InvalidOperation
 from pathlib import Path
-from typing import Any, ClassVar, Dict, List, Optional, Union
+from typing import Any, ClassVar, List, Optional, Union
 from xml.etree.ElementTree import Element, SubElement, tostring
 
 from pydantic import (
     BaseModel,
     ConfigDict,
-    Field,
     PrivateAttr,
-    create_model,
 )
 
-from astmio.dataclasses import RecordConfig
-from astmio.field_mapper import (
-    ComponentField,
-    ConstantField,
-    DateTimeField,
-    EnumField,
-    RecordFieldMapping,
-)
-from astmio.mapping import DecimalField, IntegerField
+from astmio.dataclasses import RecordMetadata
 
 from .exceptions import ValidationError
-from .record_cache import RecordClassCache
 
 log = logging.getLogger(__name__)
 
@@ -63,12 +52,7 @@ class ASTMBaseRecord(BaseModel):
     _source: Optional[str] = PrivateAttr(default=None)
 
     # Class-level configuration
-    _astm_field_mapping: ClassVar[Dict[str, int]] = {}
-    _required_fields: ClassVar[List[str]] = []
-    _max_field_lengths: ClassVar[Dict[str, int]] = {}
-    _datetime_formats: ClassVar[Dict[str, str]] = {}
-    _enum_validations: ClassVar[Dict[str, List[str]]] = []
-    _record_config: ClassVar[RecordConfig] = {}
+    _metadata: ClassVar[Optional[RecordMetadata]] = None
 
     def __setattr__(self, name: str, value: Any) -> None:
         """Track updates for audit trail."""
@@ -463,6 +447,15 @@ class ASTMBaseRecord(BaseModel):
             # Return minimal valid record
             return cls()
 
+    def is_valid(self, strict: bool = False) -> bool:
+        """
+        Check if record is valid.
+
+        :param strict: Whether to use strict validation
+        :return: True if valid, False otherwise
+        """
+        return len(self.validate_record(strict=strict)) == 0
+
     def validate_record(self, strict: bool = False) -> List[str]:
         """
         Comprehensive record validation.
@@ -513,15 +506,6 @@ class ASTMBaseRecord(BaseModel):
                 record_type=self.__class__.__name__,
             )
             return [f"Validation process failed: {e}"]
-
-    def is_valid(self, strict: bool = False) -> bool:
-        """
-        Check if record is valid.
-
-        :param strict: Whether to use strict validation
-        :return: True if valid, False otherwise
-        """
-        return len(self.validate_record(strict=strict)) == 0
 
     @classmethod
     def save_to_file(
@@ -648,254 +632,4 @@ class ASTMBaseRecord(BaseModel):
             raise ValidationError(f"Failed to load records: {e}")
 
 
-class RecordFactory:
-    """
-    Enhanced and refactored factory for creating dynamic record classes.
-    This version works with the new specialized field mapping classes.
-    """
-
-    @staticmethod
-    def create_record_class(record_fields_config: RecordConfig) -> type:
-        """Create dynamic Pydantic class from RecordConfig with caching."""
-        return RecordClassCache.get_or_create(
-            record_fields_config, RecordFactory._create_record_class_impl
-        )
-
-    @staticmethod
-    def _create_record_class_impl(record_config: RecordConfig) -> type:
-        """
-        Internal implementation of record class creation using specialized field objects.
-        """
-        try:
-            config_errors: list[str] = record_config.validate_record_config()
-            if config_errors:
-                log.warning(
-                    f"Record config validation warnings for {record_config.record_type}: {config_errors}"
-                )
-
-            fields = {}
-            validators = {}
-            astm_field_mapping = {}
-            required_fields = []
-            max_field_lengths = {}
-            datetime_formats = {}
-            enum_validations = {}
-
-            for record_field in record_config.fields:
-                try:
-                    field_name = record_field.field_name
-                    astm_field_mapping[field_name] = record_field.astm_position
-
-                    # Common attributes from the base class can be accessed directly and safely
-                    if record_field.required:
-                        required_fields.append(field_name)
-
-                    if record_field.max_length:
-                        max_field_lengths[field_name] = record_field.max_length
-
-                    # Use isinstance for type-specific attributes
-                    if isinstance(record_field, DateTimeField):
-                        datetime_formats[field_name] = record_field.format
-
-                    if isinstance(record_field, EnumField):
-                        enum_validations[field_name] = record_field.enum_values
-
-                    log.info("Filled the type specific objects")
-                    field_type = RecordFactory._get_pydantic_type(record_field)
-                    field_info = Field(
-                        default=record_field.default_value,
-                        max_length=record_field.max_length,
-                        description=f"ASTM position {record_field.astm_position} - {record_field.field_type}",
-                    )
-
-                    fields[field_name] = (field_type, field_info)
-                    RecordFactory._attach_runtime_validators(
-                        record_field, validators
-                    )
-
-                except Exception as e:
-                    log.error(
-                        f"Failed to process field '{getattr(record_field, 'field_name', 'UNKNOWN')}': {e}"
-                    )
-                    continue
-
-            class_name = f"{record_config.record_type.value}Record"
-            dynamic_class: ASTMBaseRecord = create_model(
-                class_name,
-                __base__=ASTMBaseRecord,
-                **fields,
-            )
-
-            dynamic_class._astm_field_mapping = astm_field_mapping
-            dynamic_class._required_fields = required_fields
-            dynamic_class._max_field_lengths = max_field_lengths
-            dynamic_class._datetime_formats = datetime_formats
-            dynamic_class._enum_validations = enum_validations
-            dynamic_class._record_config = record_config
-
-            for validator_name, validator_func in validators.items():
-                setattr(dynamic_class, validator_name, validator_func)
-
-            log.info(
-                f"Successfully created {class_name} with {len(fields)} fields"
-            )
-            return dynamic_class
-
-        except Exception as e:
-            log.error(
-                f"Failed to create record class for {record_config.record_type}: {e}"
-            )
-            raise ValidationError(f"Record class creation failed: {e}")
-
-    @staticmethod
-    def _get_pydantic_type(field_mapping: RecordFieldMapping):
-        """
-        Determines the correct Pydantic type for a field mapping.
-
-        This method correctly handles:
-        - Basic types (string, datetime, etc.)
-        - Nested component models.
-        - Repeated fields (by wrapping the type in `List[...]`).
-        - Optional fields for non-repeated, non-required fields.
-        """
-        from datetime import datetime
-        from typing import List, Optional
-
-        from pydantic import BaseModel, ConfigDict
-
-        base_type = str
-
-        if isinstance(field_mapping, DateTimeField):
-            base_type = datetime
-        elif isinstance(field_mapping, IntegerField):
-            base_type = int
-        elif isinstance(field_mapping, DecimalField):
-            base_type = Decimal
-        elif isinstance(field_mapping, ComponentField):
-            if field_mapping.component_fields:
-                component_fields_dict = {}
-                component_annotations = {}
-                for component_field in field_mapping.component_fields:
-                    component_type = RecordFactory._get_pydantic_type(
-                        component_field
-                    )
-                    component_annotations[
-                        component_field.field_name
-                    ] = component_type
-                    if component_field.default_value is not None:
-                        component_fields_dict[
-                            component_field.field_name
-                        ] = component_field.default_value
-                    elif not component_field.required:
-                        component_fields_dict[component_field.field_name] = None
-
-                component_model_name = (
-                    f"{field_mapping.field_name.title()}Component"
-                )
-                base_type = type(
-                    component_model_name,
-                    (BaseModel,),
-                    {
-                        "__annotations__": component_annotations,
-                        **component_fields_dict,
-                        "model_config": ConfigDict(
-                            extra="forbid",
-                            str_strip_whitespace=True,
-                            validate_assignment=True,
-                        ),
-                    },
-                )
-            else:
-                log.warning(
-                    f"Component field '{field_mapping.field_name}' has no sub-fields, treating as string"
-                )
-                base_type = str
-
-        if field_mapping.repeated:
-            return List[base_type]
-
-        if not field_mapping.required:
-            return Optional[base_type]
-
-        return base_type
-
-    @staticmethod
-    def _attach_runtime_validators(
-        field: RecordFieldMapping, pydantic_validators
-    ):
-        """Attaches validators based on the object's class."""
-
-        # Handle Enums
-        if isinstance(field, EnumField) and field.enum_values:
-            pydantic_validators[
-                f"validate_{field.field_name}"
-            ] = RecordFactory._create_enum_validator(
-                field.field_name, field.enum_values
-            )
-
-        # Handle DateTimes
-        if isinstance(field, DateTimeField) and field.format:
-            pydantic_validators[
-                f"validate_{field.field_name}"
-            ] = RecordFactory._create_datetime_validator(
-                field.field_name, field.format
-            )
-
-        # handle Constants
-        if isinstance(field, ConstantField) and field.default_value:
-            pydantic_validators[
-                f"validate_{field.field_name}"
-            ] = RecordFactory._create_constant_validator(
-                field.field_name, field.default_value
-            )
-            pass
-
-    @staticmethod
-    def _create_enum_validator(field_name: str, enum_values: List[str]):
-        """Create a validator function for enum fields."""
-        from pydantic import field_validator
-
-        def _validator(cls, v):
-            if v is not None and str(v) not in enum_values:
-                raise ValueError(
-                    f"Value must be one of: {enum_values}, got: {v}"
-                )
-            return v
-
-        return field_validator(field_name, mode="before")(_validator)
-
-    @staticmethod
-    def _create_datetime_validator(field_name: str, format_str: str):
-        """A factory that creates a Pydantic validator function for a specific format."""
-        from pydantic import field_validator
-
-        def _validator(value: Any) -> datetime:
-            if isinstance(value, datetime):
-                return value
-            if not isinstance(value, str):
-                raise ValueError("datetime field must be a string to parse")
-
-            try:
-                return datetime.strptime(value, format_str)
-            except ValueError:
-                raise ValueError(
-                    f"must be a valid datetime string in the format '{format_str}'"
-                )
-
-        return field_validator(field_name, mode="before")(_validator)
-
-    @staticmethod
-    def _create_constant_validator(field_name: str, constant_value: Any):
-        from pydantic import field_validator
-
-        def _validator(cls, v):
-            if v is not None and v != constant_value:
-                raise ValueError(
-                    f"Value must be '{constant_value}', but got '{v}'"
-                )
-            return v
-
-        return field_validator(field_name, mode="before")(_validator)
-
-
-__all__ = ["ASTMBaseRecord", "RecordClassCache", "RecordFactory"]
+__all__ = ["ASTMBaseRecord"]
