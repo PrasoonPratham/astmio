@@ -7,7 +7,6 @@
 #
 from typing import Any, Iterator, List, Optional, Tuple, Union
 
-from .codec import DecodingResult, MessageType
 from .constants import (
     COMPONENT_SEP,
     CRLF,
@@ -19,6 +18,7 @@ from .constants import (
     REPEAT_SEP,
     STX,
 )
+from .dataclasses import DecodingResult, MessageType
 from .enums import ErrorCode
 from .exceptions import ChecksumError, ProtocolError, ValidationError
 from .logging import get_logger

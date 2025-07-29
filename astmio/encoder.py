@@ -7,11 +7,8 @@
 #
 import logging
 from collections.abc import Iterable
-from typing import Any, Iterator, List, Optional, Union
+from typing import Any, Iterator, List, Optional
 
-from astmio.enums import ErrorCode
-
-from .codec import EncodingOptions, decode_message
 from .constants import (
     COMPONENT_SEP,
     CR,
@@ -23,13 +20,13 @@ from .constants import (
     REPEAT_SEP,
     STX,
 )
+from .decoder import decode_message
+from .enums import ErrorCode
 from .exceptions import ProtocolError, ValidationError
+from .types import ASTMRecord, EncodingOptions
 from .utils import make_checksum, split
 
 log = logging.getLogger(__name__)
-
-# Type aliases
-ASTMRecord = List[Union[str, List[Any], None]]
 
 
 def encode(
@@ -116,9 +113,6 @@ def iter_encode(
     :yields: ASTM message chunks.
     :raises: ValidationError for validation issues.
     """
-    from .codec import EncodingOptions
-    from .decoder import decode_message
-
     if options is None:
         options = EncodingOptions(encoding=encoding, size=size)
 

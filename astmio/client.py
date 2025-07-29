@@ -7,12 +7,14 @@ from contextlib import asynccontextmanager
 from dataclasses import dataclass
 from typing import Iterable, Optional
 
-from .codec import ASTMRecord, iter_encode
+from astmio.encoder import iter_encode
+
 from .constants import ACK, ENQ, EOT
 from .dataclasses import ConnectionConfig
 from .exceptions import ConnectionError
 from .exceptions import TimeoutError as ASTMTimeoutError
 from .logging import get_logger
+from .types import ASTMRecord
 
 log = get_logger(__name__)
 

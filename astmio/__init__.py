@@ -50,18 +50,9 @@ from .exceptions import (
 )
 from .logging import get_logger, setup_logging
 from .profile import DeviceProfile
-from .records import (
-    CommentRecord,
-    HeaderRecord,
-    OrderRecord,
-    PatientRecord,
-    Record,
-    ResultRecord,
-    ScientificRecord,
-    TerminatorRecord,
-)
 from .server import Server, ServerConfig, astm_server
 from .server import create_server as _create_server
+from .types import MessageType
 
 try:
     from .config import load_profile, validate_profile

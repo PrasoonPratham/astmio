@@ -3,9 +3,11 @@
 #
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
+from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Literal, Optional
+from typing import Any, Dict, List, Literal, Optional, Union
 
+from astmio.constants import ENCODING
 from astmio.exceptions import ValidationError
 from astmio.field_mapper import FieldMappingUnion, create_field_mapping
 
@@ -550,6 +552,46 @@ class ParserConfig:
             return cls(**data)
         except (ValueError, TypeError) as e:
             raise ValidationError(f"Invalid parser configuration: {e}")
+
+
+ASTMRecord = List[Union[str, List[Any], None]]
+ASTMData = List[ASTMRecord]
+
+
+class MessageType(Enum):
+    """ASTM message types for better classification."""
+
+    COMPLETE_MESSAGE = "complete_message"
+    FRAME_ONLY = "frame_only"
+    RECORD_ONLY = "record_only"
+    CHUNKED_MESSAGE = "chunked_message"
+
+
+@dataclass
+class DecodingResult:
+    """Result of decoding operation with metadata."""
+
+    data: ASTMData
+    message_type: MessageType
+    sequence_number: Optional[int] = None
+    checksum: Optional[str] = None
+    checksum_valid: bool = True
+    warnings: List[str] = None
+
+    def __post_init__(self):
+        if self.warnings is None:
+            self.warnings = []
+
+
+@dataclass
+class EncodingOptions:
+    """Options for encoding ASTM messages."""
+
+    encoding: str = ENCODING
+    size: Optional[int] = None
+    validate_checksum: bool = True
+    strict_validation: bool = False
+    include_metadata: bool = False
 
 
 # Export all dataclasses
