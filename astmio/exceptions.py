@@ -399,6 +399,37 @@ class Rejected(BaseASTMError):
         super().__init__(message, context, **kwargs)
 
 
+class InvalidFieldError(BaseASTMError):
+    def __init__(
+        self,
+        field_type: str,
+        index: int,
+        message: str,
+        field_value: Any = None,
+        constraint: Optional[str] = None,
+        **kwargs,
+    ):
+        context = ErrorContext(
+            operation="data_validation",
+            data={
+                "value": str(repr(field_value))
+                if field_value is not None
+                else None,
+                "constraint": constraint,
+                "field_type": field_type,
+                "index": index,
+            },
+            suggestions=[
+                "Check field format requirements",
+                "Verify value constraints",
+                "Review field validation rules",
+                "Check for required fields",
+            ],
+            recoverable=True,
+        )
+        super().__init__(message, context, **kwargs)
+
+
 # Error recovery utilities
 class ErrorRecovery:
     """Utilities for error recovery and retry logic."""
@@ -496,6 +527,7 @@ __all__ = [
     "ResourceError",
     "SecurityError",
     "Rejected",
+    "InvalidFieldError",
     "ErrorRecovery",
     "AggregateError",
 ]
