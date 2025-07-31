@@ -1,209 +1,240 @@
-from dataclasses import dataclass
-from dataclasses import fields as dataclass_fields
-from typing import Any, Dict, List, Literal, Optional, Type, Union
+from datetime import datetime
+from typing import Annotated, Any, Dict, List, Literal, Optional, Union
 
-from .exceptions import ValidationError
+from pydantic import BaseModel, Field, field_validator, model_validator
+
+from .exceptions import ConfigurationError
 
 
-@dataclass
-class RecordFieldMapping:
+class RecordFieldMapping(BaseModel):
     """
-    CHANGED: This is now the common base class for all field types.
-    It contains only the attributes that EVERY field mapping shares.
+    The common base model for all field mapping configurations.
+
+    This class defines attributes shared by every field type and uses Pydantic
+    aliases to map from the user-friendly YAML keys (e.g., 'name', 'default')
+    to more descriptive internal attribute names.
     """
 
-    field_name: str
-    astm_position: int
+    field_name: str = Field(..., alias="name")
+    astm_position: Optional[int] = Field(None, ge=1)
     field_type: str
     required: bool = False
     repeated: bool = False
-    max_length: Optional[int] = None
-    default_value: Optional[Any] = None
+    max_length: Optional[int] = Field(None, gt=0)
+    default_value: Optional[Any] = Field(None, alias="default")
 
-    def __post_init__(self):
-        """Basic validation for all fields."""
-        if not self.field_name or not self.field_name.strip():
-            raise ValidationError("Field name cannot be empty")
-        if self.astm_position < 0:
-            raise ValidationError("ASTM position must be non-negative")
+    # def __post_init__(self):
+    #     """Basic validation for all fields."""
+    #     if not self.field_name or not self.field_name.strip():
+    #         raise ValidationError("Field name cannot be empty")
+    #     if self.astm_position < 0:
+    #         raise ValidationError("ASTM position must be non-negative")
 
-    def validate_field_config(self) -> List[str]:
-        """Validate individual field configuration and return errors."""
-        errors = []
+    # def validate_field_config(self) -> List[str]:
+    #     """Validate individual field configuration and return errors."""
+    #     errors = []
 
-        # Validate field name
-        if not self.field_name or not self.field_name.strip():
-            errors.append("Field name cannot be empty")
+    #     # Validate field name
+    #     if not self.field_name or not self.field_name.strip():
+    #         errors.append("Field name cannot be empty")
 
-        # Validate ASTM position
-        if self.astm_position < 0:
-            errors.append(
-                f"ASTM position must be non-negative: {self.astm_position}"
-            )
+    #     # Validate ASTM position
+    #     if self.astm_position < 0:
+    #         errors.append(
+    #             f"ASTM position must be non-negative: {self.astm_position}"
+    #         )
 
-        # Validate max length
-        if self.max_length is not None and self.max_length <= 0:
-            errors.append(f"Max length must be positive: {self.max_length}")
+    #     # Validate max length
+    #     if self.max_length is not None and self.max_length <= 0:
+    #         errors.append(f"Max length must be positive: {self.max_length}")
 
-        # Validate field type specific requirements
-        if self.field_type == "enum" and not self.enum_values:
-            errors.append("Enum field type requires enum_values")
+    #     # Validate field type specific requirements
+    #     if self.field_type == "enum" and not self.enum_values:
+    #         errors.append("Enum field type requires enum_values")
 
-        if self.field_type == "component" and not self.component_fields:
-            errors.append("Component field type requires component_fields")
+    #     if self.field_type == "component" and not self.component_fields:
+    #         errors.append("Component field type requires component_fields")
 
-        if self.field_type == "constant" and not self.default_value:
-            errors.append("Constant field type requires default_value")
+    #     if self.field_type == "constant" and not self.default_value:
+    #         errors.append("Constant field type requires default_value")
 
-        return errors
+    #     return errors
 
 
-@dataclass
+class IgnoredField(RecordFieldMapping):
+    """A field that should be ignored during parsing. Always optional."""
+
+    field_type: Literal["ignored"] = "ignored"
+    required: bool = False
+
+
 class ConstantField(RecordFieldMapping):
-    """A field with a fixed, default value."""
+    """A field with a fixed, constant value."""
 
     field_type: Literal["constant"] = "constant"
-    default_value: Any = None
+    default_value: Any = Field(..., alias="default")
 
-    def __post_init__(self):
-        if self.default_value is None:
-            raise ValidationError(
-                f"ConstantField '{self.field_name}' must have a default_value."
-            )
+    @model_validator(mode="after")
+    def check_default_value_adheres_to_max_length(self) -> "ConstantField":
+        """
+        Validates that the provided 'default' value does not exceed 'max_length'.
+        Example from your config: `default: H` must have `len('H') <= max_length: 1`.
+        """
+        if self.max_length is not None and self.default_value is not None:
+            if len(str(self.default_value)) > self.max_length:
+                raise ConfigurationError(
+                    message=(
+                        f"The default value ('{self.default_value}') for constant field "
+                        f"'{self.field_name}' exceeds the specified max_length of {self.max_length}."
+                    ),
+                    config_key=self.field_name,
+                )
+        return self
 
 
-@dataclass
+class StringField(RecordFieldMapping):
+    field_type: Literal["string"] = "string"
+    parsing: Optional[Literal["literal"]] = None
+
+    @model_validator(mode="after")
+    def check_default_value_adheres_to_max_length(self) -> "StringField":
+        """
+        If a default value is provided, validates that it does not exceed 'max_length'.
+        """
+        if self.max_length is not None and self.default_value is not None:
+            if len(str(self.default_value)) > self.max_length:
+                raise ConfigurationError(
+                    message=(
+                        f"The default value for string field '{self.field_name}' "
+                        f"exceeds the specified max_length of {self.max_length}."
+                    ),
+                    config_key=self.field_name,
+                )
+        return self
+
+
 class IntegerField(RecordFieldMapping):
-    """A field with an integer value"""
+    """A field representing an integer."""
 
     field_type: Literal["integer"] = "integer"
 
 
-@dataclass
 class DecimalField(RecordFieldMapping):
-    """A field with an decimal value"""
+    """A field representing a decimal number."""
 
     field_type: Literal["decimal"] = "decimal"
 
 
-@dataclass
-class StringField(RecordFieldMapping):
-    """A standard string field with optional parsing rules."""
-
-    field_type: Literal["string"] = "string"
-    parsing: Optional[Literal["literal"]] = None
-
-
-@dataclass
 class EnumField(RecordFieldMapping):
-    """A field constrained to a list of possible values."""
+    """A field constrained to a specific list of string values."""
 
     field_type: Literal["enum"] = "enum"
-    enum_values: List[str] = None
+    enum_values: List[str] = Field(..., alias="values")
 
-    def __post_init__(self):
-        if not self.enum_values:
-            raise ValidationError(
-                f"EnumField '{self.field_name}' must have a non-empty enum_values list."
-            )
+    @model_validator(mode="after")
+    def check_enum_values_adhere_to_max_length(self) -> "EnumField":
+        """
+        If max_length is specified, ensure all values in the enum_values list
+        comply with that length constraint.
+        Example from your config: All values in `["PR", "QR", ...]` must have `len <= 2`.
+        """
+        if self.max_length is None:
+            return self
+        for value in self.enum_values:
+            if len(value) > self.max_length:
+                raise ConfigurationError(
+                    message=(
+                        f"A value in 'enum_values' ('{value}') for field '{self.field_name}' "
+                        f"exceeds the specified max_length of {self.max_length}."
+                    ),
+                    config_key=self.field_name,
+                    config_value=self.enum_values,
+                )
+        return self
 
 
-@dataclass
 class DateTimeField(RecordFieldMapping):
-    """A field representing a date and/or time."""
+    """A field representing a date and/or time that requires a format string."""
 
     field_type: Literal["datetime"] = "datetime"
-    format: str = None
+    format: str
 
-    def __post_init__(self):
-        if not self.format:
-            raise ValidationError(
-                f"DateTimeField '{self.field_name}' must have a format string."
-            )
+    @model_validator(mode="after")
+    def check_datetime_rules(self) -> "DateTimeField":
+        """
+        Validates consistency between 'format', 'max_length', and any 'default' value.
+        Example from your config: `max_length: 14` must match the length of a
+        timestamp formatted with `"%Y%m%d%H%M%S"`.
+        """
+
+        if self.default_value is not None:
+            try:
+                datetime.strptime(str(self.default_value), self.format)
+            except ValueError:
+                raise ConfigurationError(
+                    message=(
+                        f"The default value ('{self.default_value}') for datetime field "
+                        f"'{self.field_name}' does not match the specified format '{self.format}'."
+                    ),
+                    config_key=self.field_name,
+                )
+
+        if self.max_length is not None:
+            expected_length = len(datetime(2000, 1, 1).strftime(self.format))
+            if expected_length != self.max_length:
+                raise ConfigurationError(
+                    message=(
+                        f"The specified max_length ({self.max_length}) for datetime field "
+                        f"'{self.field_name}' does not match the expected length ({expected_length}) "
+                        f"from the format string '{self.format}'."
+                    ),
+                    config_key=self.field_name,
+                )
+        return self
 
 
-@dataclass
 class ComponentField(RecordFieldMapping):
-    """A field that is composed of other sub-fields (recursive)."""
+    """
+    A complex field composed of a list of other sub-fields.
+    This model is recursive.
+    """
 
     field_type: Literal["component"] = "component"
-    component_fields: List["FieldMappingUnion"] = None
+    component_fields: List["DiscriminatedField"] = Field(..., alias="fields")
+
+    @field_validator("component_fields", mode="before")
+    @classmethod
+    def pre_process_component_fields(
+        cls, fields_data: List[Dict[str, Any]]
+    ) -> List[Dict[str, Any]]:
+        """
+        Recursively pre-processes the raw field data for sub-components.
+        1. Renames the 'type' key from YAML to 'field_type'.
+        2. Injects the astm_position for the sub-fields.
+        """
+        for i, field in enumerate(fields_data):
+            if isinstance(field, dict):
+                if "type" in field:
+                    field["field_type"] = field.pop("type")
+
+                if "astm_position" not in field:
+                    field["astm_position"] = i + 1
+        return fields_data
 
 
 FieldMappingUnion = Union[
+    IgnoredField,
     ConstantField,
     StringField,
+    IntegerField,
+    DecimalField,
     EnumField,
     DateTimeField,
     ComponentField,
-    IntegerField,
 ]
 
-FIELD_TYPE_MAP: Dict[str, Type[RecordFieldMapping]] = {
-    "constant": ConstantField,
-    "string": StringField,
-    "enum": EnumField,
-    "datetime": DateTimeField,
-    "component": ComponentField,
-    "integer": IntegerField,
-    "decimal": DecimalField,
-    "ignored": StringField,
-}
+DiscriminatedField = Annotated[
+    FieldMappingUnion, Field(discriminator="field_type")
+]
 
-
-def create_field_mapping(
-    field_data: Dict[str, Any], position: int
-) -> Optional[FieldMappingUnion]:
-    """
-    Factory to create the correct FieldMapping dataclass object based on its type.
-    This version is robust against unexpected keyword arguments.
-    """
-    field_type = field_data.get("type", "string")
-
-    target_class = FIELD_TYPE_MAP.get(field_type)
-    if not target_class:
-        raise ValidationError(
-            f"Unknown field type specified in YAML: '{field_type}'"
-        )
-
-    # 1. Prepare a dictionary of ALL potential parameters.
-    all_params = {
-        "field_name": field_data.get("name", "").rstrip(","),
-        "astm_position": position,
-        "field_type": field_type,
-        "required": field_data.get("required", False),
-        "repeated": field_data.get("repeated", False),
-        "max_length": field_data.get("max_length"),
-        "default_value": field_data.get("default"),
-        "enum_values": field_data.get("values"),
-        "format": field_data.get("format"),
-        "parsing": field_data.get("parsing"),
-    }
-
-    # 2. Handle recursive ComponentField creation.
-    if target_class is ComponentField:
-        sub_fields_data = field_data.get("fields", [])
-        all_params["component_fields"] = [
-            create_field_mapping(sf, i + 1)
-            for i, sf in enumerate(sub_fields_data)
-        ]
-
-    # --- THIS IS THE CRITICAL FIX ---
-    # 3. Get expected fields using the correct function from the 'dataclasses' module.
-    expected_fields = {f.name for f in dataclass_fields(target_class)}
-
-    # 4. Create the final, filtered dictionary of arguments.
-    final_constructor_args = {
-        key: value
-        for key, value in all_params.items()
-        if key in expected_fields
-    }
-
-    try:
-        # 5. Use the safe, filtered arguments to create the instance.
-        return target_class(**final_constructor_args)
-    except TypeError as e:
-        raise ValidationError(
-            f"Mismatched configuration for field '{all_params['field_name']}' of type '{field_type}'. "
-            f"Details: {e}"
-        ) from e
+ComponentField.model_rebuild()

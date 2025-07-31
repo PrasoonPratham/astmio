@@ -1,332 +1,157 @@
 from datetime import datetime
-from typing import Any, Callable, Dict, List, Type, Union
+from decimal import Decimal
+from typing import Annotated, Any, Dict, List, Type
 
 from pydantic import (
+    BeforeValidator,
     Field,
-    ValidationError,
     create_model,
 )
 
-from astmio.dataclasses import RecordConfig, RecordMetadata
-from astmio.enums import CommunicationProtocol
-from astmio.field_mapper import (
+from .field_mapper import (
     ComponentField,
-    ConstantField,
     DateTimeField,
     DecimalField,
-    EnumField,
-    FieldMappingUnion,
+    IgnoredField,
     IntegerField,
     RecordFieldMapping,
     StringField,
 )
-from astmio.logging import get_logger
-from astmio.models import SerialConfig, TCPConfig, UDPConfig
-from astmio.modern_records import ASTMBaseRecord
-
-from .record_cache import RecordClassCache
+from .logging import get_logger
+from .models import RecordConfig
+from .modern_records import ASTMBaseRecord, RecordMetadata
 
 log = get_logger(__name__)
+
+_record_class_cache: Dict[int, Type[ASTMBaseRecord]] = {}
 
 
 class RecordFactory:
     """
-    Enhanced and refactored factory for creating dynamic record classes.
-    This version works with the new specialized field mapping classes.
+    Creates dynamic Pydantic models from validated RecordConfig objects.
+    These generated models are used to parse live ASTM data at runtime.
     """
 
     @staticmethod
-    def get_record_class(record_type: str):
-        pass
+    def create_record_class(
+        record_type: str, config: RecordConfig
+    ) -> Type[ASTMBaseRecord]:
+        """
+        Public-facing method to create a dynamic Pydantic class from RecordConfig.
+        This method uses a cache to avoid re-creating classes unnecessarily.
+        """
+        cache_key = hash(config.model_dump_json())
+
+        if cache_key in _record_class_cache:
+            log.debug(f"Returning cached record class for '{record_type}'.")
+            return _record_class_cache[cache_key]
+
+        # If not in cache, call the internal implementation to build it.
+        log.debug(f"Cache miss for '{record_type}'. Creating new record class.")
+        new_class = RecordFactory._create_record_class_impl(record_type, config)
+        _record_class_cache[cache_key] = new_class
+        return new_class
 
     @staticmethod
-    def create_record_class(record_fields_config: RecordConfig) -> type:
-        """Create dynamic Pydantic class from RecordConfig with caching."""
-        return RecordClassCache.get_or_create(
-            record_fields_config, RecordFactory._create_record_class_impl
+    def _create_record_class_impl(
+        record_type: str, config: RecordConfig
+    ) -> Type[ASTMBaseRecord]:
+        """
+        Internal implementation of the record class creation logic.
+        This contains the clean, Pydantic-based logic from our new approach.
+        """
+        class_name = f"{record_type.upper()}Record"
+        fields: Dict[str, Any] = {}
+        metadata = RecordMetadata(source_config=config)
+
+        sub_fields = []
+        if isinstance(config, RecordConfig):
+            sub_fields = config.fields
+        elif isinstance(config, ComponentField):
+            sub_fields = config.component_fields
+
+        for field_config in sub_fields:
+            field_name = field_config.field_name
+
+            # Populate metadata
+            metadata.position_to_name[field_config.astm_position] = field_name
+            metadata.name_to_position[field_name] = field_config.astm_position
+            metadata.field_types[field_name] = field_config.field_type
+
+            if isinstance(field_config, IgnoredField):
+                continue
+
+            if field_config.required:
+                metadata.required_fields.append(field_name)
+
+            (
+                pydantic_type,
+                field_args,
+            ) = RecordFactory._get_pydantic_type_and_args(field_config)
+            fields[field_name] = (pydantic_type, Field(**field_args))
+
+        dynamic_class = create_model(
+            class_name, __base__=ASTMBaseRecord, **fields
         )
+        dynamic_class._astm_metadata = metadata
+        log.debug(f"Successfully created dynamic record class '{class_name}'.")
+        return dynamic_class
 
     @staticmethod
-    def _create_record_class_impl(record_config: RecordConfig) -> type:
-        """Internal implementation of the record class creation logic."""
-        try:
-            config_errors: list[str] = record_config.validate_record_config()
-            if config_errors:
-                log.warning(
-                    f"Record config validation warnings for {record_config.record_type}: {config_errors}"
-                )
+    def _get_pydantic_type_and_args(
+        field: RecordFieldMapping,
+    ) -> tuple[Type, Dict[str, Any]]:
+        pydantic_type: Type = str
+        field_args: Dict[str, Any] = {"default": None}
 
-            fields: Dict[str, tuple] = {}
-            validators: Dict[str, Callable] = {}
-            metadata = RecordMetadata(record_config=record_config)
+        # Determine base type based on the validated config model
+        if isinstance(field, IntegerField):
+            pydantic_type = int
+        elif isinstance(field, DecimalField):
+            pydantic_type = Decimal
+        elif isinstance(field, DateTimeField):
 
-            for record_field in record_config.fields:
+            def parse_datetime_with_format(value: Any) -> datetime:
+                if isinstance(value, datetime):
+                    return value
+                if not isinstance(value, str):
+                    raise ValueError("datetime field must be a string to parse")
+
+                cleaned_value = value.strip()
                 try:
-                    RecordFactory._process_field_config(
-                        record_field, fields, validators, metadata
+                    return datetime.strptime(cleaned_value, field.format)
+                except ValueError:
+                    raise ValueError(
+                        f"Value '{value}' does not match format '{field.format}'"
                     )
-                except Exception as e:
-                    log.error(
-                        f"Failed to process field '{getattr(record_field, 'field_name', 'UNKNOWN')}': {e}"
-                    )
-                    continue
 
-            class_name = f"{record_config.record_type.value}Record"
-            dynamic_class: ASTMBaseRecord = create_model(
-                class_name,
-                __base__=ASTMBaseRecord,
-                **fields,
+            pydantic_type = Annotated[
+                datetime, BeforeValidator(parse_datetime_with_format)
+            ]
+        elif isinstance(field, ComponentField):
+            component_class_name = (
+                f"{field.field_name.title().replace('_', '')}Component"
+            )
+            pydantic_type = RecordFactory.create_record_class(
+                component_class_name, field
             )
 
-            RecordFactory._attach_class_metadata(dynamic_class, metadata)
+        # Handle optionality and defaults
+        if field.required and field.default_value is None:
+            field_args["default"] = ...
+        if field.default_value is not None:
+            field_args["default"] = field.default_value
 
-            for validator_name, validator_func in validators.items():
-                setattr(dynamic_class, validator_name, validator_func)
+        # Handle repeated fields
+        if field.repeated:
+            pydantic_type = List[pydantic_type]
+            if "default" not in field_args or field_args["default"] is None:
+                field_args["default_factory"] = list
 
-            log.info(
-                f"Successfully created {class_name} with {len(fields)} fields"
-            )
-            return dynamic_class
+        if field.max_length:
+            if isinstance(field, StringField):
+                field_args["max_length"] = field.max_length
+            elif isinstance(field, IntegerField):
+                field_args["le"] = (10**field.max_length) - 1
 
-        except Exception as e:
-            log.error(
-                f"Failed to create record class for {record_config.record_type}: {e}"
-            )
-            raise ValidationError(f"Record class creation failed: {e}")
-
-    @staticmethod
-    def _process_field_config(
-        record_field: FieldMappingUnion,
-        fields: Dict[str, tuple],
-        validators: Dict[str, Callable],
-        metadata: RecordMetadata,
-    ):
-        """Processes a single field's configuration and updates all relevant collections."""
-        field_name = record_field.field_name
-
-        metadata.astm_field_mapping[field_name] = record_field.astm_position
-        if record_field.required:
-            metadata.required_fields.append(field_name)
-
-        if isinstance(record_field, DateTimeField):
-            metadata.datetime_formats[field_name] = record_field.format
-        if isinstance(record_field, EnumField):
-            metadata.enum_validations[field_name] = record_field.enum_values
-
-        (
-            pydantic_type,
-            field_args,
-        ) = RecordFactory._create_pydantic_field_definition(record_field)
-        field_info = Field(**field_args)
-        fields[field_name] = (pydantic_type, field_info)
-
-        RecordFactory._attach_runtime_validators(record_field, validators)
-
-    @staticmethod
-    def _create_pydantic_field_definition(
-        field_mapping: RecordFieldMapping,
-    ) -> tuple[type, dict]:
-        """
-        Determines the correct Pydantic type AND field arguments for a field mapping.
-
-        Returns:
-            A tuple containing (pydantic_type, field_args_dictionary).
-        """
-        from datetime import datetime
-        from decimal import Decimal
-        from typing import List, Optional
-
-        from pydantic import BaseModel, ConfigDict
-
-        base_type = str
-        if isinstance(field_mapping, DateTimeField):
-            base_type = datetime
-        elif isinstance(field_mapping, IntegerField):
-            base_type = int
-        elif isinstance(field_mapping, DecimalField):
-            base_type = Decimal
-        elif isinstance(field_mapping, ComponentField):
-            if field_mapping.component_fields:
-                component_annotations = {}
-                component_fields_dict = {}
-                for component_field in field_mapping.component_fields:
-                    (
-                        comp_type,
-                        comp_args,
-                    ) = RecordFactory._create_pydantic_field_definition(
-                        component_field
-                    )
-                    component_annotations[
-                        component_field.field_name
-                    ] = comp_type
-                    if "default" in comp_args:
-                        component_fields_dict[
-                            component_field.field_name
-                        ] = comp_args["default"]
-
-                model_name = f"{field_mapping.field_name.title()}Component"
-                base_type = type(
-                    model_name,
-                    (BaseModel,),
-                    {
-                        "__annotations__": component_annotations,
-                        **component_fields_dict,
-                        "model_config": ConfigDict(
-                            extra="forbid",
-                            str_strip_whitespace=True,
-                            validate_assignment=True,
-                        ),
-                    },
-                )
-            else:
-                base_type = str
-
-        field_args = {
-            "description": f"ASTM position {field_mapping.astm_position} - {field_mapping.field_type}",
-        }
-
-        if field_mapping.default_value is not None:
-            field_args["default"] = field_mapping.default_value
-
-        if (
-            isinstance(field_mapping, StringField)
-            and field_mapping.max_length is not None
-        ):
-            field_args["max_length"] = field_mapping.max_length
-
-        if (
-            isinstance(field_mapping, IntegerField)
-            and field_mapping.max_length is not None
-        ):
-            upper_bound = (10**field_mapping.max_length) - 1
-            field_args["le"] = upper_bound
-
-        final_type = base_type
-        if field_mapping.repeated:
-            final_type = List[base_type]
-        elif (
-            not field_mapping.required
-            or field_mapping.default_value is not None
-        ):
-            final_type = Optional[base_type]
-
-        return (final_type, field_args)
-
-    @staticmethod
-    def _attach_class_metadata(
-        dynamic_class: Type[ASTMBaseRecord], metadata: RecordMetadata
-    ):
-        """Attaches the completed RecordMetadata object to the dynamic class."""
-        dynamic_class._metadata = metadata
-
-    @staticmethod
-    def _attach_runtime_validators(
-        field: RecordFieldMapping, pydantic_validators: Dict[str, Callable]
-    ):
-        """Attaches custom Pydantic validators based on the field's configuration."""
-        if isinstance(field, EnumField) and field.enum_values:
-            pydantic_validators[
-                f"validate_{field.field_name}"
-            ] = RecordFactory._create_enum_validator(
-                field.field_name, field.enum_values
-            )
-
-        if isinstance(field, DateTimeField) and field.format:
-            pydantic_validators[
-                f"validate_{field.field_name}"
-            ] = RecordFactory._create_datetime_validator(
-                field.field_name, field.format
-            )
-
-        if isinstance(field, ConstantField) and field.default_value:
-            pydantic_validators[
-                f"validate_{field.field_name}"
-            ] = RecordFactory._create_constant_validator(
-                field.field_name, field.default_value
-            )
-
-    @staticmethod
-    def _create_enum_validator(field_name: str, enum_values: List[str]):
-        """Create a validator function for enum fields."""
-        from pydantic import field_validator
-
-        def _validator(cls, v):
-            if v is not None and str(v) not in enum_values:
-                raise ValueError(
-                    f"Value must be one of: {enum_values}, got: {v}"
-                )
-            return v
-
-        return field_validator(field_name, mode="before")(_validator)
-
-    @staticmethod
-    def _create_datetime_validator(field_name: str, format_str: str):
-        """A factory that creates a Pydantic validator function for a specific format."""
-        from pydantic import field_validator
-
-        def _validator(value: Any) -> datetime:
-            if isinstance(value, datetime):
-                return value
-            if not isinstance(value, str):
-                raise ValueError("datetime field must be a string to parse")
-
-            try:
-                return datetime.strptime(value, format_str)
-            except ValueError:
-                raise ValueError(
-                    f"must be a valid datetime string in the format '{format_str}'"
-                )
-
-        return field_validator(field_name, mode="before")(_validator)
-
-    @staticmethod
-    def _create_constant_validator(field_name: str, constant_value: Any):
-        from pydantic import field_validator
-
-        def _validator(cls, v):
-            if v is not None and v != constant_value:
-                raise ValueError(
-                    f"Value must be '{constant_value}', but got '{v}'"
-                )
-            return v
-
-        return field_validator(field_name, mode="before")(_validator)
-
-
-def create_transport_config(
-    data: Dict[str, Any],
-) -> Union[TCPConfig, SerialConfig, UDPConfig]:
-    """
-    Factory function to create the correct transport config object from a dictionary.
-    """
-
-    # copy data to do safe opertaions
-    transport_config_data = data.copy()
-    mode_str = transport_config_data.pop("mode", "tcp").lower()
-
-    # Define the map for config type and its model
-    TRANSPORT_CONFIG_MAP: Dict[
-        str, Type[Union[TCPConfig, UDPConfig, SerialConfig]]
-    ] = {
-        CommunicationProtocol.TCP.value: TCPConfig,
-        CommunicationProtocol.UDP.value: UDPConfig,
-        CommunicationProtocol.SERIAL.value: SerialConfig,
-    }
-
-    transport_class: Dict[
-        str, Union[TCPConfig, UDPConfig, SerialConfig]
-    ] = TRANSPORT_CONFIG_MAP.get(mode_str)
-
-    if not transport_class:
-        raise ValueError(
-            f"Unsupported transport mode: '{mode_str}'. \
-            Must be one of {list(TRANSPORT_CONFIG_MAP.keys())}"
-        )
-    try:
-        return transport_class.model_validate(transport_config_data)
-    except ValidationError:
-        raise
-    except TypeError as e:
-        raise ValueError(
-            f"Invalid parameters provided for mode '{mode_str}'. Error: {e}"
-        ) from e
+        return pydantic_type, field_args

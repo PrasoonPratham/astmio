@@ -6,11 +6,8 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
-from astmio.constants import ENCODING
-from astmio.exceptions import ValidationError
-from astmio.field_mapper import FieldMappingUnion, create_field_mapping
-
-from .enums import ConnectionState, MessageType, RecordType
+from .constants import ENCODING
+from .enums import ConnectionState, MessageType
 from .logging import get_logger
 
 log = get_logger(__name__)
@@ -236,21 +233,6 @@ class PerformanceMetrics:
         )
 
 
-@dataclass(slots=True)
-class RecordMetadata:
-    """
-    A container for all the parsed metadata and validation rules
-    for a dynamically created record class.
-    """
-
-    astm_field_mapping: Dict[str, int] = field(default_factory=dict)
-    required_fields: List[str] = field(default_factory=list)
-    max_field_lengths: Dict[str, int] = field(default_factory=dict)
-    datetime_formats: Dict[str, str] = field(default_factory=dict)
-    enum_validations: Dict[str, List[str]] = field(default_factory=dict)
-    record_config: "RecordConfig" = None
-
-
 ASTMRecord = List[Union[str, List[Any], None]]
 ASTMData = List[ASTMRecord]
 
@@ -282,109 +264,12 @@ class EncodingOptions:
     include_metadata: bool = False
 
 
-@dataclass
-class RecordConfig:
-    """Configuration for a specific record type."""
-
-    record_type: RecordType
-    description: Optional[str] = None
-    total_fields: Optional[int] = None
-    repeated: bool = False
-    fields: List[FieldMappingUnion] = field(default_factory=list)
-
-    validation_rules: Dict[str, Any] = field(default_factory=dict)
-    custom_parser: Optional[str] = None
-
-    def __post_init__(self):
-        """Validate record configuration."""
-        positions = [f.astm_position for f in self.fields]
-        if len(positions) != len(set(positions)):
-            raise ValidationError(
-                f"Duplicate ASTM positions in record {self.record_type}"
-            )
-
-        if (
-            self.total_fields is not None
-            and len(self.fields) > self.total_fields
-        ):
-            log.warning(
-                f"Record {self.record_type} has {len(self.fields)} fields but total_fields is {self.total_fields}"
-            )
-
-    @classmethod
-    def from_dict(
-        cls, record_type: str, data: Dict[str, Any]
-    ) -> "RecordConfig":
-        try:
-            fields = [
-                create_field_mapping(field_data, i + 1)
-                for i, field_data in enumerate(data.get("fields", []))
-            ]
-
-        except ValidationError as e:
-            log.error(f"Failed to parse fields for {record_type}: {e}")
-            raise
-
-        return cls(
-            record_type=RecordType(record_type.upper()),
-            description=data.get("description"),
-            total_fields=data.get("total_fields"),
-            repeated=data.get("repeated", False),
-            fields=fields,
-            validation_rules=data.get("validation_rules", {}),
-            custom_parser=data.get("custom_parser"),
-        )
-
-    # I have to split this method into some other class
-    def validate_record_config(self) -> List[str]:
-        """
-        record configuration validation.
-        - Validates if the astm positions are sequential or not
-        - Validates if there are any required fields or not
-        - Validates if there are any duplicate fields or not
-        - Validates if the present fields are equal to the expected fields
-        """
-        errors = []
-
-        if not self.fields:
-            errors.append(f"No fields present to validate : {self.fields}")
-
-        # Validate field positions are sequential
-        positions = [f.astm_position for f in self.fields]
-        if len(positions) != len(set(positions)):
-            seen = set()
-            duplicates = {p for p in positions if p in seen or seen.add(p)}
-            errors.append(
-                f"Duplicate ASTM positions found: {sorted(duplicates)}"
-            )
-
-        # Validate required fields
-        required_fields = [f for f in self.fields if f.required]
-        if not required_fields:
-            errors.append("No required fields defined")
-
-        # Validate field names are unique
-        field_names = [f.field_name for f in self.fields]
-        duplicates = {
-            name for name in field_names if field_names.count(name) > 1
-        }
-        if duplicates:
-            errors.append(f"Duplicate field names: {duplicates}")
-
-        # Validates total_fields
-        if not self.total_fields or not self.fields:
-            errors.append("fields are not present for comparision")
-        elif len(self.fields) != self.total_fields:
-            errors.append("total_fields and record fields don't match")
-
-        return errors
-
-
 __all__ = [
     "ConnectionStatus",
     "MessageMetrics",
     "ValidationResult",
     "SecurityConfig",
     "PerformanceMetrics",
-    "RecordConfig",
+    "DecodingResult",
+    "EncodingOptions",
 ]

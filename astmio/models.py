@@ -2,8 +2,8 @@ from typing import Any, Dict, List, Literal, Optional
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
-from astmio.exceptions import ConfigurationError
-
+from .exceptions import ConfigurationError
+from .field_mapper import DiscriminatedField
 from .logging import get_logger
 
 log = get_logger(__name__)
@@ -25,7 +25,7 @@ class SerialConfig(BaseModel):
     """Configuration for serial port communication."""
 
     port: str
-    mode: Literal["SERIAL"] = "serial"
+    mode: Literal["serial"] = "serial"
     baudrate: int = 9600
     databits: int = 8
     parity: Optional[str] = None
@@ -97,7 +97,7 @@ class SerialConfig(BaseModel):
 class TCPConfig(BaseNetworkConfig):
     """Configuration for TCP transport, including SSL options."""
 
-    mode: Literal["TCP"] = "tcp"
+    mode: Literal["tcp"] = "tcp"
     ssl_enabled: bool = False
     ssl_cert_path: Optional[str] = None
     ssl_key_path: Optional[str] = None
@@ -125,7 +125,7 @@ class TCPConfig(BaseNetworkConfig):
 class UDPConfig(BaseNetworkConfig):
     """Configuration for UDP transport."""
 
-    mode: Literal["UDP"] = "udp"
+    mode: Literal["udp"] = "udp"
 
 
 class FrameConfig(BaseModel):
@@ -171,9 +171,6 @@ class FrameConfig(BaseModel):
 
         return self
 
-    # my_config = FrameConfig(**your_dict)
-    # my_config = FrameConfig.model_validate(your_dict)
-
 
 class ConnectionConfig(BaseModel):
     """
@@ -210,6 +207,79 @@ class ConnectionConfig(BaseModel):
         )
 
 
+class RecordConfig(BaseModel):
+    """
+    A Pydantic model that validates the configuration for a single record type
+    (e.g., the 'H' record or 'P' record) from the YAML file.
+    """
+
+    record_type: str
+    description: Optional[str] = None
+    total_fields: Optional[int] = Field(None, gt=0)
+    repeated: bool = False
+    fields: List[DiscriminatedField] = []
+    validation_rules: Dict[str, Any] = {}
+    custom_parser: Optional[str] = None
+
+    @field_validator("fields", mode="before")
+    @classmethod
+    def assign_astm_positions(
+        cls, fields_data: List[Dict[str, Any]]
+    ) -> List[Dict[str, Any]]:
+        """
+        Pre-processes the raw field data before validation.
+        1. Renames the 'type' key from YAML to 'field_type' for our discriminator.
+        2. Injects the astm_position based on list order.
+        """
+        for i, field in enumerate(fields_data):
+            if isinstance(field, dict):
+                if "type" in field:
+                    field["field_type"] = field.pop("type")
+
+                # Logic from your existing validator to set position
+                if "astm_position" not in field:
+                    field["astm_position"] = i + 1
+        return fields_data
+
+    @model_validator(mode="after")
+    def validate_record_logic(self) -> "RecordConfig":
+        """
+        A post-validator that checks for consistency and correctness across the
+        entire list of fields after they have all been individually parsed.
+        """
+        # Check for duplicate field names within this record
+        names = [field.field_name for field in self.fields]
+        if len(names) != len(set(names)):
+            seen = set()
+            duplicates = {n for n in names if n in seen or seen.add(n)}
+            raise ConfigurationError(
+                message=f"Duplicate field names found in record configuration: {sorted(duplicates)}",
+                config_key="fields",
+            )
+
+        # Check that there is at least one field marked as required
+        if not any(field.required for field in self.fields):
+            log.warning(
+                "Configuration warning: Record type '%s' has no fields marked as 'required: true'. "
+                "This may make the record difficult to use for data validation.",
+                self.record_type,
+            )
+
+        # Check if total_fields (if specified) matches the actual number of fields
+        if (
+            self.total_fields is not None
+            and len(self.fields) != self.total_fields
+        ):
+            log.warning(
+                "Configuration mismatch: The record is defined with 'total_fields' of %s, "
+                "but contains %s fields.",
+                self.total_fields,
+                len(self.fields),
+            )
+
+        return self
+
+
 __all__ = [
     "BaseNetworkConfig",
     "SerialConfig",
@@ -217,4 +287,5 @@ __all__ = [
     "UDPConfig",
     "FrameConfig",
     "ConnectionConfig",
+    "RecordConfig",
 ]
