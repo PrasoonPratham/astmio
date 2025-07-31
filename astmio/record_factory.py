@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Any, Callable, Dict, List, Type
+from typing import Any, Callable, Dict, List, Type, Union
 
 from pydantic import (
     Field,
@@ -8,6 +8,7 @@ from pydantic import (
 )
 
 from astmio.dataclasses import RecordConfig, RecordMetadata
+from astmio.enums import CommunicationProtocol
 from astmio.field_mapper import (
     ComponentField,
     ConstantField,
@@ -20,6 +21,7 @@ from astmio.field_mapper import (
     StringField,
 )
 from astmio.logging import get_logger
+from astmio.models import SerialConfig, TCPConfig, UDPConfig
 from astmio.modern_records import ASTMBaseRecord
 
 from .record_cache import RecordClassCache
@@ -32,6 +34,10 @@ class RecordFactory:
     Enhanced and refactored factory for creating dynamic record classes.
     This version works with the new specialized field mapping classes.
     """
+
+    @staticmethod
+    def get_record_class(record_type: str):
+        pass
 
     @staticmethod
     def create_record_class(record_fields_config: RecordConfig) -> type:
@@ -285,3 +291,42 @@ class RecordFactory:
             return v
 
         return field_validator(field_name, mode="before")(_validator)
+
+
+def create_transport_config(
+    data: Dict[str, Any],
+) -> Union[TCPConfig, SerialConfig, UDPConfig]:
+    """
+    Factory function to create the correct transport config object from a dictionary.
+    """
+
+    # copy data to do safe opertaions
+    transport_config_data = data.copy()
+    mode_str = transport_config_data.pop("mode", "tcp").lower()
+
+    # Define the map for config type and its model
+    TRANSPORT_CONFIG_MAP: Dict[
+        str, Type[Union[TCPConfig, UDPConfig, SerialConfig]]
+    ] = {
+        CommunicationProtocol.TCP.value: TCPConfig,
+        CommunicationProtocol.UDP.value: UDPConfig,
+        CommunicationProtocol.SERIAL.value: SerialConfig,
+    }
+
+    transport_class: Dict[
+        str, Union[TCPConfig, UDPConfig, SerialConfig]
+    ] = TRANSPORT_CONFIG_MAP.get(mode_str)
+
+    if not transport_class:
+        raise ValueError(
+            f"Unsupported transport mode: '{mode_str}'. \
+            Must be one of {list(TRANSPORT_CONFIG_MAP.keys())}"
+        )
+    try:
+        return transport_class.model_validate(transport_config_data)
+    except ValidationError:
+        raise
+    except TypeError as e:
+        raise ValueError(
+            f"Invalid parameters provided for mode '{mode_str}'. Error: {e}"
+        ) from e

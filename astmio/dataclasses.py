@@ -3,42 +3,17 @@
 #
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
-from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Literal, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from astmio.constants import ENCODING
 from astmio.exceptions import ValidationError
 from astmio.field_mapper import FieldMappingUnion, create_field_mapping
 
-from .enums import CommunicationProtocol, ConnectionState, RecordType
+from .enums import ConnectionState, MessageType, RecordType
 from .logging import get_logger
 
 log = get_logger(__name__)
-
-
-@dataclass
-class ConnectionConfig:
-    """Configuration for ASTM connections."""
-
-    host: str = "localhost"
-    port: int = 15200
-    timeout: float = 10.0
-    encoding: str = "latin-1"
-    chunk_size: Optional[int] = None
-    max_retries: int = 3
-    retry_delay: float = 1.0
-    keepalive: bool = True
-    device_profile: Optional[str] = None
-
-    def __str__(self) -> str:
-        return f"ConnectionConfig(host={self.host}, port={self.port})"
-
-    def __repr__(self) -> str:
-        return (
-            f"ConnectionConfig(host={self.host!r}, port={self.port}, "
-            f"timeout={self.timeout}, encoding={self.encoding!r})"
-        )
 
 
 @dataclass
@@ -261,154 +236,6 @@ class PerformanceMetrics:
         )
 
 
-@dataclass
-class SerialConfig:
-    """Configuration for a Serial port connection."""
-
-    port: str
-    mode: Literal[CommunicationProtocol.SERIAL] = CommunicationProtocol.SERIAL
-    baudrate: int = 9600
-    databits: int = 8
-    parity: Optional[str] = None
-    stopbits: int = 1
-    timeout: float = 10.0
-
-    def __post_init__(self):
-        """serial configuration validation."""
-        if not self.port:
-            raise ValidationError("Serial port name cannot be empty.")
-        if self.baudrate <= 0:
-            raise ValidationError("Baud rate must be positive.")
-
-        valid_baudrates = [
-            300,
-            600,
-            1200,
-            2400,
-            4800,
-            9600,
-            19200,
-            38400,
-            57600,
-            115200,
-        ]
-        if self.baudrate not in valid_baudrates:
-            log.warning(
-                f"Unusual baud rate: {self.baudrate}. Common rates: {valid_baudrates}"
-            )
-
-        if self.databits not in [5, 6, 7, 8]:
-            raise ValidationError(
-                f"Invalid data bits: {self.databits}. Must be 5, 6, 7, or 8"
-            )
-
-        if self.stopbits not in [1, 2]:
-            raise ValidationError(
-                f"Invalid stop bits: {self.stopbits}. Must be 1 or 2"
-            )
-
-        if self.parity and self.parity.upper() not in [
-            "NONE",
-            "EVEN",
-            "ODD",
-            "MARK",
-            "SPACE",
-        ]:
-            raise ValidationError(
-                f"Invalid parity: {self.parity}. Must be None, EVEN, ODD, MARK, or SPACE"
-            )
-
-
-@dataclass
-class BaseNetworkConfig:
-    """Base configuration for IP-based network protocols."""
-
-    host: str = "0.0.0.0"
-    port: int = 15200
-    timeout: float = 30.0
-    encoding: str = "ascii"
-    control_chars: Dict[str, int] = field(default_factory=dict)
-
-    def __post_init__(self):
-        """Validate common network configuration."""
-        if not 1 <= self.port <= 65535:
-            raise ValidationError(f"Invalid port number: {self.port}")
-
-        if self.timeout <= 0:
-            raise ValidationError(f"Timeout must be positive: {self.timeout}")
-
-
-@dataclass
-class TCPConfig(BaseNetworkConfig):
-    """Configuration for TCP, UDP, or WebSocket connections."""
-
-    mode: Literal[CommunicationProtocol.TCP] = CommunicationProtocol.TCP
-    ssl_enabled: bool = False
-    ssl_cert_path: Optional[str] = None
-    ssl_key_path: Optional[str] = None
-    max_connections: int = 10
-
-    def __post_init__(self):
-        """Validate configuration after initialization."""
-        if self.max_connections <= 0:
-            raise ValidationError(
-                f"Max connections must be positive: {self.max_connections}"
-            )
-
-        if self.ssl_enabled:
-            if not self.ssl_cert_path or not self.ssl_key_path:
-                raise ValidationError(
-                    "SSL enabled but certificate or key path missing"
-                )
-
-
-@dataclass
-class UDPConfig(BaseNetworkConfig):
-    """Configuration for TCP, UDP, or WebSocket connections."""
-
-    mode: Literal[CommunicationProtocol.UDP] = CommunicationProtocol.UDP
-
-
-@dataclass
-class FrameConfig:
-    """Enhanced frame configuration with validation."""
-
-    start: str = "STX"
-    end: List[str] = field(default_factory=lambda: ["ETX", "CR", "LF"])
-    checksum: bool = True
-    max_length: int = 240
-    sequence_numbers: bool = True
-    chunking_enabled: bool = True
-    chunk_size: int = 240
-
-    def __post_init__(self):
-        """Validate configuration after initialization."""
-        if self.max_length <= 0:
-            raise ValidationError(
-                f"Max length must be positive: {self.max_length}"
-            )
-
-        if self.chunking_enabled and self.chunk_size <= 0:
-            raise ValidationError(
-                f"Chunk size must be positive: {self.chunk_size}"
-            )
-
-        if self.chunk_size > self.max_length:
-            log.warning(
-                "Chunk size (%s) larger than max length (%s)",
-                self.chunk_size,
-                self.max_length,
-            )
-
-    @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "FrameConfig":
-        """Create from dictionary with validation."""
-        try:
-            return cls(**data)
-        except (ValueError, TypeError) as e:
-            raise ValidationError(f"Invalid frame configuration: {e}")
-
-
 @dataclass(slots=True)
 class RecordMetadata:
     """
@@ -422,6 +249,37 @@ class RecordMetadata:
     datetime_formats: Dict[str, str] = field(default_factory=dict)
     enum_validations: Dict[str, List[str]] = field(default_factory=dict)
     record_config: "RecordConfig" = None
+
+
+ASTMRecord = List[Union[str, List[Any], None]]
+ASTMData = List[ASTMRecord]
+
+
+@dataclass
+class DecodingResult:
+    """Result of decoding operation with metadata."""
+
+    data: ASTMData
+    message_type: MessageType
+    sequence_number: Optional[int] = None
+    checksum: Optional[str] = None
+    checksum_valid: bool = True
+    warnings: List[str] = None
+
+    def __post_init__(self):
+        if self.warnings is None:
+            self.warnings = []
+
+
+@dataclass
+class EncodingOptions:
+    """Options for encoding ASTM messages."""
+
+    encoding: str = ENCODING
+    size: Optional[int] = None
+    validate_checksum: bool = True
+    strict_validation: bool = False
+    include_metadata: bool = False
 
 
 @dataclass
@@ -477,6 +335,7 @@ class RecordConfig:
             custom_parser=data.get("custom_parser"),
         )
 
+    # I have to split this method into some other class
     def validate_record_config(self) -> List[str]:
         """
         record configuration validation.
@@ -521,92 +380,11 @@ class RecordConfig:
         return errors
 
 
-@dataclass
-class ParserConfig:
-    """Parser configuration with customization options."""
-
-    strict_mode: bool = False
-    ignore_checksum_errors: bool = False
-    auto_sequence_correction: bool = True
-    max_message_size: int = 64000
-    custom_handlers: Dict[str, str] = field(default_factory=dict)
-    preprocessing_rules: List[str] = field(default_factory=list)
-
-    # Field mapping and separator configuration
-    patient_name_field: Optional[str] = None
-    sample_id_field: Optional[str] = None
-    test_separator: str = "\\"
-    component_separator: str = "^"
-
-    def __post_init__(self):
-        """Validate parser configuration."""
-        if self.max_message_size <= 0:
-            raise ValidationError(
-                f"Max message size must be positive: {self.max_message_size}"
-            )
-
-    @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "ParserConfig":
-        """Create from dictionary with validation."""
-        try:
-            return cls(**data)
-        except (ValueError, TypeError) as e:
-            raise ValidationError(f"Invalid parser configuration: {e}")
-
-
-ASTMRecord = List[Union[str, List[Any], None]]
-ASTMData = List[ASTMRecord]
-
-
-class MessageType(Enum):
-    """ASTM message types for better classification."""
-
-    COMPLETE_MESSAGE = "complete_message"
-    FRAME_ONLY = "frame_only"
-    RECORD_ONLY = "record_only"
-    CHUNKED_MESSAGE = "chunked_message"
-
-
-@dataclass
-class DecodingResult:
-    """Result of decoding operation with metadata."""
-
-    data: ASTMData
-    message_type: MessageType
-    sequence_number: Optional[int] = None
-    checksum: Optional[str] = None
-    checksum_valid: bool = True
-    warnings: List[str] = None
-
-    def __post_init__(self):
-        if self.warnings is None:
-            self.warnings = []
-
-
-@dataclass
-class EncodingOptions:
-    """Options for encoding ASTM messages."""
-
-    encoding: str = ENCODING
-    size: Optional[int] = None
-    validate_checksum: bool = True
-    strict_validation: bool = False
-    include_metadata: bool = False
-
-
-# Export all dataclasses
 __all__ = [
-    "ConnectionConfig",
     "ConnectionStatus",
     "MessageMetrics",
     "ValidationResult",
     "SecurityConfig",
     "PerformanceMetrics",
-    "SerialConfig",
-    "BaseNetworkConfig",
-    "TCPConfig",
-    "UDPConfig",
-    "FrameConfig",
     "RecordConfig",
-    "ParserConfig",
 ]

@@ -680,4 +680,3 @@ records:
         max_length: 1
         required: true
 quirks:
-parser:

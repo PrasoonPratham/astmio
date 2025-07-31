@@ -1,6 +1,12 @@
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Set, Type, Union
+from typing import Any, Dict, List, Optional, Union
+
+from astmio.validation import (
+    validate_device_info,
+    validate_frame_configuration,
+    validate_transport_configuration,
+)
 
 try:
     import yaml
@@ -11,19 +17,15 @@ try:
 except ImportError:
     toml = None
 
-from astmio.exceptions import ValidationError
+from astmio.exceptions import ConfigurationError, ValidationError
 
 from .dataclasses import (
-    FrameConfig,
-    ParserConfig,
     RecordConfig,
     RecordType,
-    SerialConfig,
-    TCPConfig,
-    UDPConfig,
 )
 from .enums import CommunicationProtocol
 from .logging import get_logger
+from .models import FrameConfig, SerialConfig, TCPConfig, UDPConfig
 
 log = get_logger(__name__)
 
@@ -40,18 +42,16 @@ class DeviceProfile:
     protocol: str = "ASTM E1394"
 
     # Configuration sections
-    transport: Union[TCPConfig, SerialConfig] = field(
+    transport: Union[TCPConfig, SerialConfig, UDPConfig] = field(
         default_factory=lambda: TCPConfig(mode=CommunicationProtocol.TCP)
     )
     frame: FrameConfig = field(default_factory=FrameConfig)
     records: Dict[RecordType, RecordConfig] = field(default_factory=dict)
-    parser: ParserConfig = field(default_factory=ParserConfig)
 
     # Metadata
     description: Optional[str] = None
     created_at: datetime = field(default_factory=datetime.now)
     updated_at: Optional[datetime] = None
-    tags: Set[str] = field(default_factory=set)
 
     # Device-specific quirks and customizations
     quirks: Dict[str, Any] = field(default_factory=dict)
@@ -71,29 +71,27 @@ class DeviceProfile:
     def from_dict(
         cls, data: Dict[str, Any], source_file: Optional[str] = None
     ) -> "DeviceProfile":
-        """Create profile from dictionary with comprehensive validation."""
+        """
+        Create profile from dictionary with comprehensive validation.
+        """
+        records = {}
+        parsing_errors = []
         try:
-            # Extract and validate basic information
-            device = data.get("device")
-            if not device:
-                raise ValidationError("Device name is required")
+            # validate basic information
+            device = validate_device_info(data)
 
-            # parse transport configuration
-            transport_data = data.get("transport", {})
+            # validate transport config
             transport_config: Union[
-                TCPConfig, SerialConfig
-            ] = create_transport_config(transport_data)
+                TCPConfig, UDPConfig, SerialConfig
+            ] = validate_transport_configuration(data)
 
-            # Parse frame configuration
-            frame_data = data.get("frame", {})
-            frame = FrameConfig.from_dict(frame_data)
+            # Validate frame config
+            frame_config: FrameConfig = validate_frame_configuration(data)
 
-            # Parse records configuration
-            records = {}
+            # Validate records config
             records_data: Dict[RecordType, RecordConfig] = data.get(
                 "records", {}
             )
-            parsing_errors = []
 
             # Split dict item into recordType and record_data like 'H' and its fields
             for record_type_str, record_data in records_data.items():
@@ -119,9 +117,9 @@ class DeviceProfile:
                     log.debug(
                         f"Successfully parsed {record_type_str} record with {len(record_config.fields)} fields"
                     )
-                except ValueError as e:
+                except ValueError as ve:
                     log.warning(
-                        f"Unknown record type: {record_type_str}, error: {e}"
+                        f"Unknown record type: {record_type_str}, error: {ve}"
                     )
                     parsing_errors.append(
                         f"Unknown record type: {record_type_str}"
@@ -134,24 +132,8 @@ class DeviceProfile:
                         f"Failed to parse {record_type_str}: {str(e)}"
                     )
 
-            # Parse parser configuration
-            parser = data.get("parser", {})
-            # if not parser_data:
-            #     log.info("No parser configuration found, using defaults")
-            #     parser_data = {
-            #         "patient_name_field": "P.5",
-            #         "sample_id_field": "O.3",
-            #         "test_separator": "\\",
-            #         "component_separator": "^",
-            #     }
-            # parser = ParserConfig.from_dict(parser_data)
-
-            # Parse tags if present
-            tags = set(data.get("tags", []))
-
-            quirks = data.get("quirks", {})
-            if not quirks:
-                log.info("No special quirks found")
+            # validate device specific quirks config
+            quirks_config = data.get("quirks", {})
 
             # Create profile
             profile: DeviceProfile = cls(
@@ -161,12 +143,10 @@ class DeviceProfile:
                 version=data.get("version"),
                 protocol=data.get("protocol", "ASTM E1394"),
                 transport=transport_config,
-                frame=frame,
+                frame=frame_config,
                 records=records,
-                parser=parser,
                 description=data.get("description"),
-                tags=tags,
-                quirks=quirks,
+                quirks=quirks_config,
                 custom_extensions=data.get("custom_extensions", {}),
             )
 
@@ -176,7 +156,8 @@ class DeviceProfile:
 
             log.info("Loaded profile for %s", device)
             return profile
-
+        except ConfigurationError as ce:
+            raise ce
         except Exception as e:
             log.error("Failed to create profile from dictionary: %s", str(e))
             raise ValidationError(f"Invalid profile configuration: {e}")
@@ -296,7 +277,7 @@ class DeviceProfile:
         from astmio.record_factory import RecordFactory
 
         try:
-            return RecordFactory.create_record_class(self.records[record_type])
+            return RecordFactory.get_record_class(self.records[record_type])
         except Exception as e:
             log.error(
                 f"Failed to create record class for {record_type.value}: {e}"
@@ -370,39 +351,3 @@ class DeviceProfile:
         except Exception as e:
             log.error("Failed to merge profiles: %s", str(e))
             raise ValidationError(f"Profile merge failed: {e}")
-
-
-def create_transport_config(
-    data: Dict[str, Any],
-) -> Union[TCPConfig, SerialConfig]:
-    """
-    Factory function to create the correct transport config object from a dictionary.
-    """
-    if not isinstance(data, dict):
-        raise ValidationError(
-            f"Transport configuration must be a dictionary, not {type(data)}."
-        )
-
-    # copy data to do safe opertaions
-    config_data = data.copy()
-    mode_str = config_data.pop("mode", "tcp").lower()
-
-    CONFIG_MAP: Dict[str, Type[Union[TCPConfig, UDPConfig, SerialConfig]]] = {
-        CommunicationProtocol.TCP.value: TCPConfig,
-        CommunicationProtocol.UDP.value: UDPConfig,
-        CommunicationProtocol.SERIAL.value: SerialConfig,
-    }
-
-    config_class = CONFIG_MAP.get(mode_str)
-
-    if not config_class:
-        raise ValidationError(f"Unsupported transport mode: '{mode_str}'")
-
-    try:
-        return config_class(**config_data)
-    except TypeError as e:
-        raise ValidationError(
-            f"Invalid parameters for mode '{mode_str}'. Error: {e}"
-        ) from e
-    except (ValueError, KeyError) as e:
-        raise ValidationError(f"Failed to create transport config: {e}") from e

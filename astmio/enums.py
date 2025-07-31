@@ -204,6 +204,15 @@ class SerializationFormat(str, Enum):
         return self.value
 
 
+class MessageType(Enum):
+    """ASTM message types for better classification."""
+
+    COMPLETE_MESSAGE = "complete_message"
+    FRAME_ONLY = "frame_only"
+    RECORD_ONLY = "record_only"
+    CHUNKED_MESSAGE = "chunked_message"
+
+
 # Export all enums
 __all__ = [
     "RecordType",
@@ -218,4 +227,5 @@ __all__ = [
     "ErrorCode",
     "CommunicationProtocol",
     "SerializationFormat",
+    "MessageType",
 ]

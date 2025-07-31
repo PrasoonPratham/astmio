@@ -4,13 +4,6 @@ from typing import Any, Dict, List, Literal, Optional, Type, Union
 
 from .exceptions import ValidationError
 
-# @dataclass
-# class BaseFieldMapping:
-#     field_name: str
-#     astm_position: int
-#     required: bool = False
-#     max_length: Optional[int] = None
-
 
 @dataclass
 class RecordFieldMapping:
