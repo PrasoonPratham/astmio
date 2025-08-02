@@ -23,43 +23,6 @@ class RecordFieldMapping(BaseModel):
     max_length: Optional[int] = Field(None, gt=0)
     default_value: Optional[Any] = Field(None, alias="default")
 
-    # def __post_init__(self):
-    #     """Basic validation for all fields."""
-    #     if not self.field_name or not self.field_name.strip():
-    #         raise ValidationError("Field name cannot be empty")
-    #     if self.astm_position < 0:
-    #         raise ValidationError("ASTM position must be non-negative")
-
-    # def validate_field_config(self) -> List[str]:
-    #     """Validate individual field configuration and return errors."""
-    #     errors = []
-
-    #     # Validate field name
-    #     if not self.field_name or not self.field_name.strip():
-    #         errors.append("Field name cannot be empty")
-
-    #     # Validate ASTM position
-    #     if self.astm_position < 0:
-    #         errors.append(
-    #             f"ASTM position must be non-negative: {self.astm_position}"
-    #         )
-
-    #     # Validate max length
-    #     if self.max_length is not None and self.max_length <= 0:
-    #         errors.append(f"Max length must be positive: {self.max_length}")
-
-    #     # Validate field type specific requirements
-    #     if self.field_type == "enum" and not self.enum_values:
-    #         errors.append("Enum field type requires enum_values")
-
-    #     if self.field_type == "component" and not self.component_fields:
-    #         errors.append("Component field type requires component_fields")
-
-    #     if self.field_type == "constant" and not self.default_value:
-    #         errors.append("Constant field type requires default_value")
-
-    #     return errors
-
 
 class IgnoredField(RecordFieldMapping):
     """A field that should be ignored during parsing. Always optional."""

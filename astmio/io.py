@@ -46,22 +46,54 @@ def from_file(filepath: Union[str, Path]) -> "DeviceProfile":
     return load_profile_from_file(filepath)
 
 
-def load_profile_from_file(filepath: Union[str, Path]) -> "DeviceProfile":
-    """Loads a device profile from a file."""
+def load_profile_from_file(filepath: Union[str, Path]) -> DeviceProfile:
+    """
+    Loads, validates, and prepares a complete device profile from a file.
+    This is the primary, format-agnostic entry point for loading a profile.
+    """
+    log.info("Loading device profile from: %s", filepath)
     filepath = Path(filepath)
     if not filepath.exists():
+        log.error("Configuration file not found at path: %s", filepath)
         raise FileNotFoundError(f"Profile file not found: {filepath}")
-
     try:
+        # Step 1: Determine format and get the correct loader
         profile_format = _get_format_from_path(filepath)
         loader = _get_loader(profile_format)
 
+        # Step 2: Read and load the file content into a dictionary
         with open(filepath, encoding="utf-8") as f:
             config_data = loader(f)
 
-        return DeviceProfile.from_dict(config_data, source_file=str(filepath))
-    except (OSError, ValueError, ImportError) as e:
-        raise ValidationError(f"Error loading profile from {filepath}") from e
+        if not isinstance(config_data, dict):
+            raise ConfigurationError(
+                "Configuration file did not produce a valid dictionary."
+            )
+
+        # Step 3: Use the modern Pydantic method to validate the schema
+        profile: DeviceProfile = DeviceProfile.model_validate(config_data)
+
+        # Step 4: Generate the dynamic runtime parsers
+        profile.generate_record_models()
+        log.info(
+            "Successfully loaded and prepared profile '%s' (v%s).",
+            profile.device,
+            profile.version,
+        )
+        return profile
+
+    except FileNotFoundError:
+        raise
+    except (ValidationError, BaseASTMError) as e:
+        log.error("Device profile validation failed for '%s'.", filepath)
+        raise ConfigurationError(
+            message=f"The device profile at '{filepath}' is invalid.", cause=e
+        )
+    except Exception as e:
+        raise ConfigurationError(
+            message=f"An unexpected error occurred while loading '{filepath}'.",
+            cause=e,
+        )
 
 
 def load_profile_from_yaml(file_path: str) -> DeviceProfile:

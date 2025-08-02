@@ -89,7 +89,7 @@ class ASTMBaseRecord(BaseModel):
     ) -> "ASTMBaseRecord":
         """
         Parses a pre-processed list of values from a smart decoder into a
-        validated instance of this dynamic model. This is the final, correct version.
+        validated instance of this dynamic model
         """
         mapped_dict: Dict[str, Any] = {}
 
@@ -97,9 +97,6 @@ class ASTMBaseRecord(BaseModel):
         data_fields = values[1:] if is_top_level_record else values
 
         for i, value in enumerate(data_fields):
-            # Correctly calculate the 1-based ASTM position.
-            # If it's a top-level record, we sliced off the first element,
-            # so the position starts at i + 2.
             position = i + 2 if is_top_level_record else i + 1
 
             field_name = cls._astm_metadata.position_to_name.get(position)
