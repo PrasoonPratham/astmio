@@ -1,5 +1,8 @@
 from .. import BasePlugin
 
+# Import the modern records plugin
+from .modern_records import ASTMBaseRecord, ModernRecordsPlugin, RecordMetadata
+
 
 class RecordPlugin(BasePlugin):
     """
@@ -22,3 +25,11 @@ class RecordPlugin(BasePlugin):
         if not hasattr(dispatcher, "wrappers"):
             dispatcher.wrappers = {}
         dispatcher.wrappers[self.record_type] = self.wrapper
+
+
+__all__ = [
+    "RecordPlugin",
+    "ModernRecordsPlugin",
+    "ASTMBaseRecord",
+    "RecordMetadata",
+]

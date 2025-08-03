@@ -211,6 +211,11 @@ def _register_builtin_plugins():
         register_available_plugin("metrics", MetricsPlugin)
         register_available_plugin("prometheus", PrometheusMetricsPlugin)
 
+        # Register modern records plugin
+        from .records import ModernRecordsPlugin
+
+        register_available_plugin("modern_records", ModernRecordsPlugin)
+
     except ImportError as e:
         log.debug(f"Some built-in plugins not available: {e}")
 

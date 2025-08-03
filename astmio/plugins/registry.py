@@ -107,6 +107,13 @@ class PluginRegistry:
             self.register("metrics", MetricsPlugin, "monitoring")
             self.register("prometheus", PrometheusMetricsPlugin, "monitoring")
 
+            # Modern Records Plugin
+            from .records import ModernRecordsPlugin
+
+            self.register(
+                "modern_records", ModernRecordsPlugin, "data_processing"
+            )
+
             log.info("Built-in plugins registered successfully")
 
         except ImportError as e:
