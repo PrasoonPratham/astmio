@@ -7,9 +7,9 @@ from contextlib import asynccontextmanager
 from dataclasses import dataclass
 from typing import Iterable, Optional
 
+from astmio.constants import ACK, ENQ, EOT
 from astmio.encoder import iter_encode
 
-from .constants import ACK, ENQ, EOT
 from .exceptions import ConnectionError
 from .exceptions import TimeoutError as ASTMTimeoutError
 from .logging import get_logger

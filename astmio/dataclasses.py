@@ -7,7 +7,8 @@ from typing import Any, Dict, List, Optional, Union
 
 from pydantic import BaseModel, Field, computed_field, model_validator
 
-from .constants import ENCODING
+from astmio.constants import ENCODING
+
 from .enums import ConnectionState, MessageType
 from .logging import get_logger
 
@@ -132,6 +133,7 @@ class SecurityConfig(BaseModel):
 
     # Data protection
     mask_sensitive_data: bool = True
+
     sensitive_fields: List[str] = Field(
         default_factory=lambda: [
             "patient_id",

@@ -1,12 +1,11 @@
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Union
 
+from astmio.enums import SerializationFormat
+from astmio.exceptions import ValidationError
+from astmio.io import from_file
+from astmio.logging import get_logger
 from astmio.profile import DeviceProfile
-
-from .enums import SerializationFormat
-from .exceptions import ValidationError
-from .io import from_file
-from .logging import get_logger
 
 log = get_logger(__name__)
 
@@ -76,7 +75,7 @@ class ConfigManager:
                 self._profile_cache[cache_key] = profile
                 self._load_stats["successful"] += 1
 
-            validation_errors = profile.validate()
+            validation_errors = profile.model_validate()
             if validation_errors:
                 self._validation_cache[profile.device] = validation_errors
                 log.warning(
@@ -99,7 +98,7 @@ class ConfigManager:
             )
 
         if not profile.is_valid():
-            errors = profile.validate()
+            errors = profile.model_validate()
             log.warning(f"Adding invalid profile {profile.device}: {errors}")
 
         self._profiles.get(profile.device)
@@ -257,7 +256,6 @@ def validate_profile(profile_data: Dict[str, Any]) -> bool:
         profile = DeviceProfile.from_dict(profile_data)
         return profile.is_valid(strict=True)
     except ValidationError as e:
-        # Re-raise ValidationError as ValueError for backward compatibility
         raise ValueError(str(e))
     except Exception as e:
         log.error(f"Profile validation failed: {e}")

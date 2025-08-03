@@ -1,3 +1,7 @@
+#
+# Modern Pydantic-based ASTM record definitions
+#
+
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import (
@@ -11,16 +15,15 @@ from typing import (
     Union,
 )
 
-from pydantic import BaseModel, ConfigDict, PrivateAttr, ValidationError
+from pydantic import BaseModel, ConfigDict, PrivateAttr
 
+from astmio.exceptions import InvalidFieldError, ValidationError
 from astmio.field_mapper import (
     ComponentField,
     DateTimeField,
     RecordFieldMapping,
 )
-
-from .exceptions import InvalidFieldError
-from .logging import get_logger
+from astmio.logging import get_logger
 
 if TYPE_CHECKING:
     from .models import RecordConfig
@@ -142,15 +145,28 @@ class ASTMBaseRecord(BaseModel):
         """Serializes the record to a JSON string."""
         return self.model_dump_json(indent=indent, **kwargs)
 
-    def to_astm(self) -> List[Optional[str]]:
-        """Serializes the record back into a positional list of strings."""
+    def to_astm(
+        self,
+        repeat_delimiter: str = "~",
+        component_delimiter: str = "^",
+    ) -> List[Optional[str]]:
+        """
+        Serializes the record back into a positional, 0-indexed list of strings.
+        This version correctly handles 0-based list indexing.
+        """
         data = self.model_dump()
 
         max_pos = max(self._astm_metadata.name_to_position.values(), default=0)
-        astm_fields: List[Optional[str]] = [""] * (max_pos + 1)
+        # Create a list of the correct size. If max_pos is 13, we need 13 slots (0-12).
+        astm_fields: List[Optional[str]] = [""] * max_pos
 
         for name, position in self._astm_metadata.name_to_position.items():
             if name not in self.model_fields:
+                continue
+
+            # Convert 1-based ASTM position to 0-based list index.
+            idx = position - 1
+            if not (0 <= idx < len(astm_fields)):
                 continue
 
             value = data.get(name)
@@ -168,30 +184,25 @@ class ASTMBaseRecord(BaseModel):
                 and field_config.repeated
                 and isinstance(value, list)
             ):
-                repeat_delimiter = "~"
                 serialized_values = [
                     self._serialize_value(item, field_config) for item in value
                 ]
-                astm_fields[position] = repeat_delimiter.join(serialized_values)
+                # Use the parameter and the correct index (idx).
+                astm_fields[idx] = repeat_delimiter.join(serialized_values)
+
             elif isinstance(field_config, ComponentField) and isinstance(
                 value, dict
             ):
-                astm_fields[position] = self._serialize_component(
-                    value, field_config
+                # Pass the delimiter and use the correct index (idx).
+                astm_fields[idx] = self._serialize_component(
+                    value, field_config, component_delimiter
                 )
             else:
-                astm_fields[position] = self._serialize_value(
-                    value, field_config
-                )
-
-        is_top_level_record = "record_type" in self.model_fields
-        if is_top_level_record:
-            astm_fields[0] = data.get("record_type")
+                astm_fields[idx] = self._serialize_value(value, field_config)
 
         return astm_fields
 
     def _serialize_value(self, value: Any, config: "RecordFieldMapping") -> str:
-        """Serializes a single value to a string based on its config."""
         if value is None:
             return ""
         if isinstance(config, DateTimeField) and isinstance(value, datetime):
@@ -199,10 +210,12 @@ class ASTMBaseRecord(BaseModel):
         return str(value)
 
     def _serialize_component(
-        self, component_data: Dict[str, Any], config: "ComponentField"
+        self,
+        component_data: Dict[str, Any],
+        config: "ComponentField",
+        component_delimiter: str,
     ) -> str:
         """Serializes a nested component into a delimited string."""
-        component_delimiter = "^"
         max_comp_pos = max(
             (f.astm_position for f in config.component_fields), default=0
         )
