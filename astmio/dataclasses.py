@@ -1,40 +1,21 @@
 #
-# Modern dataclasses for ASTM protocol
+# Modern Pydantic models for ASTM protocol
 #
-from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
-from .enums import ConnectionState
+from pydantic import BaseModel, Field, computed_field, model_validator
 
+from astmio.constants import ENCODING
 
-@dataclass
-class ConnectionConfig:
-    """Configuration for ASTM connections."""
+from .enums import ConnectionState, MessageType
+from .logging import get_logger
 
-    host: str = "localhost"
-    port: int = 15200
-    timeout: float = 10.0
-    encoding: str = "latin-1"
-    chunk_size: Optional[int] = None
-    max_retries: int = 3
-    retry_delay: float = 1.0
-    keepalive: bool = True
-    device_profile: Optional[str] = None
-
-    def __str__(self) -> str:
-        return f"ConnectionConfig(host={self.host}, port={self.port})"
-
-    def __repr__(self) -> str:
-        return (
-            f"ConnectionConfig(host={self.host!r}, port={self.port}, "
-            f"timeout={self.timeout}, encoding={self.encoding!r})"
-        )
+log = get_logger(__name__)
 
 
-@dataclass
-class ConnectionStatus:
+class ConnectionStatus(BaseModel):
     """Status information for ASTM connections."""
 
     state: ConnectionState
@@ -47,6 +28,7 @@ class ConnectionStatus:
     errors: int = 0
     last_error: Optional[str] = None
 
+    @computed_field
     @property
     def uptime(self) -> Optional[timedelta]:
         """Calculate connection uptime."""
@@ -54,6 +36,7 @@ class ConnectionStatus:
             return datetime.now() - self.connected_at
         return None
 
+    @computed_field
     @property
     def is_active(self) -> bool:
         """Check if connection is active."""
@@ -70,48 +53,10 @@ class ConnectionStatus:
         )
 
 
-@dataclass
-class DeviceProfile:
-    """Device-specific configuration profile."""
-
-    name: str
-    vendor: str
-    model: str
-    version: Optional[str] = None
-    description: Optional[str] = None
-
-    # Protocol settings
-    encoding: str = "latin-1"
-    chunk_size: Optional[int] = None
-    timeout: float = 10.0
-
-    # Field mappings and overrides
-    field_mappings: Dict[str, str] = field(default_factory=dict)
-    field_overrides: Dict[str, Any] = field(default_factory=dict)
-    required_fields: List[str] = field(default_factory=list)
-
-    # Protocol quirks and special handling
-    quirks: List[str] = field(default_factory=list)
-    custom_handlers: Dict[str, str] = field(default_factory=dict)
-
-    # Validation rules
-    validation_rules: Dict[str, Dict[str, Any]] = field(default_factory=dict)
-
-    def __str__(self) -> str:
-        return f"DeviceProfile({self.vendor} {self.model})"
-
-    def __repr__(self) -> str:
-        return (
-            f"DeviceProfile(name={self.name!r}, vendor={self.vendor!r}, "
-            f"model={self.model!r}, version={self.version!r})"
-        )
-
-
-@dataclass
-class MessageMetrics:
+class MessageMetrics(BaseModel):
     """Metrics for ASTM message processing."""
 
-    timestamp: datetime = field(default_factory=datetime.now)
+    timestamp: datetime = Field(default_factory=datetime.now)
     message_type: str = ""
     record_count: int = 0
     size_bytes: int = 0
@@ -134,33 +79,32 @@ class MessageMetrics:
         )
 
 
-@dataclass
-class ValidationResult:
+class ValidationResult(BaseModel):
     """Result of data validation operations."""
 
     is_valid: bool
-    errors: List[str] = field(default_factory=list)
-    warnings: List[str] = field(default_factory=list)
-    field_errors: Dict[str, List[str]] = field(default_factory=dict)
+    errors: List[str] = Field(default_factory=list)
+    warnings: List[str] = Field(default_factory=list)
+    field_errors: Dict[str, List[str]] = Field(default_factory=dict)
 
     def add_error(self, message: str, field: Optional[str] = None) -> None:
         """Add a validation error."""
         self.is_valid = False
         self.errors.append(message)
         if field:
-            if field not in self.field_errors:
-                self.field_errors[field] = []
-            self.field_errors[field].append(message)
+            self.field_errors.setdefault(field, []).append(message)
 
     def add_warning(self, message: str) -> None:
         """Add a validation warning."""
         self.warnings.append(message)
 
+    @computed_field
     @property
     def has_errors(self) -> bool:
         """Check if there are any errors."""
         return len(self.errors) > 0
 
+    @computed_field
     @property
     def has_warnings(self) -> bool:
         """Check if there are any warnings."""
@@ -178,8 +122,7 @@ class ValidationResult:
         )
 
 
-@dataclass
-class SecurityConfig:
+class SecurityConfig(BaseModel):
     """Security configuration for ASTM connections."""
 
     enable_tls: bool = False
@@ -190,7 +133,8 @@ class SecurityConfig:
 
     # Data protection
     mask_sensitive_data: bool = True
-    sensitive_fields: List[str] = field(
+
+    sensitive_fields: List[str] = Field(
         default_factory=lambda: [
             "patient_id",
             "name",
@@ -204,6 +148,15 @@ class SecurityConfig:
     enable_audit_log: bool = False
     audit_log_file: Optional[Path] = None
 
+    @model_validator(mode="after")
+    def check_tls_files(self) -> "SecurityConfig":
+        """Ensure certificate files are provided if TLS is enabled."""
+        if self.enable_tls and (not self.cert_file or not self.key_file):
+            raise ValueError(
+                "If TLS is enabled, 'cert_file' and 'key_file' must be provided."
+            )
+        return self
+
     def __str__(self) -> str:
         tls_status = "TLS enabled" if self.enable_tls else "TLS disabled"
         return f"SecurityConfig({tls_status})"
@@ -215,11 +168,10 @@ class SecurityConfig:
         )
 
 
-@dataclass
-class PerformanceMetrics:
+class PerformanceMetrics(BaseModel):
     """Performance metrics for ASTM operations."""
 
-    start_time: datetime = field(default_factory=datetime.now)
+    start_time: datetime = Field(default_factory=datetime.now)
     end_time: Optional[datetime] = None
 
     # Message statistics
@@ -237,13 +189,15 @@ class PerformanceMetrics:
     timeouts: int = 0
     retries: int = 0
 
+    @computed_field
     @property
-    def duration(self) -> Optional[timedelta]:
+    def duration(self) -> timedelta:
         """Calculate total duration."""
         if self.end_time:
             return self.end_time - self.start_time
         return datetime.now() - self.start_time
 
+    @computed_field
     @property
     def average_processing_time(self) -> float:
         """Calculate average processing time per message."""
@@ -251,20 +205,22 @@ class PerformanceMetrics:
             return self.total_processing_time / self.messages_processed
         return 0.0
 
+    @computed_field
     @property
     def throughput_messages_per_second(self) -> float:
         """Calculate message throughput."""
-        duration = self.duration
-        if duration and duration.total_seconds() > 0:
-            return self.messages_processed / duration.total_seconds()
+        duration_secs = self.duration.total_seconds()
+        if duration_secs > 0:
+            return self.messages_processed / duration_secs
         return 0.0
 
+    @computed_field
     @property
     def throughput_bytes_per_second(self) -> float:
         """Calculate byte throughput."""
-        duration = self.duration
-        if duration and duration.total_seconds() > 0:
-            return self.bytes_processed / duration.total_seconds()
+        duration_secs = self.duration.total_seconds()
+        if duration_secs > 0:
+            return self.bytes_processed / duration_secs
         return 0.0
 
     def record_processing_time(self, processing_time: float) -> None:
@@ -290,13 +246,37 @@ class PerformanceMetrics:
         )
 
 
-# Export all dataclasses
+ASTMRecord = List[Union[str, List[Any], None]]
+ASTMData = List[ASTMRecord]
+
+
+class DecodingResult(BaseModel):
+    """Result of decoding operation with metadata."""
+
+    data: ASTMData
+    message_type: MessageType
+    sequence_number: Optional[int] = None
+    checksum: Optional[str] = None
+    checksum_valid: bool = True
+    warnings: List[str] = Field(default_factory=list)
+
+
+class EncodingOptions(BaseModel):
+    """Options for encoding ASTM messages."""
+
+    encoding: str = ENCODING
+    size: Optional[int] = None
+    validate_checksum: bool = True
+    strict_validation: bool = False
+    include_metadata: bool = False
+
+
 __all__ = [
-    "ConnectionConfig",
     "ConnectionStatus",
-    "DeviceProfile",
     "MessageMetrics",
     "ValidationResult",
     "SecurityConfig",
     "PerformanceMetrics",
+    "DecodingResult",
+    "EncodingOptions",
 ]

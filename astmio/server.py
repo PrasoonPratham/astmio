@@ -7,7 +7,10 @@ from contextlib import asynccontextmanager
 from dataclasses import dataclass
 from typing import Callable, Dict, List, Optional
 
-from .codec import decode_message
+from astmio.decoder import decode_with_metadata
+from astmio.exceptions import ChecksumError, ProtocolError, ValidationError
+from astmio.types import DecodingResult
+
 from .constants import ACK, ENQ, EOT, ETB, ETX, NAK, STX
 from .logging import get_logger, setup_logging
 from .plugins import BasePlugin, PluginManager
@@ -144,70 +147,81 @@ async def handle_connection(
 
 async def process_message(
     message: bytes,
-    handlers: Dict[str, Callable],
-    config: ServerConfig,
+    handlers: dict,
+    config: "ServerConfig",
     writer: asyncio.StreamWriter,
     logger,
     server: "Server",
 ) -> None:
-    """Process a single ASTM message."""
-    try:
-        if not message.startswith(STX):
-            return
+    """Process a single ASTM message with robust error handling."""
+    if not message.startswith(STX):
+        logger.debug("Ignoring data without STX prefix.")
+        return
 
-        seq, records, checksum = decode_message(
+    try:
+        decoded_message: "DecodingResult" = decode_with_metadata(
             message, encoding=config.encoding
         )
 
-        for record_list in records:
-            if not record_list:
-                continue
+        if decoded_message and decoded_message.data:
+            for record_list in decoded_message.data:
+                if not record_list:
+                    continue
 
-            record_type = record_list[0]
+                record_type = record_list[0]
+                server.emit_event("record_processed", record_list, server)
 
-            # Emit record processing event for plugins
-            server.emit_event("record_processed", record_list, server)
-
-            if record_type in handlers:
-                try:
+                if handlers and record_type in handlers:
                     handler = handlers[record_type]
-
-                    # Check if handler is async
-                    if asyncio.iscoroutinefunction(handler):
-                        await asyncio.wait_for(
-                            handler(record_list, server),
-                            timeout=5.0,  # Handler timeout
+                    try:
+                        if asyncio.iscoroutinefunction(handler):
+                            await asyncio.wait_for(
+                                handler(record_list, server), timeout=5.0
+                            )
+                        else:
+                            loop = asyncio.get_event_loop()
+                            await asyncio.wait_for(
+                                loop.run_in_executor(
+                                    None, handler, record_list, server
+                                ),
+                                timeout=5.0,
+                            )
+                    except asyncio.TimeoutError:
+                        logger.warning(
+                            "Handler timed out", record_type=record_type
                         )
-                    else:
-                        # Run sync handler in executor to avoid blocking
-                        loop = asyncio.get_event_loop()
-                        await asyncio.wait_for(
-                            loop.run_in_executor(
-                                None, handler, record_list, server
-                            ),
-                            timeout=5.0,
+                    except Exception as e:
+                        logger.error(
+                            "Handler execution error",
+                            record_type=record_type,
+                            error=str(e),
                         )
-                except asyncio.TimeoutError:
-                    logger.warning("Handler timeout", record_type=record_type)
-                except Exception as e:
-                    logger.error(
-                        "Handler error", record_type=record_type, error=str(e)
+                else:
+                    logger.debug(
+                        "No handler for record type", record_type=record_type
                     )
-            else:
-                logger.debug(
-                    "No handler for record type", record_type=record_type
-                )
 
-        # Send ACK
         if not writer.is_closing():
             writer.write(ACK)
             await writer.drain()
 
-    except Exception as e:
-        logger.error("Message processing error", error=str(e))
+    except (ChecksumError, ProtocolError, ValidationError) as e:
+        logger.error("ASTM message rejected: %s", e.message)
         if not writer.is_closing():
             writer.write(NAK)
             await writer.drain()
+
+    except Exception:
+        logger.exception("Unexpected internal error during message processing.")
+        if not writer.is_closing():
+            try:
+                writer.write(NAK)
+                await writer.drain()
+            except Exception as transport_err:
+                logger.error(
+                    "Failed to send NAK on unexpected error.",
+                    error=transport_err,
+                )
 
 
 class Server:
@@ -392,7 +406,7 @@ def create_server(
 
     This is the recommended way to create servers for most use cases.
     """
-    config = ServerConfig(
+    config: ServerConfig = ServerConfig(
         host=host,
         port=port,
         timeout=timeout,

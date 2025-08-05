@@ -1,4 +1,10 @@
-from .. import BasePlugin
+from astmio.plugins import BasePlugin
+from astmio.plugins.records.modern_records import (
+    ASTMBaseRecord,
+    ModernRecordsPlugin,
+    PatientRecord,
+    RecordMetadata,
+)
 
 
 class RecordPlugin(BasePlugin):
@@ -22,3 +28,12 @@ class RecordPlugin(BasePlugin):
         if not hasattr(dispatcher, "wrappers"):
             dispatcher.wrappers = {}
         dispatcher.wrappers[self.record_type] = self.wrapper
+
+
+__all__ = [
+    "RecordPlugin",
+    "ModernRecordsPlugin",
+    "ASTMBaseRecord",
+    "RecordMetadata",
+    "PatientRecord",
+]

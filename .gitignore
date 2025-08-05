@@ -89,3 +89,6 @@ production_hipaa_audit.db
 
 # ruff cache
 .ruff_cache
+
+# Kiro
+.kiro/

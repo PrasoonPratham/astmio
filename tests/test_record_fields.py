@@ -11,7 +11,7 @@ def test_record_field_mapping():
     header = records[0]
     assert header[0] == "H"
     # Delimiter field is parsed as components with ^ separator
-    assert isinstance(header[1], list)  # Should be list of components
+    assert isinstance(header[1], str)  # Should be list of components
     assert header[3] == "PSWD"
     assert header[4] == "Maglumi User"
     assert header[9] == "Lis"

@@ -1,121 +1,682 @@
+# ===================================================================
+# Device Profile for: Mindray BS-240
+#
+# `Protocol`: ASTM E1394-97
+#
+# `Encoding`: The encoding the analyzer is using or expecting
+#
+# `Records`: Each key is the ASTM Record Type ID (H, P, O, R, L, C, Q).
+#           The 'fields' list is ordered by the ASTM index (0-based).
+#
+#   `Description`:  It gives the description of that record
+#   `Total_fields`: Total fields in that record
+#   `Repeated`:     If true then it can be defined multiple times per
+#                   session else only one time
+#   Fields:
+#       `Name`: The name of the field
+#       `Max_length`: Allowed length of the field
+#       `Required`: It hints if it is a reserved value or not,
+#                   if 'FALSE' then it is 'reserved' else it is 'not reserved'
+#       `Type`: It is the datatype of that field.
+#       ***NOTE := This values should be handled carefully as it may have some quirks
+#           String:     Check for 'parsing' field
+#           Component:  It is 'recursive' there are more nested fields
+#           Constant:   It has 'default' field
+#           Enum:       It has 'values' field it can have n indexes in the list (0-based)
+#           Ignored:    According to manual it is 'Reserved' field safe to ignore
+#           DateTime:   Check for the 'format' field
+# ===================================================================
+
 device: BS-240
 protocol: ASTM_E1394-97
+encoding: latin-1
 transport:
-  mode: tcp
-  port: 5001
-  host: 0.0.0.0
-  encoding: ascii
+  mode: serial
+  port: COM2
+  baudrate: 9600
+  databits: 8
+  parity: None
+  stopbits: 1
+  timeout: 10.0
 records:
   H:
-    delimiter: "|\\^&"
-    processing_id: PR
-    version: "1394-97"
+    description: "Header Record: Defines the start of a transmission."
+    total_fields: 14
     fields:
-      - type             # Field 0: Record type 'H'
-      - delimiter        # Field 1: Delimiter definition
-      - message_id       # Field 2: Message control ID
-      - password         # Field 3: Access password
-      - sender           # Field 4: Sender name/ID
-      - address          # Field 5: Sender address
-      - reserved         # Field 6: Reserved field
-      - phone            # Field 7: Sender phone
-      - capabilities     # Field 8: Sender capabilities
-      - receiver         # Field 9: Receiver ID
-      - comments         # Field 10: Comments
-      - processing_id    # Field 11: Processing ID
-      - version          # Field 12: Version number
-      - timestamp        # Field 13: Date/Time of message
+      - name: record_type
+        type: constant
+        default: H
+        max_length: 1
+        required: true
+
+      - name: delimiter_definition
+        type: string
+        parsing: literal
+        max_length: 4
+        required: true
+
+      - name: message_control_id
+        type: ignored
+
+      - name: access_password
+        type: ignored
+
+      - name: sender_name_id
+        type: component
+        required: true
+        fields:
+          - name: sender_name
+            type: string
+            max_length: 40
+            required: true
+
+          - name: software_version
+            type: string
+            max_length: 20
+            required: true
+
+          - name: serial_number
+            type: string
+            max_length: 20
+            required: true
+
+      - name: sender_address
+        type: ignored
+
+      - name: reserved_1
+        type: ignored
+
+      - name: sender_phone
+        type: ignored
+
+      - name: sender_capabilities
+        type: ignored
+
+      - name: receiver_id
+        type: ignored
+
+      - name: comments_or_special_instructions
+        type: ignored
+
+      - name: processing_id
+        type: enum
+        values: ["PR", "QR", "CR", "RQ", "QA", "SA"]
+        max_length: 2
+        required: true
+
+      - name: version_number
+        type: string
+        max_length: 12
+        required: true
+
+      - name: timestamp
+        type: datetime
+        format: "%Y%m%d%H%M%S"
+        max_length: 14
+        required: true
   P:
+    description: "Patient Information Record"
+    total_fields: 35
+    repeated: true
     fields:
-      - type                   # Field 0: Record type
-      - sequence               # Field 1: Sequence number
-      - practice_assigned_id   # Field 2: Practice assigned ID
-      - patient_id             # Field 3: Patient ID
-      - patient_id_3           # Field 4: Patient ID 3
-      - patient_name           # Field 5: Patient name
-      - reserved_field         # Field 6: Reserved field
-      - birth_date             # Field 7: Birth date
-      - sex                    # Field 8: Patient sex
-      - race                   # Field 9: Patient race
-      - address                # Field 10: Patient address
-      - reserved_field         # Field 11: Reserved field
-      - phone                  # Field 12: Patient phone
-      - attending_physician    # Field 13: Attending physician
-      - special_field_1        # Field 14: Special field 1
-      - body_surface_area      # Field 15: Body surface area
-      - height                 # Field 16: Patient height
-      - weight                 # Field 17: Patient weight
-      - diagnosis              # Field 18: Patient diagnosis
-      - medication             # Field 19: Patient medication
-      - diet                   # Field 20: Patient diet
-      - practice_field_1       # Field 21: Practice field 1
-      - practice_field_2       # Field 22: Practice field 2
-      - admission_date         # Field 23: Admission/discharge dates
-      - admission_status       # Field 24: Admission status
-      - location               # Field 25: Location
-      - nature_of_diagnosis    # Field 26: Nature of diagnosis
-      - diagnosis_code         # Field 27: Diagnosis code
-      - religion               # Field 28: Patient religion
-      - marital_status         # Field 29: Marital status
-      - isolation_status       # Field 30: Isolation status
-      - language               # Field 31: Patient language
-      - hospital_service       # Field 32: Hospital service
-      - hospital_institution   # Field 33: Hospital institution
-      - dosage_category        # Field 34: Dosage category
-  O:                                  # For SA header type (LIS => Instrument)
+      - name: record_type
+        type: constant
+        default: P
+        max_length: 1
+        required: true
+
+      - name: sequence_number
+        type: integer
+        max_length: 3
+        required: true
+
+      - name: practice_assigned_patient_id
+        type: ignored
+
+      - name: patient_id
+        type: string
+        max_length: 30
+        required: true
+
+      - name: patient_id_3
+        type: ignored
+
+      - name: patient_name_component
+        type: component
+        required: true
+        fields:
+          - name: patient_name
+            type: ignored
+
+          - name: last_name
+            type: string
+            max_length: 40
+            required: true
+
+          - name: first_name
+            type: string
+            max_length: 20
+            required: true
+
+          - name: middle_initial
+            type: string
+            max_length: 1
+            required: true
+
+      - name: reserved_field_1
+        type: ignored
+
+      - name: birth_info
+        type: component
+        required: true
+        fields:
+          - name: birth_date
+            type: datetime
+            format: "%Y%m%d"
+            max_length: 8
+            required: true
+
+          - name: age
+            type: integer
+            max_length: 3
+            required: true
+
+          - name: age_unit
+            type: enum
+            values: ["Y", "M", "W", "D", "H"]
+            max_length: 1
+            required: true
+
+      - name: patient_sex
+        type: enum
+        values: ["M", "F", "U"]
+        max_length: 1
+        required: true
+
+      - name: patient_race
+        type: ignored
+
+      - name: patient_address
+        type: string
+        max_length: 20
+        required: true
+
+      - name: reserved_blood_type
+        type: ignored
+
+      - name: patient_phone
+        type: ignored
+
+      - name: attending_physician_component
+        type: component
+        required: true
+        fields:
+          - name: attending_physician_name
+            type: ignored
+
+          - name: last_name
+            type: string
+            max_length: 20
+            required: true
+
+          - name: first_name
+            type: string
+            max_length: 20
+            required: true
+
+          - name: middle_initial
+            type: string
+            max_length: 1
+            required: true
+
+      - name: special_field_1
+        type: ignored
+
+      - name: body_surface_area
+        type: ignored
+
+      - name: patient_height
+        type: ignored
+
+      - name: patient_weight
+        type: ignored
+
+      - name: diagnosis
+        type: string
+        max_length: 50
+        required: true
+
+      - name: medication
+        type: ignored
+
+      - name: diet
+        type: ignored
+
+      - name: practice_field_1
+        type: ignored
+
+      - name: practice_field_2
+        type: ignored
+
+      - name: admission_and_discharge_dates
+        type: ignored
+
+      - name: admission_status
+        type: ignored
+
+      - name: location
+        type: ignored
+
+      - name: nature_of_diagnosis
+        type: ignored
+
+      - name: alt_diag_code_and_class
+        type: ignored
+
+      - name: patient_religion
+        type: ignored
+
+      - name: marital_status
+        type: ignored
+
+      - name: isolation_status
+        type: ignored
+
+      - name: language
+        type: ignored
+
+      - name: hospital_service
+        type: ignored
+
+      - name: hospital_institution
+        type: ignored
+
+      - name: dosage
+        type: ignored
+  O:
+    description: "Order Record: Describes tests to be performed on a sample."
+    total_fields: 31
+    repeated: true
     fields:
-      - type                          # Field 0: Record type ID
-      - sequence                      # Field 1: Sequence number
-      - sample_id                     # Field 2: Sample ID, Sample disk No., Sample cup position
-      - instrument_specimen_id        # Field 3: Sample bar code
-      - assay_info                    # Field 4: Test details (No., Name, Dilution, Replicate)
-      - priority                      # Field 5: Test priority (e.g., Routine, STAT)
-      - requested_date_time           # Field 6: Sample request time
-      - specimen_collection_date_time # Field 7: Sample collection time
-      - collection_end_time           # Field 8: Collection end time (Void and reserved)
-      - collection_volume             # Field 9: Collection volume
-      - collected_by                  # Field 10: Collector (Void and reserved)
-      - action_code                   # Field 11: Action code (Void and reserved)
-      - danger_code                   # Field 12: Danger code (Void and reserved)
-      - relevant_clinical_information # Field 13: Relevant clinical information
-      - specimen_received_date_time   # Field 14: Date and time specimen was received in the lab
-      - specimen_type                 # Field 15: Sample type (e.g., serum, urine, plasma)
-      - ordering_physician            # Field 16: Ordering physician's name (sender)
-      - physician_phone               # Field 17: Sending department or phone number
-      - offline_dilution_factor       # Field 18: Dilution factor
-      - user_field_2                  # Field 19: User-defined field (sender)
-      - laboratory_field_1            # Field 20: Laboratory field #1 (Void and reserved)
-      - laboratory_field_2            # Field 21: Laboratory field #2 (Void and reserved)
-      - results_reported_date_time    # Field 22: Date/time results were reported or modified (Void and reserved)
-      - instrument_charge_to_system   # Field 23: Charge to computer system (Void and reserved)
-      - instrument_section_id         # Field 24: Instrument section ID (Void and reserved)
-      - report_type                   # Field 25: Report type (e.g., request, query, final)
-      - reserved_field                # Field 26: Reserved field (Void and reserved)
-      - location_specimen_collected   # Field 27: Location where specimen was collected (Void and reserved)
-      - nosocomial_infection_flag     # Field 28: Nosocomial infection flag (Void and reserved)
-      - specimen_service              # Field 29: Specimen service (Void and reserved)
-      - specimen_institution          # Field 30: Specimen institution (Void and reserved)
-  R:                                  # (Instrument => LIS)
+      - name: record_type
+        type: constant
+        default: O
+        max_length: 1
+        required: true
+
+      - name: sequence_number
+        type: integer
+        max_length: 3
+        required: true
+
+      - name: sample_id_component
+        type: component
+        required: true
+        fields:
+          - name: sample_id
+            type: string
+            max_length: 10
+            required: true
+
+          - name: sample_tray_no
+            type: ignored
+
+          - name: sample_pos
+            type: ignored
+
+      - name: instrument_specimen_id
+        type: string
+
+      - name: assay_info_component
+        type: component
+        required: true
+        repeated: true
+        fields:
+          - name: assay_no
+            type: string
+            max_length: 10
+            required: true
+
+          - name: assay_name
+            type: string
+            max_length: 50
+            required: true
+
+          - name: dilution_rate
+            type: ignored
+
+          - name: repeat_number
+            type: ignored
+
+      - name: priority
+        type: enum
+        values: ["R", "S"]
+        max_length: 1
+        required: true
+
+      - name: requested_datetime
+        type: datetime
+        format: "%Y%m%d%H%M%S"
+        max_length: 14
+        required: true
+
+      - name: collection_datetime
+        type: datetime
+        format: "%Y%m%d%H%M%S"
+        max_length: 14
+        required: true
+
+      - name: collection_end_time
+        type: ignored
+
+      - name: collection_volume
+        type: ignored
+
+      - name: collected_by
+        type: ignored
+
+      - name: action_code
+        type: ignored
+
+      - name: danger_code
+        type: ignored
+
+      - name: relevant_clinical_info
+        type: ignored
+
+      - name: received_datetime
+        type: datetime
+        format: "%Y%m%d%H%M%S"
+        max_length: 14
+        required: true
+
+      - name: specimen_type
+        type: enum
+        values: ["serum", "urine", "plasma", "timed", "other", "blood", "amniotic"]
+        max_length: 20
+        required: true
+
+      - name: ordering_physician_component
+        type: component
+        required: true
+        fields:
+          - name: ordering_physician
+            type: ignored
+
+          - name: last_name
+            type: string
+            max_length: 40
+            required: true
+
+          - name: first_name
+            type: string
+            max_length: 20
+            required: true
+
+          - name: middle_initial
+            type: string
+            max_length: 1
+            required: true
+
+      - name: physician_phone
+        type: string
+        max_length: 20
+        required: true
+
+      - name: offline_dilution_factor
+        type: ignored
+
+      - name: user_field_2_component
+        type: component
+        required: true
+        fields:
+          - name: user_field_2
+            type: ignored
+
+          - name: last_name
+            type: string
+            max_length: 40
+
+          - name: first_name
+            type: string
+            max_length: 20
+
+          - name: middle_initial
+            type: string
+            max_length: 1
+
+      - name: lab_field_1
+        type: ignored
+
+      - name: lab_field_2
+        type: ignored
+
+      - name: results_datetime
+        type: ignored
+
+      - name: instrument_charge
+        type: ignored
+
+      - name: instrument_section
+        type: ignored
+
+      - name: report_type
+        type: enum
+        values: ["O", "Q", "F"]
+        max_length: 1
+        required: true
+
+      - name: reserved_field_1
+        type: ignored
+
+      - name: location_specimen_collected
+        type: ignored
+
+      - name: nosocomial_infection_flag
+        type: ignored
+
+      - name: specimen_service
+        type: ignored
+
+      - name: specimen_institution
+        type: ignored
+  R:
+    description: "Result Record: Contains the result for a single test."
+    total_fields: 14
+    repeated: true
     fields:
-      - type                           # Field 0: Record type ID[1]
-      - sequence                       # Field 1: Sequence number[1]
-      - universal_test_id              # Field 2: Universal Test ID, including test number, name, replicate, and result type[1]
-      - result_value                   # Field 3: Final test result, either quantitative (Measurement Value) or qualitative (Interpretation)[1]
-      - units                          # Field 4: Units for the measurement and final serum index values for turbidity (L), hemolysis (H), and icterus (I)[2]
-      - measurement_range              # Field 5: Reference range high and low limits[2]
-      - abnormal_flag                  # Field 6: Abnormal result flag (e.g., Normal, High, Low)[2]
-      - nature_of_abnormality          # Field 7: Nature of Abnormality Testing[2]
-      - result_status                  # Field 8: Status of the result (e.g., F for final)[2]
-      - original_result_values         # Field 9: Original test result, including quantitative value, interpretation, and serum index[2][3]
-      - operator_identification        # Field 10: Operator Identification[3]
-      - test_start_time                # Field 11: Date and time the test started[3]
-      - test_completion_time           # Field 12: Date and time the test was completed[3]
-      - instrument_details             # Field 13: Instrument identification, including sender name and device ID[3]
+      - name: record_type
+        type: constant
+        default: R
+        max_length: 1
+        required: true
+
+      - name: sequence_number
+        type: integer
+        max_length: 10
+        required: true
+
+      - name: universal_test_id
+        type: component
+        required: true
+        fields:
+          - name: assay_number
+            type: string
+            max_length: 10
+            required: true
+
+          - name: assay_name
+            type: string
+            max_length: 50
+            required: true
+
+          - name: replicate_number
+            type: ignored
+
+          - name: result_type
+            type: enum
+            values: ["I", "F"]
+            max_length: 1
+            required: true
+
+      - name: measurement_value
+        type: component
+        required: true
+        fields:
+          - name: measurement_value
+            type: decimal
+            max_length: 25
+            required: true
+
+          - name: interpretation
+            type: string
+            max_length: 10
+            required: true
+
+          - name: SI_L_value
+            type: ignored
+
+          - name: SI_H_value
+            type: ignored
+
+          - name: SI_I_value
+            type: ignored
+
+      - name: units
+        type: string
+        max_length: 12
+        required: true
+
+      - name: reference_range
+        type: component
+        required: true
+        fields:
+          - name: upper_limit
+            type: decimal
+            max_length: 12
+            required: true
+
+          - name: lower_limit
+            type: decimal
+            max_length: 12
+            required: true
+
+      - name: result_abnormal_flag
+        type: enum
+        values: ["N", "L", "H"]
+        max_length: 1
+        required: true
+
+      - name: nature_of_abnormality
+        type: string
+        max_length: 10
+        required: true
+
+      - name: result_status
+        type: enum
+        values: ["F"]
+        max_length: 1
+        required: true
+
+      - name: original_result_details
+        type: component
+        required: true
+        fields:
+          - name: measurement_value
+            type: decimal
+            max_length: 25
+            required: true
+
+          - name: interpretation
+            type: string
+            max_length: 10
+            required: true
+
+          - name: si_l_value_turbidity
+            type: ignored
+
+          - name: si_h_value_hemolysis
+            type: ignored
+
+          - name: si_i_value_icterus
+            type: ignored
+
+      - name: operator_identification
+        type: enum
+        values: ["1", "0"]
+        required: true
+
+      - name: test_start_datetime
+        type: datetime
+        format: "%Y%m%d%H%M%S"
+        max_length: 14
+        required: true
+
+      - name: test_completion_datetime
+        type: ignored
+
+      - name: instrument_identification
+        type: component
+        required: true
+        fields:
+          - name: instrument_identification
+            type: string
+            max_length: 16
+            required: true
+
+          - name: device_id
+            type: ignored
+  C:
+    description: "Comment Record: Provides additional textual information."
+    total_fields: 5
+    repeated: true
+    fields:
+      - name: record_type
+        type: constant
+        default: C
+        max_length: 1
+        required: true
+
+      - name: sequence_number
+        type: integer
+        max_length: 3
+        required: true
+
+      - name: comment_source
+        type: enum
+        values: ["I"]
+        max_length: 1
+        required: true
+
+      - name: comment_text
+        type: string
+        parsing: literal
+        max_length: 90
+        required: true
+
+      - name: comment_type
+        type: enum
+        values: ["G", "I"]
+        max_length: 1
+        required: true
   L:
+    description: "Terminator Record: Marks the end of the transmission."
+    total_fields: 3
     fields:
-      - type                           # Field 0: Record type 'L'
-      - sequence                       # Field 1: Sequence number
-      - termination_code               # Field 2: Termination code
-parser:
-  patient_name_field: P.5
-  sample_id_field: O.3
+      - name: record_type
+        type: constant
+        default: L
+        max_length: 1
+        required: true
+
+      - name: sequence_number
+        type: integer
+        max_length: 3
+        required: true
+
+      - name: termination_code
+        type: enum
+        values: ["N", "I", "Q"]
+        max_length: 1
+        required: true
+quirks:

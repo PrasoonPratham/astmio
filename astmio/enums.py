@@ -181,6 +181,38 @@ class ErrorCode(IntEnum):
         return f"ErrorCode.{self.name}"
 
 
+class CommunicationProtocol(str, Enum):
+    """Communication protocol types."""
+
+    TCP = "tcp"
+    SERIAL = "serial"
+    UDP = "udp"
+    HTTP = "http"
+
+    def __str__(self) -> str:
+        return self.value
+
+
+class SerializationFormat(str, Enum):
+    """Serialization format types."""
+
+    YAML = "yaml"
+    JSON = "json"
+    TOML = "toml"
+
+    def __str__(self) -> str:
+        return self.value
+
+
+class MessageType(Enum):
+    """ASTM message types for better classification."""
+
+    COMPLETE_MESSAGE = "complete_message"
+    FRAME_ONLY = "frame_only"
+    RECORD_ONLY = "record_only"
+    CHUNKED_MESSAGE = "chunked_message"
+
+
 # Export all enums
 __all__ = [
     "RecordType",
@@ -193,4 +225,7 @@ __all__ = [
     "TerminationCode",
     "ConnectionState",
     "ErrorCode",
+    "CommunicationProtocol",
+    "SerializationFormat",
+    "MessageType",
 ]
