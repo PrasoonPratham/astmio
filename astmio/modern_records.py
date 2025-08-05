@@ -5,7 +5,7 @@
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Type
 
 from astmio.logging import get_logger
-from astmio.plugins import install_plugin
+from astmio.plugins import get_default_manager
 
 if TYPE_CHECKING:
     from astmio.models import RecordConfig
@@ -31,7 +31,9 @@ def get_modern_records_plugin() -> "ModernRecordsPlugin":
     global _modern_records_plugin
 
     if _modern_records_plugin is None:
-        _modern_records_plugin = install_plugin("modern_records")
+        _modern_records_plugin = get_default_manager().server.install_plugin(
+            "modern_records"
+        )
         log.info("Modern Records plugin initialized")
 
     return _modern_records_plugin

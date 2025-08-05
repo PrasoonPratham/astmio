@@ -1,7 +1,10 @@
-from .. import BasePlugin
-
-# Import the modern records plugin
-from .modern_records import ASTMBaseRecord, ModernRecordsPlugin, RecordMetadata
+from astmio.plugins import BasePlugin
+from astmio.plugins.records.modern_records import (
+    ASTMBaseRecord,
+    ModernRecordsPlugin,
+    PatientRecord,
+    RecordMetadata,
+)
 
 
 class RecordPlugin(BasePlugin):
@@ -32,4 +35,5 @@ __all__ = [
     "ModernRecordsPlugin",
     "ASTMBaseRecord",
     "RecordMetadata",
+    "PatientRecord",
 ]

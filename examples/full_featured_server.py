@@ -21,7 +21,7 @@ plugins = []
 
 # Try to load HIPAA plugin
 try:
-    from astmio.plugins.hipaa import HIPAAAuditPlugin
+    from astmio.plugins.hipaa.hipaa import HIPAAAuditPlugin
 
     hipaa_plugin = HIPAAAuditPlugin(
         db_path="production_audit.db", retention_days=2555

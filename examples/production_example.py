@@ -247,7 +247,7 @@ async def run_production_server():
     # Add HIPAA plugin if available
     if astmio.is_hipaa_available():
         try:
-            from astmio.plugins.hipaa import HIPAAAuditPlugin
+            from astmio.plugins.hipaa.hipaa import HIPAAAuditPlugin
 
             # Create HIPAA plugin with production settings
             hipaa_plugin = HIPAAAuditPlugin(

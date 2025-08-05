@@ -9,6 +9,19 @@ Install plugins with: pip install astmio[hipaa] or pip install astmio[metrics]
 import logging as stdlib_logging
 from typing import Any, Callable, Dict, List, Optional
 
+from astmio.dataclasses import ConnectionStatus, MessageMetrics
+from astmio.enums import ErrorCode, RecordType
+from astmio.exceptions import (
+    ConfigurationError,
+    ProtocolError,
+    ValidationError,
+)
+from astmio.logging import get_logger, setup_logging
+from astmio.profile import DeviceProfile
+from astmio.server import Server, ServerConfig, astm_server
+from astmio.server import create_server as _create_server
+from astmio.types import MessageType
+
 # Core functionality
 from .client import Client, ClientConfig, astm_client
 from .client import create_client as _create_client
@@ -41,18 +54,6 @@ from .constants import (
     REPEAT_SEP,
     STX,
 )
-from .dataclasses import ConnectionStatus, MessageMetrics
-from .enums import ErrorCode, RecordType
-from .exceptions import (
-    ConfigurationError,
-    ProtocolError,
-    ValidationError,
-)
-from .logging import get_logger, setup_logging
-from .profile import DeviceProfile
-from .server import Server, ServerConfig, astm_server
-from .server import create_server as _create_server
-from .types import MessageType
 
 try:
     from .config import load_profile, validate_profile
@@ -70,85 +71,6 @@ except ImportError:
 
 
 __version__ = "1.0.1"
-__all__ = [
-    # High-level API
-    "send_astm_data",
-    "run_astm_server",
-    "create_comprehensive_handlers",
-    # Context managers
-    "astm_client",
-    "astm_server",
-    # Core classes
-    "create_client",
-    "create_server",
-    "Client",
-    "Server",
-    "ClientConfig",
-    "ServerConfig",
-    # Codec
-    "encode",
-    "decode",
-    "encode_message",
-    "decode_message",
-    "decode_record",
-    "encode_record",
-    "decode_component",
-    "encode_component",
-    "make_checksum",
-    "decode_with_metadata",
-    "iter_encode",
-    # ASTM constants
-    "STX",
-    "ETX",
-    "ETB",
-    "ENQ",
-    "ACK",
-    "NAK",
-    "EOT",
-    "LF",
-    "CR",
-    # Separators
-    "RECORD_SEP",
-    "FIELD_SEP",
-    "REPEAT_SEP",
-    "COMPONENT_SEP",
-    "ESCAPE_SEP",
-    # Logging
-    "setup_logging",
-    "get_logger",
-    # Exceptions
-    "ASTMError",
-    "ProtocolError",
-    "ValidationError",
-    "ConfigurationError",
-    # Data structures
-    "Record",
-    "HeaderRecord",
-    "PatientRecord",
-    "OrderRecord",
-    "ResultRecord",
-    "CommentRecord",
-    "TerminatorRecord",
-    "ScientificRecord",
-    "MessageHeaderRecord",
-    "MessageTerminatorRecord",
-    "DeviceProfile",
-    "ConnectionStatus",
-    "MessageMetrics",
-    "AuditContext",
-    "SecurityContext",
-    "MiddlewareInput",
-    "MiddlewareOutput",
-    # Enums
-    "RecordType",
-    "MessageType",
-    "ErrorCode",
-    "EventType",
-    # Configuration
-    "ServerConfig",
-    "ClientConfig",
-    "CoreConfig",
-]
 
 _logger = get_logger(__name__)
 
@@ -209,7 +131,7 @@ def create_server(
         ...     profile="profiles/mindray.yaml"
         ... )
     """
-    server = _create_server(handlers, host, port, timeout, **kwargs)
+    server: Server = _create_server(handlers, host, port, timeout, **kwargs)
 
     # Install plugins if specified
     if plugins:
@@ -442,3 +364,73 @@ def print_plugin_status():
 # Set default logging handler to avoid "No handler found" warnings.
 # Only set up a null handler - let users configure logging themselves
 stdlib_logging.getLogger(__name__).addHandler(stdlib_logging.NullHandler())
+
+# FIXED: Only include items that are actually imported or defined in this file
+__all__ = [
+    # High-level API functions defined in this file
+    "send_astm_data",
+    "run_astm_server",
+    "create_comprehensive_handlers",
+    "create_client",
+    "create_server",
+    # Plugin availability functions defined in this file
+    "is_hipaa_available",
+    "is_metrics_available",
+    "get_available_plugins",
+    "print_plugin_status",
+    # Context managers imported from submodules
+    "astm_client",
+    "astm_server",
+    # Core classes imported from submodules
+    "Client",
+    "Server",
+    "ClientConfig",
+    "ServerConfig",
+    # Codec functions imported from .codec
+    "encode",
+    "decode",
+    "encode_message",
+    "decode_message",
+    "decode_record",
+    "encode_record",
+    "decode_component",
+    "encode_component",
+    "make_checksum",
+    "decode_with_metadata",
+    "iter_encode",
+    # ASTM constants imported from .constants
+    "STX",
+    "ETX",
+    "ETB",
+    "ENQ",
+    "ACK",
+    "NAK",
+    "EOT",
+    "LF",
+    "CR",
+    "RECORD_SEP",
+    "FIELD_SEP",
+    "REPEAT_SEP",
+    "COMPONENT_SEP",
+    "ESCAPE_SEP",
+    # Logging functions imported from .logging
+    "setup_logging",
+    "get_logger",
+    # Exceptions imported from .exceptions
+    "ProtocolError",
+    "ValidationError",
+    "ConfigurationError",
+    # Data structures imported from various modules
+    "DeviceProfile",
+    "ConnectionStatus",
+    "MessageMetrics",
+    # Enums imported from .enums
+    "RecordType",
+    "MessageType",
+    "ErrorCode",
+    # Config functions (defined in try/except block)
+    "load_profile",
+    "validate_profile",
+    # Version
+    "__version__",
+]

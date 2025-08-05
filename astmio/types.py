@@ -8,6 +8,7 @@
 """
 Shared types and data structures for ASTM processing.
 """
+
 from dataclasses import dataclass
 from enum import Enum
 from typing import Any, List, Optional, Union

@@ -1,235 +1,114 @@
-import importlib
-import pkgutil
-from collections import defaultdict
-from typing import Any, Callable, Dict, List, Optional, Type
+import logging
+from typing import Dict, List, Optional, Type
 
-from ..logging import get_logger
+from .base import BasePlugin, PluginManager
+from .registry import PluginRegistry
 
-log = get_logger(__name__)
+log = logging.getLogger(__name__)
+
+# This is our Singleton instance.
+registry = PluginRegistry()
+
+_default_manager = PluginManager()
 
 
-class BasePlugin:
+def get_default_manager() -> PluginManager:
+    """Returns the default, shared PluginManager instance."""
+    return _default_manager
+
+
+# --- Registry Functions (Operating on the Catalog) ---
+
+
+def register_plugin_class(
+    name: str, plugin_class: Type[BasePlugin], category: str = "custom"
+):
     """
-    Base class for all plugins.
+    Functional wrapper to register a plugin class to the global registry.
+    This makes a plugin *available* to be used.
     """
-
-    name: str = "BasePlugin"
-    version: str = "1.0.0"
-    description: str = "Base plugin class"
-
-    def __init__(self, **kwargs):
-        """Initialize plugin with configuration."""
-        self.config = kwargs
-        self.manager: Optional[PluginManager] = None
-
-    def install(self, manager: "PluginManager"):
-        """Install the plugin."""
-        self.manager = manager
-        log.info(f"Installing plugin: {self.name}")
-
-    def uninstall(self, manager: "PluginManager"):
-        """Uninstall the plugin."""
-        log.info(f"Uninstalling plugin: {self.name}")
-        self.manager = None
-
-    def configure(self, **kwargs):
-        """Configure the plugin with new settings."""
-        self.config.update(kwargs)
+    registry.register(name, plugin_class, category)
 
 
-class PluginManager:
+def get_plugin_class(name: str) -> Optional[Type[BasePlugin]]:
+    """Functional wrapper to get a plugin class (blueprint) from the registry."""
+    return registry.get(name)
+
+
+def list_available_plugins() -> List[str]:
+    """Functional wrapper to list all available plugin classes in the registry."""
+    return registry.list_all()
+
+
+def get_plugin_info(name: str) -> Optional[Dict[str, str]]:
+    """Functional wrapper to get metadata for an available plugin."""
+    return registry.get_plugin_info(name)
+
+
+# --- Manager Functions (Operating on Active Plugins) ---
+
+
+def activate_plugin(name: str, **config) -> Optional[BasePlugin]:
     """
-    Manages the lifecycle of plugins and the event system.
-    """
-
-    def __init__(self, server: Any = None):
-        self.server = server
-        self._plugins: Dict[str, BasePlugin] = {}
-        self._event_listeners: Dict[str, List[Callable]] = defaultdict(list)
-
-    def on(self, event_name: str, handler: Callable):
-        """Register an event listener."""
-        self._event_listeners[event_name].append(handler)
-
-    def emit(self, event_name: str, *args, **kwargs):
-        """Emit an event to all registered listeners."""
-        for handler in self._event_listeners[event_name]:
-            try:
-                handler(*args, **kwargs)
-            except Exception as e:
-                log.error(
-                    f"Error in event handler for {event_name}: {e}",
-                    event=event_name,
-                    handler=handler,
-                )
-
-    def register_plugin(self, plugin: BasePlugin):
-        """Register a single plugin."""
-        self._plugins[plugin.name] = plugin
-        plugin.install(self)
-
-    def unregister_plugin(self, name: str):
-        """Unregister a plugin by name."""
-        if name in self._plugins:
-            plugin = self._plugins.pop(name)
-            plugin.uninstall(self)
-
-    def get_plugin(self, name: str) -> Optional[BasePlugin]:
-        """Get a plugin by name."""
-        return self._plugins.get(name)
-
-    def list_plugins(self) -> List[str]:
-        """List all registered plugins."""
-        return list(self._plugins.keys())
-
-    def discover_plugins(self, package):
-        """Discover and register all plugins within a given package."""
-        for _, name, _ in pkgutil.iter_modules(
-            package.__path__, package.__name__ + "."
-        ):
-            try:
-                module = importlib.import_module(name)
-                for item_name in dir(module):
-                    item = getattr(module, item_name)
-                    if (
-                        isinstance(item, type)
-                        and issubclass(item, BasePlugin)
-                        and item is not BasePlugin
-                    ):
-                        self.register_plugin(item())
-            except Exception as e:
-                log.error(f"Failed to discover plugin in {name}: {e}")
-
-
-# Global plugin registry for pip-like installation
-_available_plugins: Dict[str, Callable] = {}
-
-
-def register_available_plugin(name: str, plugin_class: Type[BasePlugin]):
-    """Register a plugin class as available for installation."""
-    _available_plugins[name] = plugin_class
-
-
-def install_plugin(name: str, **kwargs) -> BasePlugin:
-    """
-    Install a plugin by name (pip-like interface).
+    Finds a plugin in the registry, instantiates it, and registers it
+    with the default manager to make it *active*.
 
     Args:
-        name: Plugin name
-        **kwargs: Plugin configuration
+        name: The name of the plugin to activate.
+        **config: Configuration options to pass to the plugin's constructor.
 
     Returns:
-        Installed plugin instance
-
-    Raises:
-        ValueError: If plugin not found
+        The activated plugin instance, or None if activation failed.
     """
-    if name not in _available_plugins:
-        # Try to import from plugins module
-        try:
-            module = importlib.import_module(f"astmio.plugins.{name}")
-            # Look for plugin class in the module
-            for item_name in dir(module):
-                item = getattr(module, item_name)
-                if (
-                    isinstance(item, type)
-                    and issubclass(item, BasePlugin)
-                    and item is not BasePlugin
-                ):
-                    _available_plugins[name] = item
-                    break
-        except ImportError:
-            raise ValueError(f"Plugin '{name}' not found")
+    plugin_class = registry.get(name)
+    if not plugin_class:
+        log.error(f"Cannot activate plugin '{name}': Not found in registry.")
+        return None
 
-    plugin_class = _available_plugins[name]
-    plugin = plugin_class(**kwargs)
-
-    log.info(f"Plugin '{name}' installed successfully")
-    return plugin
-
-
-def uninstall_plugin(name: str):
-    """
-    Uninstall a plugin by name.
-
-    Args:
-        name: Plugin name to uninstall
-    """
-    if name in _available_plugins:
-        log.info(f"Plugin '{name}' uninstalled successfully")
-    else:
-        log.warning(f"Plugin '{name}' was not installed")
-
-
-def list_plugins() -> List[str]:
-    """List all available plugins."""
-    return list(_available_plugins.keys())
-
-
-def list_available_plugins() -> Dict[str, str]:
-    """List all available plugins with descriptions."""
-    plugins = {}
-
-    # Discover plugins in the plugins directory
-    import astmio.plugins
-
-    for _, name, _ in pkgutil.iter_modules(astmio.plugins.__path__):
-        if name.startswith("_"):
-            continue
-
-        try:
-            module = importlib.import_module(f"astmio.plugins.{name}")
-            for item_name in dir(module):
-                item = getattr(module, item_name)
-                if (
-                    isinstance(item, type)
-                    and issubclass(item, BasePlugin)
-                    and item is not BasePlugin
-                ):
-                    plugins[name] = getattr(
-                        item, "description", "No description available"
-                    )
-                    break
-        except ImportError:
-            continue
-
-    return plugins
-
-
-# Auto-register built-in plugins
-def _register_builtin_plugins():
-    """Auto-register built-in plugins."""
     try:
-        # Register HIPAA plugin
-        from .hipaa import HIPAAAuditPlugin
-
-        register_available_plugin("hipaa", HIPAAAuditPlugin)
-
-        # Register metrics plugin
-        from .metrics import MetricsPlugin, PrometheusMetricsPlugin
-
-        register_available_plugin("metrics", MetricsPlugin)
-        register_available_plugin("prometheus", PrometheusMetricsPlugin)
-
-        # Register modern records plugin
-        from .records import ModernRecordsPlugin
-
-        register_available_plugin("modern_records", ModernRecordsPlugin)
-
-    except ImportError as e:
-        log.debug(f"Some built-in plugins not available: {e}")
+        plugin_instance = plugin_class(**config)
+        manager = get_default_manager()
+        manager.register_plugin(plugin_instance)
+        log.info(f"Plugin '{name}' activated successfully.")
+        return plugin_instance
+    except Exception as e:
+        log.error(f"Failed to instantiate or register plugin '{name}': {e}")
+        return None
 
 
-# Initialize built-in plugins
-_register_builtin_plugins()
+def deactivate_plugin(name: str):
+    """Deactivates a plugin by removing it from the default manager."""
+    manager = get_default_manager()
+    manager.unregister_plugin(name)
+
+
+def list_active_plugins() -> List[str]:
+    """Lists the names of all currently active plugins in the default manager."""
+    manager = get_default_manager()
+    return manager.list_plugins()
+
+
+def emit_event(event_name: str, *args, **kwargs):
+    """Emits an event through the default plugin manager."""
+    manager = get_default_manager()
+    manager.emit(event_name, *args, **kwargs)
 
 
 __all__ = [
+    # Core Classes (for type hinting and advanced usage)
     "BasePlugin",
     "PluginManager",
-    "install_plugin",
-    "uninstall_plugin",
-    "list_plugins",
+    "PluginRegistry",
+    # Core Instances (for direct access)
+    "registry",
+    # Functional API (for convenience)
+    "register_plugin_class",
+    "get_plugin_class",
     "list_available_plugins",
-    "register_available_plugin",
+    "get_plugin_info",
+    "activate_plugin",
+    "deactivate_plugin",
+    "list_active_plugins",
+    "emit_event",
+    "get_default_manager",
 ]

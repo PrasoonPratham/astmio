@@ -13,7 +13,7 @@ import astmio
 # Import plugins directly (install with: pip install astmio[hipaa])
 print("🚀 Loading plugins...")
 try:
-    from astmio.plugins.hipaa import HIPAAAuditPlugin
+    from astmio.plugins.hipaa.hipaa import HIPAAAuditPlugin
 
     hipaa_plugin = HIPAAAuditPlugin(db_path="medical_audit.db")
     print("✅ HIPAA plugin loaded")
@@ -197,7 +197,7 @@ async def demo_plugin_management():
     # Create a plugin instance with custom config
     print("\n📥 Creating HIPAA plugin with custom config...")
     if astmio.is_hipaa_available():
-        from astmio.plugins.hipaa import HIPAAAuditPlugin
+        from astmio.plugins.hipaa.hipaa import HIPAAAuditPlugin
 
         custom_hipaa = HIPAAAuditPlugin(
             db_path="custom_audit.db", retention_days=365, auto_backup=True

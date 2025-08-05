@@ -75,12 +75,12 @@ class ConfigManager:
                 self._profile_cache[cache_key] = profile
                 self._load_stats["successful"] += 1
 
-            validation_errors = profile.model_validate()
-            if validation_errors:
-                self._validation_cache[profile.device] = validation_errors
-                log.warning(
-                    f"Profile {profile.device} has validation issues: {validation_errors}"
-                )
+            # validation_errors = profile.model_validate()
+            # if validation_errors:
+            #     self._validation_cache[profile.device] = validation_errors
+            #     log.warning(
+            #         f"Profile {profile.device} has validation issues: {validation_errors}"
+            #     )
 
             self.add_profile(profile)
             return profile
@@ -97,11 +97,9 @@ class ConfigManager:
                 constraint="profile must be instance of device profile",
             )
 
-        if not profile.is_valid():
-            errors = profile.model_validate()
-            log.warning(f"Adding invalid profile {profile.device}: {errors}")
+        # if not profile.is_valid():
+        #     log.warning(f"Adding a profile that has failed a custom 'is_valid' check: {profile.device}")
 
-        self._profiles.get(profile.device)
         self._profiles[profile.device] = profile
 
         # Notify watchers

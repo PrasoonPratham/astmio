@@ -17,17 +17,17 @@ from typing import (
 
 from pydantic import BaseModel, ConfigDict, PrivateAttr
 
-from ...exceptions import InvalidFieldError, ValidationError
-from ...field_mapper import (
+from astmio.exceptions import InvalidFieldError, ValidationError
+from astmio.field_mapper import (
     ComponentField,
     DateTimeField,
     RecordFieldMapping,
 )
-from ...logging import get_logger
-from .. import BasePlugin
+from astmio.logging import get_logger
+from astmio.plugins import BasePlugin, PluginManager
 
 if TYPE_CHECKING:
-    from ...models import RecordConfig
+    from astmio.models import RecordConfig
 
 log = get_logger(__name__)
 
@@ -278,7 +278,7 @@ class ModernRecordsPlugin(BasePlugin):
         self.records_processed = 0
         self.validation_errors = 0
 
-    def install(self, manager):
+    def install(self, manager: PluginManager):
         """Install the modern records plugin."""
         super().install(manager)
 
@@ -476,3 +476,8 @@ class ModernRecordsPlugin(BasePlugin):
             log.debug(
                 f"Record created: {type(record).__name__} at {record._created_at}"
             )
+
+
+# This is just a placeholder to not get an error in hippa.py
+class PatientRecord:
+    pass

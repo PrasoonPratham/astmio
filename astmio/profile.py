@@ -3,10 +3,10 @@ from typing import Annotated, Any, Dict, Optional, Type, Union
 
 from pydantic import BaseModel, Field, PrivateAttr, field_validator
 
-from .logging import get_logger
-from .models import RecordConfig, SerialConfig, TCPConfig, UDPConfig
-from .modern_records import ASTMBaseRecord
-from .record_factory import RecordFactory
+from astmio.logging import get_logger
+from astmio.models import RecordConfig, SerialConfig, TCPConfig, UDPConfig
+from astmio.modern_records import ASTMBaseRecord
+from astmio.record_factory import RecordFactory
 
 try:
     import yaml

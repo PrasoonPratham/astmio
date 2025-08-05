@@ -7,6 +7,12 @@
 #
 from typing import Any, Iterator, List, Optional, Tuple, Union
 
+from astmio.dataclasses import DecodingResult, MessageType
+from astmio.enums import ErrorCode
+from astmio.exceptions import ProtocolError, ValidationError
+from astmio.logging import get_logger
+from astmio.utils import is_chunked_message, make_checksum
+
 from .constants import (
     COMPONENT_SEP,
     CRLF,
@@ -18,11 +24,6 @@ from .constants import (
     REPEAT_SEP,
     STX,
 )
-from .dataclasses import DecodingResult, MessageType
-from .enums import ErrorCode
-from .exceptions import ChecksumError, ProtocolError, ValidationError
-from .logging import get_logger
-from .utils import is_chunked_message, make_checksum
 
 log = get_logger(__name__)
 
@@ -181,100 +182,58 @@ def _decode_record_only(
     return DecodingResult(data=[record], message_type=MessageType.RECORD_ONLY)
 
 
+# In astmio/codec.py
+
+
 def decode_message(
     message: bytes, encoding: str, strict: bool = False
 ) -> Tuple[Optional[int], ASTM_Message, Optional[str]]:
     """
-    ASTM message decoder with proper error handling.
-
-    :param message: ASTM message as bytes.
-    :param encoding: Data encoding.
-    :param strict: Whether to use strict validation.
-    :return: Tuple of (sequence number, list of records, checksum).
-    :raises: ProtocolError for malformed messages, ValidationError for
-             validation issues.
+    Decodes a complete ASTM message from bytes, validating its structure
+    and checksum with robust frame parsing.
     """
-    if not isinstance(message, bytes):
-        raise ValidationError(
-            f"bytes expected, got {type(message).__name__}",
-            field="record_input",
-            value=type(message).__name__,
-            constraint="must_be_bytes",
-        )
-
-    if not message:
-        raise ValidationError(
-            "Empty message provided",
-            field="message_empty",
-            value="<empty>",
-            constraint="non_empty_required",
-        )
-
-    if not message.startswith(STX):
-        if strict:
-            raise ProtocolError(
-                "Malformed ASTM message: Must start with STX",
-                code=ErrorCode.PROTOCOL_VIOLATION,
-                protocol_data=message[:50],
-            )
-        stx_pos = message.find(STX)
-        if stx_pos > 0:
-            message = message[stx_pos:]
-            log.warning(f"Found STX at position {stx_pos}, truncated message")
-        else:
-            raise ProtocolError(
-                "No STX found in message",
-                code=ErrorCode.PROTOCOL_VIOLATION,
-                protocol_data=message[:50],
-            )
-
-    frame_end_pos: int = message.rfind(ETX)
-    if frame_end_pos == -1:
-        frame_end_pos = message.rfind(ETB)
-
-    if frame_end_pos == -1:
-        if strict:
-            raise ProtocolError(
-                "Malformed ASTM message: No ETX or ETB found",
-                code=ErrorCode.PROTOCOL_VIOLATION,
-                protocol_data=message[-50:],
-            )
-        log.warning("No ETX or ETB found, using end of message")
-        frame_end_pos = (
-            len(message) - 3
-        )  # Assume checksum is last 2 chars + CRLF
-
-    if frame_end_pos <= 1:
+    if (
+        not isinstance(message, bytes)
+        or not message.startswith(STX)
+        or len(message) < 8
+    ):
         raise ProtocolError(
-            f"Malformed ASTM message: Frame is too short (length: {len(message)})",
-            code=ErrorCode.INVALID_MESSAGE_FORMAT,
-            protocol_data=message,
+            "Message is not a valid ASTM frame (must be bytes, start with STX, and have minimum length of 8)."
         )
 
-    frame_for_checksum: bytes = message[1 : frame_end_pos + 1]
-    trailer = message[frame_end_pos + 1 :]
-    cs = trailer.rstrip(CRLF)
-
-    # Validate checksum
-    ccs = make_checksum(frame_for_checksum)
-    checksum_valid = cs == ccs
-
-    if not checksum_valid:
-        if strict:
-            raise ChecksumError(
-                calculated=ccs,
-                data=message,
-                expected=cs,
-                message=f"Checksum failure: expected {cs!r}, calculated {ccs!r}. Data may be corrupt.",
+    try:
+        if not message.endswith(CRLF):
+            raise ProtocolError(
+                f"Message must end with CRLF, but ends with {message[-2:]!r}"
             )
-        log.warning(
-            f"Checksum failure: expected {cs!r}, calculated {ccs!r}. Data may be corrupt."
+
+        payload = message[1:-4]
+        received_checksum = message[-4:-2]
+
+        end_of_frame_char = payload[-1:]
+        if end_of_frame_char not in (ETX, ETB):
+            raise ProtocolError(
+                f"Expected ETX or ETB before checksum, but found {end_of_frame_char!r}"
+            )
+
+    except IndexError:
+        raise ProtocolError(
+            "Message is too short to contain a valid frame trailer (ETX/ETB, Checksum, CRLF)."
         )
 
-    frame_content = frame_for_checksum[:-1]
-    seq, records = decode_frame(frame_content, encoding, strict)
+    calculated_checksum = make_checksum(payload)
 
-    return seq, records, cs.decode(ENCODING, errors="replace") if cs else None
+    if received_checksum != calculated_checksum:
+        error_msg = f"Checksum failure: expected {received_checksum.decode(errors='ignore')!r}, calculated {calculated_checksum.decode(errors='ignore')!r}."
+        from .exceptions import ChecksumError
+
+        raise ChecksumError(message=error_msg)
+
+    frame_content = payload[1:-1]
+
+    seq, records = decode_frame(frame_content, encoding, strict=False)
+
+    return seq, records, received_checksum.decode(encoding, "replace")
 
 
 def decode_frame(

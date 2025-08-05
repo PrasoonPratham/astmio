@@ -412,9 +412,9 @@ class InvalidFieldError(BaseASTMError):
         context = ErrorContext(
             operation="data_validation",
             data={
-                "value": str(repr(field_value))
-                if field_value is not None
-                else None,
+                "value": (
+                    str(repr(field_value)) if field_value is not None else None
+                ),
                 "constraint": constraint,
                 "field_type": field_type,
                 "index": index,
